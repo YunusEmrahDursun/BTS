@@ -1,0 +1,56 @@
+script.
+  let select2ConnectWarning;
+  $(document).ready(function(){
+      $(window).keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+      });
+      $(".select2").select2({
+        language: {
+           noResults: function () {
+            if(select2ConnectWarning){
+              return select2ConnectWarning;
+            }
+            return "Sonuç bulunamadı"; },
+           inputTooShort: function (input, min) { var n = min - input.length; return "En az " + n + " karakter daha girmelisiniz"; },
+           inputTooLong: function (input, max) { var n = input.length - max; return n + " karakter azaltmalısınız"; },
+           loadingMore: function (pageNumber) { return "Daha fazla..."; },
+           searching: function () { return "Aranıyor..."; }
+        },
+        width:"100%",
+        ajax: {
+          url: "/ajax/dyndata/!{data && data.table}",
+          dataType: 'json',
+          delay: 250,
+          data: function (params) {
+            var send={
+              q: params.term,
+              col:$(this).attr("name"),
+            }
+            select2ConnectWarning=null;
+            let target=$(this).attr("connect");
+            if(target){
+              send.cq=target;
+              send.c=$(`[name='${target}']`).val();
+              if(!send.c){
+                select2ConnectWarning=$(`[name='${target}']`).find("option[value]").text() + " seçiniz!";
+              } 
+            }
+            return send;
+          },
+          processResults: function (data, params) {
+            return {
+              results: data,
+            };
+          },
+          cache: true
+        },
+      });
+      let round=#{(data && data.round) || false }
+      if(round){
+        document.querySelectorAll("[ajax-key='f']").forEach((e)=> e.classList.add("round"));
+        document.querySelectorAll(".select2.round").forEach((e)=>e.parentNode?.querySelector(".select2-selection--single")?.classList.add("round"));
+      }
+    })  

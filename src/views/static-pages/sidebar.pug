@@ -1,0 +1,55 @@
+#left-sidebar.sidebar
+    .navbar-brand
+        a(href='/web/dashboard')
+            img.img-fluid.logo(src='/images/icon.svg' alt='Oculux Logo')
+            span Bina Takip Sistemi
+        button.btn-toggle-offcanvas.btn.btn-sm.float-right(type='button')
+            i.lnr.lnr-menu.icon-close
+    .sidebar-scroll
+        .user-account
+            .user_div
+                img.user-photo(src='/images/user.png' alt='User Profile Picture')
+            .dropdown
+                span Hoşgeldin,
+                a.dropdown-toggle.user-name(href='javascript:void(0);' data-toggle='dropdown')
+                    strong=session.kullanici_isim +" "+ session.kullanici_soyisim
+                ul.dropdown-menu.dropdown-menu-right.account.vivify.flipInY
+                    li
+                        a(href='page-profile.html')
+                            i.icon-user
+                            | My Profile
+                    li
+                        a(href='app-inbox.html')
+                            i.icon-envelope-open
+                            | Messages
+                    li
+                        a(href='javascript:void(0);')
+                            i.icon-settings
+                            | Settings
+                    li.divider
+                    li
+                        a(href='page-login.html')
+                            i.icon-power
+                            | Logout
+        nav#left-sidebar-nav.sidebar-nav
+            if menu != null 
+                ul#main-menu.metismenu
+                    li
+                        a(href='/web/dashboard') Ana Sayfa 
+                    each val in menu
+                        li.header=val.title
+                        each sub in val.list
+                            li
+                                a.has-arrow(href='#'+sub)
+                                    i(class=tables[sub] && tables[sub].icon )
+                                    if tables[sub]
+                                        span=tables[sub].title
+                                    else 
+                                        span=sub 
+                                ul
+                                    li
+                                        a(href='/web/table/'+sub) Tablo
+                                    li
+                                        a(href='/web/form/'+sub) İçerik Ekle     
+                    li
+                        a(href='/web/exit') Çıkış    

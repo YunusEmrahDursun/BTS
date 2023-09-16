@@ -1,0 +1,51 @@
+{
+  "allowSyntheticDefaultImports" : true,
+    "esModuleInterop" : true,
+  "compilerOptions": {
+    "jsx": "react",
+    "noImplicitAny": false,
+    "allowJs": true,
+    "strictPropertyInitialization": false,
+    "target": "es6",                 
+    "module": "commonjs",            
+    "outDir": "dist",                
+    "strict": true,                  
+    "baseUrl": "./",                 
+    "esModuleInterop": true,         
+    "skipLibCheck": true,            
+    "forceConsistentCasingInFileNames": true, 
+    "paths": {
+      "@repos/*": [
+        "src/repos/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@server": [
+        "src/server"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@routes/*": [
+        "src/routes/*"
+      ],
+      "@database/*": [
+        "src/database/*"
+      ],
+      "@procedures/*": [
+        "src/procedures/*"
+      ]
+    },
+    "useUnknownInCatchVariables": false
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    
+  ]
+}

@@ -1,0 +1,44 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title=title
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
+    meta(name='description' content='Oculux Bootstrap 4x admin is super flexible, powerful, clean & modern responsive admin dashboard with unlimited possibilities.')
+    meta(name='author' content='GetBootstrap, design by: puffintheme.com')
+    link(rel='icon' href='/images/favicon.ico' type='image/x-icon')
+    // VENDOR CSS
+    link(rel='stylesheet' href='/css/bootstrap.min.css')
+    link(rel='stylesheet' href='/css/font-awesome.min.css')
+    link(rel='stylesheet' href='/css/vivify.min.css')
+    // MAIN CSS
+    link(rel='stylesheet' href='/css/site.min.css')
+    link(rel='stylesheet' href='/css/parsley.css')
+    link(rel='stylesheet' href='/css/toastr.min.css')
+  body.theme-cyan.font-montserrat
+    #myBar
+    // Page Loader
+    .page-loader-wrapper
+      .loader
+        .bar1
+        .bar2
+        .bar3
+        .bar4
+        .bar5
+    .pattern
+    block content
+    // END WRAPPER
+    script(src='/bundles/libscripts.bundle.js')
+    link(rel='stylesheet' href='/css/select2.css')
+    link(rel='stylesheet' href='/css/parsley.css')
+    link(rel='stylesheet' href='/css/dropify.min.css')
+    script(src='/js/select2.js')  
+    script(src='/js/jquery.inputmask.bundle.js')
+    script(src='/bundles/vendorscripts.bundle.js')
+    script(src='/bundles/mainscripts.bundle.js')
+    script(src='/js/main.js')
+    script(src='/js/parsley.min.js')
+    script(src='/js/toastr.js')
+    include ../components/componentjs
+    block javascript

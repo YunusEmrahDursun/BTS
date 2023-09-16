@@ -1,0 +1,12 @@
+.row
+  -let design=data.design || [ {size:12}  ]
+  each cols in design
+    div(class="row col-md-"+cols.size || 12)
+      -let i=cols.start-1 || 0
+      -let end=cols.end!=undefined ? cols.end-1 :  data.columns.length-1
+      while i <= end
+        -key=data.columns[i]
+        include components
+        -i++
+  //if data.upload
+    include upload

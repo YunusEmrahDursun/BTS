@@ -1,0 +1,14 @@
+#game-area {
+    width: 800px;
+    height: 800px;
+    position: relative;
+    border:2px solid green;
+}
+.cube{
+    position: absolute;
+    background-color: aqua;
+    width: 40px;
+    height: 40px;
+    top: 400px;
+    left: 400px;
+}

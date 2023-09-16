@@ -1,0 +1,20 @@
+.col-12
+  .form-group.mt-3.mb-5
+    .dropify-wrapper
+      .dropify-message
+        span.file-icon
+        p Dosyaları buraya sürükleyin veya bir dosya seçmek için tıklayın
+        p.dropify-error Birşeyler ters gitti!
+      .dropify-loader
+      .dropify-errors-container
+        ul
+      input.dropify(type='file' ajax-key="u")
+      button.dropify-clear(type='button') Sil
+      .dropify-preview
+        span.dropify-render
+        .dropify-infos
+          .dropify-infos-inner
+            p.dropify-filename
+              span.file-icon
+              span.dropify-filename-inner
+            p.dropify-infos-message Dosyaları buraya sürükleyin veya bir dosya seçmek için tıklayın

@@ -1,0 +1,55 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title=title
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0')
+    meta(name='description' content='Oculux Bootstrap 4x admin is super flexible, powerful, clean & modern responsive admin dashboard with unlimited possibilities.')
+    meta(name='author' content='GetBootstrap, design by: puffintheme.com')
+    link(rel='icon' href='/images/favicon.ico' type='image/x-icon')
+    // VENDOR CSS
+    link(rel='stylesheet' href='/css/bootstrap.min.css')
+    link(rel='stylesheet' href='/css/font-awesome.min.css')
+    link(rel='stylesheet' href='/css/vivify.min.css')
+    // MAIN CSS
+    link(rel='stylesheet' href='/css/site.min.css')
+    link(rel='stylesheet' href='/css/parsley.css')
+  body.theme-cyan.font-montserrat
+    #myBar
+    // Page Loader
+    .page-loader-wrapper
+      .loader
+        .bar1
+        .bar2
+        .bar3
+        .bar4
+        .bar5
+.auth-main.particles_js
+  .auth_div.vivify.popIn
+    .auth_brand
+      a.navbar-brand(href='javascript:void(0);')
+        img.d-inline-block.align-top.mr-2(src='/images/icon.svg' width='30' height='30' alt='')
+        | BTS
+    .card.page-400
+      .body
+        p.lead.mb-3
+          span.number.left= status + " " 
+          span.text
+            | Oops! 
+        p
+          =message
+        .margin-top-30
+          a.btn.btn-round.btn-default.btn-block(href='javascript:history.go(-1)')
+            i.fa.fa-arrow-left
+            span Go Back
+          a.btn.btn-round.btn-primary.btn-block(href='/')
+            i.fa.fa-home
+            span Home
+  #particles-js
+    canvas.particles-js-canvas-el(width='2400' height='678' style='width: 100%; height: 100%;')
+
+  // END WRAPPER
+  script(src='/bundles/libscripts.bundle.js')
+  script(src='/bundles/vendorscripts.bundle.js')
+  script(src='/bundles/mainscripts.bundle.js')

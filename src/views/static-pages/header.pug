@@ -1,0 +1,110 @@
+nav.navbar.top-navbar
+    .container-fluid
+        .navbar-left
+            .navbar-btn
+                a(href='index.html')
+                    img.img-fluid.logo(src='/images/icon.svg' alt='Oculux Logo')
+                button.btn-toggle-offcanvas(type='button')
+                    i.lnr.lnr-menu.fa.fa-bars
+            ul.nav.navbar-nav
+                li.dropdown
+                    a.dropdown-toggle.icon-menu(href='javascript:void(0);' data-toggle='dropdown')
+                        i.icon-envelope
+                        span.notification-dot.bg-green 4
+                    ul.dropdown-menu.right_chat.email.vivify.fadeIn
+                        li.header.green You have 4 New eMail
+                        li
+                            a(href='javascript:void(0);')
+                                .media
+                                    .avtar-pic.w35.bg-red
+                                        span FC
+                                    .media-body
+                                        span.name
+                                            | James Wert 
+                                            small.float-right.text-muted Just now
+                                        span.message Update GitHub
+                        li
+                            a(href='javascript:void(0);')
+                                .media
+                                    .avtar-pic.w35.bg-indigo
+                                        span FC
+                                    .media-body
+                                        span.name
+                                            | Folisise Chosielie 
+                                            small.float-right.text-muted 12min ago
+                                        span.message New Messages
+                        li
+                            a(href='javascript:void(0);')
+                                .media
+                                    img.media-object(src='/images/xs/avatar5.jpg' alt='')
+                                    .media-body
+                                        span.name
+                                            | Louis Henry 
+                                            small.float-right.text-muted 38min ago
+                                        span.message Design bug fix
+                        li
+                            a(href='javascript:void(0);')
+                                .media.mb-0
+                                    img.media-object(src='/images/xs/avatar2.jpg' alt='')
+                                    .media-body
+                                        span.name
+                                            | Debra Stewart 
+                                            small.float-right.text-muted 2hr ago
+                                        span.message Fix Bug
+                li.dropdown
+                    a.dropdown-toggle.icon-menu(href='javascript:void(0);' data-toggle='dropdown')
+                        i.icon-bell
+                        span.notification-dot.bg-azura 4
+                    ul.dropdown-menu.feeds_widget.vivify.fadeIn
+                        li.header.blue You have 4 New Notifications
+                        li
+                            a(href='javascript:void(0);')
+                                .feeds-left.bg-red
+                                    i.fa.fa-check
+                                .feeds-body
+                                    h4.title.text-danger
+                                        | Issue Fixed 
+                                        small.float-right.text-muted 9:10 AM
+                                    small WE have fix all Design bug with Responsive
+                        li
+                            a(href='javascript:void(0);')
+                                .feeds-left.bg-info
+                                    i.fa.fa-user
+                                .feeds-body
+                                    h4.title.text-info
+                                        | New User 
+                                        small.float-right.text-muted 9:15 AM
+                                    small I feel great! Thanks team
+                        li
+                            a(href='javascript:void(0);')
+                                .feeds-left.bg-orange
+                                    i.fa.fa-question-circle
+                                .feeds-body
+                                    h4.title.text-warning
+                                        | Server Warning 
+                                        small.float-right.text-muted 9:17 AM
+                                    small Your connection is not private
+                        li
+                            a(href='javascript:void(0);')
+                                .feeds-left.bg-green
+                                    i.fa.fa-thumbs-o-up
+                                .feeds-body
+                                    h4.title.text-success
+                                        | 2 New Feedback 
+                                        small.float-right.text-muted 9:22 AM
+                                    small It will give a smart finishing to your site
+        .navbar-right
+            #navbar-menu
+                ul.nav.navbar-nav
+                    li
+                        a.search_toggle.icon-menu(href='javascript:void(0);' title='Search Result')
+                            i.icon-magnifier
+                    li
+                        a.right_toggle.icon-menu(href='javascript:void(0);' title='Right Menu')
+                            i.icon-bubbles
+                            span.notification-dot.bg-pink 2
+                    li
+                        a.icon-menu(href='/web/exit')
+                            i.icon-power
+    .progress-container
+        #myBar.progress-bar

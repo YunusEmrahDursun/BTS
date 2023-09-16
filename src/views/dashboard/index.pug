@@ -1,0 +1,272 @@
+extends ../static-pages/layout
+block content
+  .block-header
+    .row.clearfix
+      .col-md-6.col-sm-12
+        h1=title
+        nav(aria-label='breadcrumb')
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='#') BTS
+            li.breadcrumb-item.active(aria-current='page')=title
+  .row.clearfix
+    .col-lg-3.col-md-6
+      .card
+        .body
+          .d-flex.align-items-center
+            .icon-in-bg.bg-indigo.text-white.rounded-circle
+              i.fa.fa-briefcase
+            .ml-4
+              span Toplam Müşteri Sayısı
+              h4.mb-0.font-weight-medium=data.musteriSayisi
+    .col-lg-3.col-md-6
+      .card
+        .body
+          .d-flex.align-items-center
+            .icon-in-bg.bg-azura.text-white.rounded-circle
+              i.fa.fa-credit-card
+            .ml-4
+              span Kayıtlı Cihaz Sayısı
+              h4.mb-0.font-weight-medium=data.cihazSayisi
+    .col-lg-3.col-md-6
+      .card
+        .body
+          .d-flex.align-items-center
+            .icon-in-bg.bg-orange.text-white.rounded-circle
+              i.fa.fa-users
+            .ml-4
+              span Bölgeler / Teknik Personel
+              h4.mb-0.font-weight-medium=data.bolgeSayisi +" / "+ data.teknikPersonelSayisi
+    .col-lg-3.col-md-6
+      .card
+        .body
+          .d-flex.align-items-center
+            .icon-in-bg.bg-pink.text-white.rounded-circle
+              i.fa.fa-life-ring
+            .ml-4
+              span Toplam Talep Sayısı
+              h4.mb-0.font-weight-medium=data.talepSayisi
+  .row.clearfix
+    .col-lg-4.col-md-12
+      .card
+        .header
+          h2 Users
+        .body
+          .row.text-center
+            .col-6.border-right.pb-4.pt-4
+              label.mb-0 Açık Talepler
+              h4.font-30.font-weight-bold.text-col-blue 150
+            .col-6.pb-4.pt-4
+              label.mb-0 Sonuçlanan Talepler
+              h4.font-30.font-weight-bold.text-col-blue 30
+        .body
+          .form-group
+            label.d-block
+              | New Users 
+              span.float-right 77%
+            .progress.progress-xxs
+              .progress-bar.progress-bar-success(role='progressbar' aria-valuenow='77' aria-valuemin='0' aria-valuemax='100' style='width: 77%;')
+          .form-group
+            label.d-block
+              | Return Visitors 
+              span.float-right 50%
+            .progress.progress-xxs
+              .progress-bar.progress-bar-warning(role='progressbar' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' style='width: 50%;')
+          .form-group
+            label.d-block
+              | Engagement 
+              span.float-right 23%
+            .progress.progress-xxs
+              .progress-bar.progress-bar-info(role='progressbar' aria-valuenow='23' aria-valuemin='0' aria-valuemax='100' style='width: 23%;')
+    .col-lg-8.col-md-12
+      .card.user_statistics
+        .header
+          h2 Earning Report
+        .body
+          #chart-bar(style='height: 302px')
+    .col-lg-8.col-md-12
+      .table-responsive
+        table.table.table-hover.table-custom.spacing5
+          thead
+            tr
+              th(style='width: 20px;') #
+              th Client
+              th(style='width: 50px;') Amount
+              th(style='width: 50px;') Status
+              th(style='width: 110px;') Action
+          tbody
+            tr
+              td
+                span 01
+              td
+                .d-flex.align-items-center
+                  .avtar-pic.w35.bg-red(data-toggle='tooltip' data-placement='top' title='Avatar Name')
+                    span SS
+                  .ml-3
+                    a(href='page-invoices-detail.html' title='') South Shyanne
+                    p.mb-0 south.shyanne@example.com
+              td $1200
+              td
+                span.badge.badge-success.ml-0.mr-0 Done
+              td
+                button.btn.btn-sm.btn-default(type='button' title='Send Invoice' data-toggle='tooltip' data-placement='top')
+                  i.icon-envelope
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+                button.btn.btn-sm.btn-default(type='button' title='Delete' data-toggle='tooltip' data-placement='top')
+                  i.icon-trash
+            tr
+              td
+                span 02
+              td
+                .d-flex.align-items-center
+                  img.w35.h35.rounded(src='../assets/images/xs/avatar2.jpg' data-toggle='tooltip' data-placement='top' title='Avatar Name' alt='Avatar')
+                  .ml-3
+                    a(href='javascript:void(0);' title='') Zoe Baker
+                    p.mb-0 zoe.baker@example.com
+              td $378
+              td
+                span.badge.badge-success.ml-0.mr-0 Done
+              td
+                button.btn.btn-sm.btn-default(type='button' title='Send Invoice' data-toggle='tooltip' data-placement='top')
+                  i.icon-envelope
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+                button.btn.btn-sm.btn-default(type='button' title='Delete' data-toggle='tooltip' data-placement='top')
+                  i.icon-trash
+            tr
+              td
+                span 03
+              td
+                .d-flex.align-items-center
+                  .avtar-pic.w35.bg-indigo(data-toggle='tooltip' data-placement='top' title='Avatar Name')
+                    span CB
+                  .ml-3
+                    a(href='javascript:void(0);' title='') Colin Brown
+                    p.mb-0 colinbrown@example.com
+              td $653
+              td
+                span.badge.badge-success.ml-0.mr-0 Done
+              td
+                button.btn.btn-sm.btn-default(type='button' title='Send Invoice' data-toggle='tooltip' data-placement='top')
+                  i.icon-envelope
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+                button.btn.btn-sm.btn-default(type='button' title='Delete' data-toggle='tooltip' data-placement='top')
+                  i.icon-trash
+            tr
+              td
+                span 04
+              td
+                .d-flex.align-items-center
+                  .avtar-pic.w35.bg-green(data-toggle='tooltip' data-placement='top' title='Avatar Name')
+                    span KG
+                  .ml-3
+                    a(href='javascript:void(0);' title='') Kevin Gill
+                    p.mb-0 kevin.gill@example.com
+              td $451
+              td
+                span.badge.badge-warning.ml-0.mr-0 Panding
+              td
+                button.btn.btn-sm.btn-default(type='button' title='Send Invoice' data-toggle='tooltip' data-placement='top')
+                  i.icon-envelope
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+                button.btn.btn-sm.btn-default(type='button' title='Delete' data-toggle='tooltip' data-placement='top')
+                  i.icon-trash
+            tr
+              td
+                span 05
+              td
+                .d-flex.align-items-center
+                  img.w35.h35.rounded(src='../assets/images/xs/avatar5.jpg' data-toggle='tooltip' data-placement='top' title='Avatar Name' alt='Avatar')
+                  .ml-3
+                    a(href='javascript:void(0);' title='') Brandon Smith
+                    p.mb-0 Maria.gill@example.com
+              td $1,989
+              td
+                span.badge.badge-success.ml-0.mr-0 Done
+              td
+                button.btn.btn-sm.btn-default(type='button' title='Send Invoice' data-toggle='tooltip' data-placement='top')
+                  i.icon-envelope
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+                button.btn.btn-sm.btn-default(type='button' title='Delete' data-toggle='tooltip' data-placement='top')
+                  i.icon-trash
+            tr
+              td
+                span 06
+              td
+                .d-flex.align-items-center
+                  img.w35.h35.rounded(src='../assets/images/xs/avatar6.jpg' data-toggle='tooltip' data-placement='top' title='Avatar Name' alt='Avatar')
+                  .ml-3
+                    a(href='javascript:void(0);' title='') Kevin Baker
+                    p.mb-0 kevin.baker@example.com
+              td $343
+              td
+                span.badge.badge-warning.ml-0.mr-0 Panding
+              td
+                button.btn.btn-sm.btn-default(type='button' title='Send Invoice' data-toggle='tooltip' data-placement='top')
+                  i.icon-envelope
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+                button.btn.btn-sm.btn-default(type='button' title='Delete' data-toggle='tooltip' data-placement='top')
+                  i.icon-trash
+            tr
+              td
+                span 07
+              td
+                .d-flex.align-items-center
+                  img.w35.h35.rounded(src='../assets/images/xs/avatar2.jpg' data-toggle='tooltip' data-placement='top' title='Avatar Name' alt='Avatar')
+                  .ml-3
+                    a(href='javascript:void(0);' title='') Zoe Baker
+                    p.mb-0 zoe.baker@example.com
+              td $378
+              td
+                span.badge.badge-success.ml-0.mr-0 Done
+              td
+                button.btn.btn-sm.btn-default(type='button' title='Send Invoice' data-toggle='tooltip' data-placement='top')
+                  i.icon-envelope
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+                button.btn.btn-sm.btn-default(type='button' title='Delete' data-toggle='tooltip' data-placement='top')
+                  i.icon-trash
+    .col-lg-4.col-md-12
+      a.card(href='javascript:void(0)')
+        .body.text-center
+          img.img-thumbnail.rounded-circle(src='../assets/images/sm/avatar1.jpg' alt='')
+          h6.mt-3 Michelle Green
+          .text-center.text-muted Intranet Developer
+        .card-footer.text-center
+          .row.clearfix
+            .col-6
+              i.fa.fa-tag.font-22
+              div
+                span.text-muted 9 Badges
+            .col-6
+              i.fa.fa-dollar.font-22
+              div
+                span.text-muted $ 3.100
+      .card
+        .body
+          .card-text
+            .mt-0
+              small.float-right.text-muted 10/200 GB
+              span Memory
+              .progress.progress-xxs
+                .progress-bar(style='width: 60%;')
+            .mt-4
+              small.float-right.text-muted 40 MB
+              span Bandwidth
+              .progress.progress-xxs
+                .progress-bar(style='width: 50%;')
+            .mt-4
+              small.float-right.text-muted 73%
+              span Activity
+              .progress.progress-xxs
+                .progress-bar(style='width: 40%;')
+            .mt-4
+              small.float-right.text-muted 400 GB
+              span FTP
+              .progress.progress-xxs.mb-0
+                .progress-bar.bg-danger(style='width: 80%;')
