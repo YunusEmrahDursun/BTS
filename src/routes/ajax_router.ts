@@ -10,13 +10,15 @@ import path from 'path';
 import fs from 'fs';
 const md5 = require('md5');
 const router = Router();
-const { CREATED, OK, NO_CONTENT } = StatusCodes;
+const { CREATED, OK, NO_CONTENT,FORBIDDEN } = StatusCodes;
 
+//tablo request
 router.post('/table/:table',async function(req, res, next) {
+    const { table } = req.params;
+    if(!Procedures.checkAuth(table,req.session.user,"read")) return res.status(FORBIDDEN).end();
+
     try {
-        console.log(req.body)
       var data=JSON.parse(JSON.stringify(req.body.ndata));
-      const { table } = req.params;
       if(!Procedures.checkTable(table) ) {
           return res.status(NO_CONTENT).end();
       }
@@ -32,11 +34,12 @@ router.post('/table/:table',async function(req, res, next) {
     }
   
 });
+//select search
 router.get('/dyndata/:table', async function (req, res, next) {
     const { table } = req.params; 
     const { q,col,c,cq } = req.query;
     if(!Procedures.checkTable(table)  ) return res.status(NO_CONTENT).end();
-
+    if(!Procedures.checkAuth(table,req.session.user,"read")) return res.status(FORBIDDEN).end();
     const restTable=Procedures.tables[table]; 
     if(!restTable.props[col]?.f) return res.status(NO_CONTENT).end();
     
@@ -117,13 +120,20 @@ router.post("/login", async (req: Request, res: Response) => {
         if(!data.kullanici_eposta || !data.kullanici_parola){
             throw "Zorunlu alanların doldurulması gerekmektedir!"
         }
-        var user=(await  db.selectQuery({
+        var users=(await  db.selectQuery({
             kullanici_eposta:data.kullanici_eposta,
             kullanici_parola:md5(data.kullanici_parola)
         },"kullanici_table"));
 
-        if(user && Array.isArray(user) && user.length>0){
-            req.session.user = user[0];
+        if(users && Array.isArray(users) && users.length>0){
+            let user = users[0];
+            let auth = (await db.getById(user.yetki_id,"yetki_table"));
+
+            req.session.user = {
+              ...user,
+              auth: auth.yetki_key
+            };
+
         }else{
             throw "E-posta veya şifre hatalı! "
         }

@@ -1,4 +1,4 @@
-import StatusCodes from 'http-status-codes';
+import StatusCodes, { FORBIDDEN } from 'http-status-codes';
 import { Request, Response, Router,NextFunction } from 'express';
 
 import { ParamMissingError } from '@shared/errors';
@@ -57,6 +57,7 @@ router.use('/register/:id?',async (req: Request, res: Response) => {
 
 /*   session need below   */
 
+// middleware
 
 router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
     if(!req.session.user){
@@ -68,6 +69,9 @@ router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
     res.locals.session=req.session.user;
     next(); 
 })
+
+
+// end points
 
 router.get('/exit', async (req: Request, res: Response) => {
     req.session.destroy(function(error){ if(error)console.log(error)})
@@ -128,9 +132,8 @@ router.use('/dashboard', async (req: Request, res: Response) => {
 
 router.use('/table/:table',async (req: Request, res: Response) => {
     const { table } = req.params;
-    if(!Procedures.checkTable(table) ) {
-        return res.status(NO_CONTENT).end();
-    }
+    if(!Procedures.checkTable(table) ) return res.status(NO_CONTENT).end();
+    if(!Procedures.checkAuth(table,req.session.user,"read")) return res.status(FORBIDDEN).end();
     const restTable=Procedures.tables[table];
     let s={};
     if(restTable.props){
@@ -150,9 +153,8 @@ router.use('/table/:table',async (req: Request, res: Response) => {
 });
 router.use('/form/:table/:id?',async (req: Request, res: Response) => {
     const { table,id } = req.params;
-    if(!Procedures.checkTable(table) ) {
-        return res.status(NO_CONTENT).end();
-    }
+    if(!Procedures.checkTable(table) )  return res.status(NO_CONTENT).end(); 
+    if(!Procedures.checkAuth(table,req.session.user,"write")) return res.status(FORBIDDEN).end();
     const restTable=Procedures.tables[table];
     let s={};
     if(restTable.props){

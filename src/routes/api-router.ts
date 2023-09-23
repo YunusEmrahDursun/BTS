@@ -13,6 +13,8 @@ const {  OK, NO_CONTENT,BAD_REQUEST } = StatusCodes;
 
 let p:any = Procedures.getPaths();
 
+// middleware
+
 router.use("/:table/*", async (req: Request, res: Response,next:NextFunction) => {
     const { table } = req.params;
     if(!Procedures.checkTable(table)) {
@@ -24,18 +26,25 @@ router.use("/:table/*", async (req: Request, res: Response,next:NextFunction) =>
     next(); 
 })
 
+// end points
 
 router.get(p.get, async (req: Request, res: Response) => {
     const { table } = req.params;
     const restTable=Procedures.tables[table]; 
     let text, status=1 ,result:any[]=[]; 
-    try {
-        result=(await db.selectWithColumn(restTable.columns,table+"_table")) as any[]
-    } catch (error) {
-        logger.err(error, true);
-        text = "Birşeyler ters gitti!";
+    if(!Procedures.checkAuth(table,req.session.user,"read")){
+        text = "Yetkiniz Bulunmamaktadır!";
         status = 0;
+    }else{
+        try {
+            result=(await db.selectWithColumn(restTable.columns,table+"_table")) as any[]
+        } catch (error) {
+            logger.err(error, true);
+            text = "Birşeyler ters gitti!";
+            status = 0;
+        }
     }
+    
     return res.status(OK).json({
         message: text,
         status: status,
@@ -45,11 +54,14 @@ router.get(p.get, async (req: Request, res: Response) => {
 
 
 router.post(p.add, async (req: Request, res: Response) => {
-    const data = req.body;
+    const data = req.body.kdata;
     const { table } = req.params;   
     var text, status=1 ;
     if (!data ) {
         text = "Parametre Eksik!";
+        status = 0;
+    }else if(!Procedures.checkAuth(table,req.session.user,"write")){
+        text = "Yetkiniz Bulunmamaktadır!";
         status = 0;
     }else{
         try {
@@ -70,14 +82,18 @@ router.post(p.add, async (req: Request, res: Response) => {
 
 
 router.put(p.update, async (req: Request, res: Response) => {
-    const data = req.body;
-    console.log(data)
+    const data = req.body.kdata;
     const { table,id } = req.params;
     var text, status=1 ;
     if (!data || !id) {
         text = "Parametre Eksik!";
         status = 0;
-    }else{
+    }
+    else if(!Procedures.checkAuth(table,req.session.user,"write")){
+        text = "Yetkiniz Bulunmamaktadır!";
+        status = 0;
+    }
+    else{
         try {
             await db.update(Procedures.checkData(Procedures.getColumnsWithoutId(table),data),{[Procedures.getTableIdColumnName(table)]:id},table+"_table");
             text = "Güncelleme İşlemi Başarılı!";
@@ -100,7 +116,12 @@ router.delete(p.delete, async (req: Request, res: Response) => {
     if (!id ) {
         text = "Parametre Eksik!";
         status = 0;
-    }else{
+    }
+    else if(!Procedures.checkAuth(table,req.session.user,"write")){
+        text = "Yetkiniz Bulunmamaktadır!";
+        status = 0;
+    }
+    else{
         try {
             //silinmesin diye kapattım
             //await db.remove({[Procedures.getTableIdColumnName(table)]:id},table+"_table")
@@ -123,7 +144,12 @@ router.get(p.getOne, async (req: Request, res: Response) => {
     if (!id ) {
         text = "Parametre Eksik!";
         status = 0;
-    }else{
+    }
+    else if(!Procedures.checkAuth(table,req.session.user,"read")){
+        text = "Yetkiniz Bulunmamaktadır!";
+        status = 0;
+    }
+    else{
         try {
             const restTable=Procedures.tables[table];
             result=(await db.selectWithColumn(restTable.columns,table+"_table",{[Procedures.getTableIdColumnName(table)]:id})) as any[]

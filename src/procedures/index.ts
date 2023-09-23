@@ -6,9 +6,9 @@ c number text vs için
 import * as Tables from './tables/index';
 export default { 
     menu:[
-        { title: "Firma İşlemleri" , list : ["firma","firmalar","firma_tip","firma_abone","firma_dosya"]},
-        { title: "Adres" , list : ["ilceler","iller","bolge"]},
-        { title: "Teknisyen İşlemleri" , list : ["is_emri","is_emri_durum","problem","siparis_durum","siparis_parca"]},
+        { title: "Firma İşlemleri" , list : [ "firmalar","firma_tip"]},
+        { title: "Adres" , list : ["ilceler","iller"]},
+        { title: "Teknisyen İşlemleri" , list : ["is_emri","is_emri_durum"]},
         { title: "Sistem İşlemleri" , list : ["yetki","kullanici"]},
     ],
     tables:{
@@ -61,8 +61,19 @@ export default {
     checkTable:function(tableName){
         return this.tables[tableName]!=undefined;
     },
-    checkAuth:function(tableName,usr){
-        return true;
+    checkAuth:function(tableName,usr,auth_type){
+        const table=this.tables[tableName];
+        if(  ["write","read"].includes(auth_type) ){
+
+            if( table["auth_"+auth_type] ){
+                return table.auth_write.includes(usr.auth);
+            }else{
+                return true;
+            }
+
+        }else{
+            return false;
+        }
     },
     //gereksiz dataları siler
     checkData:function(arr,obj){

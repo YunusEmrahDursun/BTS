@@ -5,5 +5,7 @@ export default{
     turkce:["#","Ad"],
     defaultSize:12,
     sql:`SELECT g.* FROM ${global.databaseName}.${"firma_tip"}_table as g 
-    where g.silindi_mi=0 :srcTxt`
+    where g.silindi_mi=0 :srcTxt`,
+    auth_write:["admin"],
+    auth_read:["admin"]
 }
