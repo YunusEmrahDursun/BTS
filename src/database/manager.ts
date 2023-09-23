@@ -358,13 +358,13 @@ const selectQueryConverter = (_tableName:string,_databaseName:string,_where:obje
     return `SELECT ${ _countRow ? "SQL_CALC_FOUND_ROWS" : "" } * FROM ${_databaseName}.${_tableName} as g WHERE ( ${Object.keys(_where).map(x=> "g."+x+"= ? ").join(_mode+" ")} ) AND g.silindi_mi=0 ${_extra} ; ${ _countRow ? "SELECT FOUND_ROWS() AS max;" : "" }`;
 }
 const selectLikeConverter = (_tableName:string,_databaseName:string,_where:object,_mode:"AND" | "OR",_extra:string,_countRow:boolean) => {
-    return `SELECT ${ _countRow ? "SQL_CALC_FOUND_ROWS" : "" } * FROM ${_databaseName}.${_tableName} WHERE ( ${ _where ? Object.keys(_where).map(x=> x+" LIKE ? ").join(_mode+" "):"1=1" } ) AND silindi_mi=0 ${_extra} ; ${ _countRow ? "SELECT FOUND_ROWS() AS max;" : "" }`;
+    return `SELECT ${ _countRow ? "SQL_CALC_FOUND_ROWS" : "" } * FROM ${_databaseName}.${_tableName} WHERE ( ${ _where && Object.keys(_where).length != 0 ? Object.keys(_where).map(x=> x+" LIKE ? ").join(_mode+" "):"1=1" } ) AND silindi_mi=0 ${_extra} ; ${ _countRow ? "SELECT FOUND_ROWS() AS max;" : "" }`;
 }
 const selectLikeWithColumnConverter = (_tableName:string,_databaseName:string,_colNameS:string[],_where:object,_mode:"AND" | "OR",_extra:string) => {
-    return `SELECT ${_colNameS} FROM ${_databaseName}.${_tableName} WHERE ( ${ _where ? Object.keys(_where).map(x=> x+" LIKE ? ").join(_mode+" "):"1=1" } ) AND silindi_mi=0 ${_extra}`;
+    return `SELECT ${_colNameS} FROM ${_databaseName}.${_tableName} WHERE ( ${ _where && Object.keys(_where).length != 0 ? Object.keys(_where).map(x=> x+" LIKE ? ").join(_mode+" "):"1=1" } ) AND silindi_mi=0 ${_extra}`;
 }
 const selectWithColumnConverter = (_tableName:string,_databaseName:string,_colNameS:string[],_where:object,_mode:"AND" | "OR") => {
-    return `SELECT ${_colNameS} FROM ${_databaseName}.${_tableName} WHERE ( ${ _where ? Object.keys(_where).map(x=> x+"= ? ").join(_mode+" "):"1=1" } ) AND silindi_mi=0`;
+    return `SELECT ${_colNameS} FROM ${_databaseName}.${_tableName} WHERE ( ${ _where && Object.keys(_where).length != 0 ? Object.keys(_where).map(x=> x+"= ? ").join(_mode+" "):"1=1" } ) AND silindi_mi=0`;
 }
 const updateConverter = (_tableName:string,_databaseName:string,_object:object,_where:object,_mode:"AND" | "OR") => {
     return `UPDATE ${_databaseName}.${_tableName} SET ${Object.keys(_object).map(x=> x+"= ? ").toString()} WHERE ${Object.keys(_where).map(x=> x+"= ? ").join(_mode+" ")}`;

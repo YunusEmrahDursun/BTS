@@ -76,51 +76,52 @@ router.get('/exit', async (req: Request, res: Response) => {
 
 router.use('/dashboard', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;
-    let s=await db.queryObject(` SELECT
-    (SELECT COUNT(*) FROM ${global.databaseName}.cihaz_table WHERE firma_id=:firmaId and silindi_mi=0) as cihazSayisi, 
-    (SELECT COUNT(*) FROM ${global.databaseName}.bolge_table WHERE firma_id=:firmaId and silindi_mi=0) as bolgeSayisi,
-    (SELECT COUNT(*) FROM ${global.databaseName}.sikayet_table WHERE firma_id=:firmaId and silindi_mi=0) as talepSayisi,
-    (SELECT COUNT(*) FROM ${global.databaseName}.musteri_table WHERE firma_id=:firmaId and silindi_mi=0) as musteriSayisi,
-    (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and yetki_id=2 and silindi_mi=0) as teknikPersonelSayisi`
-    ,{firmaId});
+    let s;
+    // let s=await db.queryObject(` SELECT
+    // (SELECT COUNT(*) FROM ${global.databaseName}.cihaz_table WHERE firma_id=:firmaId and silindi_mi=0) as cihazSayisi, 
+    // (SELECT COUNT(*) FROM ${global.databaseName}.bolge_table WHERE firma_id=:firmaId and silindi_mi=0) as bolgeSayisi,
+    // (SELECT COUNT(*) FROM ${global.databaseName}.sikayet_table WHERE firma_id=:firmaId and silindi_mi=0) as talepSayisi,
+    // (SELECT COUNT(*) FROM ${global.databaseName}.musteri_table WHERE firma_id=:firmaId and silindi_mi=0) as musteriSayisi,
+    // (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and yetki_id=2 and silindi_mi=0) as teknikPersonelSayisi`
+    // ,{firmaId});
     console.log(s)
     res.render('dashboard/index',{title:"Ana Sayfa",data: Array.isArray(s) ? s[0] : {} });
 });
 
-router.use('/form/firmalar/:id?',async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const table="firmalar";
-    if(!Procedures.checkTable(table) ) {
-        return res.status(NO_CONTENT).end();
-    }
-    const restTable=Procedures.tables[table];
-    let s={};
-    if(restTable.props){
-        for (let key in restTable.props ) {
-            let item=restTable.props[key]
-            if(item.f && item.t && item.t=="select") s[item.f]=await db.selectAll(item.f+"_table");
-        }
-    }
-    let result={};
-    let pug;
+// router.use('/form/firmalar/:id?',async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const table="firmalar";
+//     if(!Procedures.checkTable(table) ) {
+//         return res.status(NO_CONTENT).end();
+//     }
+//     const restTable=Procedures.tables[table];
+//     let s={};
+//     if(restTable.props){
+//         for (let key in restTable.props ) {
+//             let item=restTable.props[key]
+//             if(item.f && item.t && item.t=="select") s[item.f]=await db.selectAll(item.f+"_table");
+//         }
+//     }
+//     let result={};
+//     let pug;
 
-    if(id){
-        let arr=await db.formProcedure(table,id);
-        if(Array.isArray(arr) && arr.length){
-            result=arr[0];
-        }
-        pug='firmalar/edit';
-    }else{
-        pug='firmalar/new';
-    }
+//     if(id){
+//         let arr=await db.formProcedure(table,id);
+//         if(Array.isArray(arr) && arr.length){
+//             result=arr[0];
+//         }
+//         pug='firmalar/edit';
+//     }else{
+//         pug='firmalar/new';
+//     }
 
-    res.render(pug,{title:restTable.title,data:{
-        table:table,
-        static:s,
-        idColName:Procedures.getTableIdColumnName(table),
-        ...restTable
-    },targetData:result});
-});
+//     res.render(pug,{title:restTable.title,data:{
+//         table:table,
+//         static:s,
+//         idColName:Procedures.getTableIdColumnName(table),
+//         ...restTable
+//     },targetData:result});
+// });
 
 
 

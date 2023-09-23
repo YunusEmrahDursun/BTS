@@ -6,12 +6,8 @@ c number text vs için
 import * as Tables from './tables/index';
 export default { 
     menu:[
-        { title: "Abone İşlemleri" , list : ["abonelik","abonelik_tip","firma_abone"]},
-        { title: "Firma İşlemleri" , list : ["firma","firmalar","firma_tip","firma_abone","firma_dosya","sektor"]},
+        { title: "Firma İşlemleri" , list : ["firma","firmalar","firma_tip","firma_abone","firma_dosya"]},
         { title: "Adres" , list : ["ilceler","iller","bolge"]},
-        { title: "Kategoriler" , list : ["alt_kategori","katagori"]},
-        { title: "Cihazlar" , list : ["cihaz","cihaz_musteri","cihaz_model","problem_cihaz","yedek_parca"]},
-        { title: "Müşteri İşlemleri" , list : ["siparis","randevu_durum","randevu","sikayet"]},
         { title: "Teknisyen İşlemleri" , list : ["is_emri","is_emri_durum","problem","siparis_durum","siparis_parca"]},
         { title: "Sistem İşlemleri" , list : ["yetki","kullanici"]},
     ],
@@ -38,13 +34,6 @@ export default {
             placeholderMood:true,
         },
         // veritabanı tabloları
-        "abonelik": Tables.abonelik,
-        "abonelik_tip":Tables.abonelik_tip,
-        "alt_kategori":Tables.alt_kategori,
-        "bolge":Tables.bolge,
-        "firma_abone":Tables.firma_abone,
-        "firma_dosya":Tables.firma_dosya,
-        "firma":Tables.firma,
         "firma_tip":Tables.firma_tip,
         "firmalar":Tables.firmalar,
         "ilceler":Tables.ilceler,
@@ -53,9 +42,6 @@ export default {
         "is_emri":Tables.is_emri,
         "katagori":Tables.katagori,
         "kullanici":Tables.kullanici,
-        "problem_cihaz":Tables.problem_cihaz,
-        "problem":Tables.problem,
-        "sikayet":Tables.sikayet,
         "yetki":Tables.yetki
     },
     getPaths:function(){
