@@ -22,7 +22,7 @@ block content
             .body
               form.form-auth-small.m-t-20(novalidate data-parsley-validate onsubmit="formValitdate(this);return false;")
                 include ./components/inputGen
-                .col-12
+                .form-footer
                   button.btn.btn-primary(type='submit') Kaydet
                   a(href='/web/table/'+data.table)
                     button.btn.btn-secondary(type='button' ) Vazgeç

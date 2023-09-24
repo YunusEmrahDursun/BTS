@@ -8,6 +8,7 @@ import db from '@database/manager';
 import Procedures from '@procedures/index';
 import path from 'path';
 import fs from 'fs';
+import logger from 'jet-logger';
 const md5 = require('md5');
 const router = Router();
 const { CREATED, OK, NO_CONTENT,FORBIDDEN } = StatusCodes;
@@ -22,10 +23,10 @@ router.post('/table/:table',async function(req, res, next) {
       if(!Procedures.checkTable(table) ) {
           return res.status(NO_CONTENT).end();
       }
-      data.userId=1//req.session.user.id;
-      res.send({d:await db.tableProcedure(table,data),status:1});
+      const firmaId=req.session.user.firma_id; // hangi firmanın datasını çekeceği için
+      res.send({d:await db.tableProcedure(table,data,firmaId),status:1});
     } catch (error) {
-      console.log(error)
+      logger.err(error, true);
       res.send({
         message: "Hata oluştu!",
         status: 0,
@@ -55,7 +56,15 @@ router.get('/dyndata/:table', async function (req, res, next) {
         }
         connect=" AND "+restTable.props[col].connect+"=?";
     }
-    const result=await db.selectLikeWithColumn(colNames,targetTable+"_table", q && {[restTable.props[col]?.k]:q } ,"AND",connect+" LIMIT 10",[c]);
+    const where= { };
+    if( restTable.check_firma_id ){
+      const firmaId= req.session.user.firma_id;
+      where["firma_id"] = firmaId;
+    }
+    if(q){
+      where[restTable.props[col]?.k] = q;
+    }
+    const result=await db.selectLikeWithColumn(colNames,targetTable+"_table", where ,"AND",connect+" LIMIT 10",[c]);
     res.json( Array.isArray(result) && result.map(x=> ({ "id": x[tableIdName] , "text": x[textName] }) ));
   });
 router.post("/register", async (req: Request, res: Response) => {
@@ -98,7 +107,7 @@ router.post("/register", async (req: Request, res: Response) => {
             await fs.mkdirSync(staticDir+'./firmaFiles'+insertedFirma);
             await fs.mkdirSync(staticDir+'./firmaImages'+insertedFirma);
         } catch (error) {
-            console.log(error);
+            logger.err(error, true);
         }
 
         text = "Kayıt Başarılı!";

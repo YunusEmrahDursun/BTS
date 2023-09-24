@@ -1,6 +1,7 @@
 const mysql = require( 'mysql' );
 import Config from '@database/config';
 import Procedures from '@procedures/index';
+import logger from 'jet-logger';
 class Database {
     
 
@@ -19,7 +20,7 @@ class Database {
         try {
             selectedProcedure=JSON.parse(JSON.stringify(this.procedures[procedure]))
          } catch (error) {
-            console.log(error)   
+            logger.err(error, true);
             throw "Procedure not converted!"
          }
 
@@ -31,7 +32,7 @@ class Database {
          return temp;
     }
 
-    tableProcedure = async (table,values) => {
+    tableProcedure = async (table,values,firmaId) => {
         const resTable=Procedures.tables[table];
         if(! resTable.sql) throw "Sql not found!"
         let sql=resTable.sql;
@@ -84,14 +85,14 @@ class Database {
                             }
                         }
                     } catch (error) {
-                        console.log(error)
+                        logger.err(error, true);
                     }
                 }
                 if(tmp!=""){
                     sql=sql.replace(":srcTxt",tmp)
                 }
             } catch (error) {
-                console.log(error)
+                logger.err(error, true);
                 throw "hata"
             }
             delete values.srcTxt;
@@ -105,6 +106,9 @@ class Database {
             sql=sql.replace(":orderBy","")
         }
         if(! values.current) sql=sql.replace(":current","0")
+        
+        sql=sql.replace(":firmaId",firmaId)
+
         return await this.queryObject(sql,values)
     }
     query = async ( sql, args:any = null ) => {
@@ -123,11 +127,13 @@ class Database {
             });
         } );
     }
-    formProcedure = async (table,value) => {
+    formProcedure = async (table,value,firmaId) => {
         const resTable=Procedures.tables[table];
         if(! resTable.sql) throw "Sql not found!"
         let sql=resTable.sql;
-        sql=sql.replace(":srcTxt",` and g.${Procedures.getTableIdColumnName(table)} = `+ this.pool.escape(`${value}`) +" ")
+        sql=sql.replace(":firmaId",firmaId);
+        sql=sql.replace(":srcTxt",` and g.${Procedures.getTableIdColumnName(table)} = `+ this.pool.escape(`${value}`) +" ");
+
         return await this.query(sql)
     }
     //anti sql injection

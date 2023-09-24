@@ -9,7 +9,7 @@ const router = Router();
 const { CREATED, OK, NO_CONTENT } = StatusCodes;
 
 const viewsDir = path.join(__dirname, 'views');
-
+import logger from 'jet-logger';
 
 /*// index page
 router.use('/', (req: Request, res: Response) => {
@@ -74,7 +74,7 @@ router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
 // end points
 
 router.get('/exit', async (req: Request, res: Response) => {
-    req.session.destroy(function(error){ if(error)console.log(error)})
+    req.session.destroy(function(error){ if(error) logger.err(error, true);})
     res.redirect('/web/login');
 });
 
@@ -165,7 +165,8 @@ router.use('/form/:table/:id?',async (req: Request, res: Response) => {
     }
     let result={};
     if(id){
-        let arr=await db.formProcedure(table,id);//await db.getById(id,table+"_table");
+        const firmaId=req.session.user.firma_id;
+        let arr=await db.formProcedure(table,id,firmaId);//await db.getById(id,table+"_table");
         if(Array.isArray(arr) && arr.length){
             result=arr[0];
         }
