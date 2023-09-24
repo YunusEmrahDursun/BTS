@@ -9,6 +9,7 @@ import Procedures from '@procedures/index';
 import path from 'path';
 import fs from 'fs';
 import logger from 'jet-logger';
+import { JetLogger } from 'jet-logger/lib/JetLogger';
 const md5 = require('md5');
 const router = Router();
 const { CREATED, OK, NO_CONTENT,FORBIDDEN } = StatusCodes;
@@ -57,10 +58,16 @@ router.get('/dyndata/:table', async function (req, res, next) {
         connect=" AND "+restTable.props[col].connect+"=?";
     }
     const where= { };
-    if( restTable.check_firma_id ){
-      const firmaId= req.session.user.firma_id;
-      where["firma_id"] = firmaId;
+    try {
+      if( Procedures.tables[restTable.props[col].f].check_firma_id ){
+        const firmaId= req.session.user.firma_id;
+        where["firma_id"] = firmaId;
+      }
+    } catch (error) {
+      logger.err(error, true);
+      res.status(NO_CONTENT).end();
     }
+   
     if(q){
       where[restTable.props[col]?.k] = q;
     }

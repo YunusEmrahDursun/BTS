@@ -32,24 +32,31 @@
                             i.icon-power
                             | Logout
         nav#left-sidebar-nav.sidebar-nav
-            if menu != null 
+            if menu != null
                 ul#main-menu.metismenu
-                    li
-                        a(href='/web/dashboard') Ana Sayfa 
-                    each val in menu
-                        li.header=val.title
-                        each sub in val.list
-                            li
-                                a.has-arrow(href='#'+sub)
-                                    i(class=tables[sub] && tables[sub].icon )
-                                    if tables[sub]
-                                        span=tables[sub].title
-                                    else 
-                                        span=sub 
-                                ul
-                                    li
-                                        a(href='/web/table/'+sub) Tablo
-                                    li
-                                        a(href='/web/form/'+sub) İçerik Ekle     
-                    li
-                        a(href='/web/exit') Çıkış    
+                    each menuItem in menu
+                        if menuItem.auth == undefined || ( menuItem.auth && menuItem.auth.includes(session.auth) )
+                            if menuItem.children 
+                                li.header=menuItem.title
+                                each menuChildItem in menuItem.children    
+                                    if menuChildItem.auth == undefined || ( menuChildItem.auth && menuChildItem.auth.includes(session.auth) )
+                                        if menuChildItem.table
+                                            li
+                                                a.has-arrow(href='#'+menuChildItem.table)
+                                                    i(class=tables[menuChildItem.table] && tables[menuChildItem.table].icon )
+                                                    if tables[menuChildItem.table]
+                                                        span=tables[menuChildItem.table].title
+                                                    else 
+                                                        span=menuChildItem.table 
+                                                ul
+                                                    li
+                                                        a(href='/web/table/'+menuChildItem.table) Tablo
+                                                    li
+                                                        a(href='/web/form/'+menuChildItem.table) İçerik Ekle
+                                        else 
+                                            li
+                                                a(href=menuItem.link)=menuItem.title                                                      
+                            else
+                                li
+                                    a(href=menuItem.link)=menuItem.title                            
+

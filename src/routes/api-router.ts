@@ -65,7 +65,9 @@ router.post(p.add, async (req: Request, res: Response) => {
         status = 0;
     }else{
         try {
-            await db.insert(Procedures.checkData(Procedures.getColumnsWithoutId(table),data),table+"_table");
+            const tempData = Procedures.checkData(Procedures.getColumnsWithoutId(table),data);
+            if(Procedures.tables[table].check_firma_id){ tempData.firma_id = req.session.user.firma_id; }
+            await db.insert(tempData,table+"_table");
             text = "Ekleme İşlemi Başarılı!";
         } catch (error) {
             logger.err(error, true);
@@ -123,8 +125,7 @@ router.delete(p.delete, async (req: Request, res: Response) => {
     }
     else{
         try {
-            //silinmesin diye kapattım
-            //await db.remove({[Procedures.getTableIdColumnName(table)]:id},table+"_table")
+            await db.remove({[Procedures.getTableIdColumnName(table)]:id},table+"_table")
             text = "Silme İşlemi Başarılı!";
         } catch (error) {
             logger.err(error, true);

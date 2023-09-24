@@ -117,7 +117,7 @@ block javascript
                             </td>`
                 }
               let tr=`
-                  <tr class="tdata" row-id="${row[data.idColName]}" onclick="${data.link==undefined ? `window.open('/web/form/${data.table}/${row[data.idColName]}', '_blank');` : `window.open('${data.link+row.id}', '_blank');`}">
+                  <tr class="tdata" row-id="${row[data.idColName]}" onclick="${data.link==undefined ? `window.open('/web/form/${data.table}/${row[data.idColName]}', '_self');` : `window.open('${data.link+row.id}', '_self');`}">
                       ${data.tableHead.map((key,index)=>{
                         let td;
                         if(!data.dateIndex) data.dateIndex=[]

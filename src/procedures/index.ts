@@ -5,11 +5,48 @@ c number text vs için
 */
 import * as Tables from './tables/index';
 export default { 
+    // { title: "test", link:"/web/test", auth:["admin"] }
     menu:[
-        { title: "Firma İşlemleri" , list : [ "firmalar","firma_tip"]},
-        { title: "Adres" , list : ["ilceler","iller"]},
-        { title: "Teknisyen İşlemleri" , list : ["is_emri","is_emri_durum"]},
-        { title: "Sistem İşlemleri" , list : ["yetki","kullanici"]},
+        { title: "Ana Sayfa", link:"/web/dashboard" },
+        {
+            title :  "Firma İşlemleri",
+            auth : ["admin"],
+            children : [
+                { table:"firmalar" },  { table:"firma_tip" }
+            ]
+        },
+        {
+            title :  "Adres",
+            auth : ["admin"],
+            children : [
+                { table:"ilceler" },  { table:"iller" }
+            ] 
+        },
+        {
+            title :  "İş Emirleri",
+            auth : ["admin","sube"],
+            children : [
+                { table:"is_emri" , auth:["sube","admin"] },  
+                { table:"is_emri_durum" , auth:["admin"] }
+            ] 
+        },
+        {
+            title :  "Şubeler",
+            auth : ["admin","sube"],
+            children : [
+                { table:"sube" , auth:["admin","sube"] }
+            ] 
+        },
+        {
+            title :  "Sistem İşlemleri",
+            auth : ["admin","sube"],
+            children : [
+                { table:"yetki" , auth:["admin"] },  
+                { table:"kullanici" , auth:["admin","sube"] }
+            ] 
+        },
+        { title: "Çıkış", link:"/web/exit" },
+       
     ],
     tables:{
         //custom ekranlar
@@ -40,7 +77,7 @@ export default {
         "iller":Tables.iller,
         "is_emri_durum":Tables.is_emri_durum,
         "is_emri":Tables.is_emri,
-        "katagori":Tables.katagori,
+        "sube":Tables.sube,
         "kullanici":Tables.kullanici,
         "yetki":Tables.yetki
     },
