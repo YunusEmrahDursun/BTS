@@ -35,7 +35,8 @@ script.
               send.cq=target;
               send.c=$(`[name='${target}']`).val();
               if(!send.c){
-                select2ConnectWarning=$(`[name='${target}']`).find("option[value]").text() + " seçiniz!";
+                //select2ConnectWarning=$(`[name='${target}']`).find("option[value]").text() + " seçiniz!";
+                select2ConnectWarning=$(`[name='${target}']`).parent().find("label").eq(0).text() + " seçiniz!";
               } 
             }
             return send;

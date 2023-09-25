@@ -3,7 +3,7 @@ export default{
     title:"İş Emri",
     check_firma_id:true,
     columns:["is_emri_id","is_emri_yonlendiren_kullanici_id", "is_emri_giden_kullanici_id", "is_emri_aciklama", "is_emri_olusturma_tarihi", "is_emri_kapanis_tarihi"],
-    turkce:["#","Yönlendiren Kullanıcı","Yönlendirilen Kullanıcı","Açıklama","Oluşturulma Tarihi","Kapatılma Tarihi"],
+    turkce:["#","Yönlendiren Kullanıcı","Atanan Kullanıcı","Açıklama","Oluşturulma Tarihi","Kapatılma Tarihi"],
     design:[ {size:12,start:3,end:4}  ],
     props:{
         "is_emri_olusturma_tarihi":{ t:"date"},

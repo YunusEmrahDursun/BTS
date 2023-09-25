@@ -4,27 +4,16 @@ block content
     .auth_div.vivify.fadeInTop
       .card
         .body
-          .login-img
-            img.img-fluid(src='/images/login-img.png')
           form.form-auth-small(novalidate data-parsley-validate onsubmit="formValitdate(this);return false" style="width: 350px;")
+            h1 BTS
             .mb-3
               p.lead Hesabınıza giriş yapın
             .form-group
               input#signin-email.form-control.round(type='email'  placeholder='E-posta' required ajax-key="l"  name='kullanici_eposta')
             .form-group
               input#signin-password.form-control.round(type='password'  placeholder='Parola' required ajax-key="l" name='kullanici_parola')
-            .form-group.clearfix
-              label.fancy-checkbox.element-left
-                input(type='checkbox')
-                span Beni Hatırla
+
             button.btn.btn-primary.btn-round.btn-block(type='submit') Giriş
-            .mt-4
-              span.helper-text.m-b-10
-                i.fa.fa-lock
-                a(href='page-forgot-password.html') Parolanızı mı unuttunuz?
-              span
-                | Hesabınız yok mu?
-                a(href='/web/register') Kayıt ol
           .pattern
             span.red
             span.indigo

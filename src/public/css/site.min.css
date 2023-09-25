@@ -4163,7 +4163,11 @@ select.form-control:not([size]):not([multiple]) {
   }
 }
 
+body{
+  height: 100vh;
+}
 .auth-main2 {
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4171,11 +4175,16 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .auth-main2 .auth_div {
-  width: 930px;
   z-index: 999;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between
+}
+
+.auth-main2 h1{
+  font-family: fangsong;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .auth-main2 .auth_div .card {

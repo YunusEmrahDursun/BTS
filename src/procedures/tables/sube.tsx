@@ -3,7 +3,7 @@ export default{
     title:"Şube",
     check_firma_id:true,
     columns:[ "sube_id","sube_adi", "il_id","ilce_id","yetkili_ad_soyad","yetkili_tel"],
-    turkce:["#","Ad","İl","İlçe","Y. Ad Soyad", "Y. Tel"],
+    turkce:["#","Ad","İl","İlçe","Yetkili Ad Soyad", "Yetkili Tel"],
     defaultSize:6,
     props:{
         "sube_adi":{size:6},

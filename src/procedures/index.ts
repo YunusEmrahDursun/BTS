@@ -31,6 +31,13 @@ export default {
             ] 
         },
         {
+            title :  "Binalar",
+            auth : ["admin","sube"],
+            children : [
+                { table:"bina" , auth:["admin","sube"] }
+            ] 
+        },
+        {
             title :  "Şubeler",
             auth : ["admin","sube"],
             children : [
@@ -79,7 +86,8 @@ export default {
         "is_emri":Tables.is_emri,
         "sube":Tables.sube,
         "kullanici":Tables.kullanici,
-        "yetki":Tables.yetki
+        "yetki":Tables.yetki,
+        "bina":Tables.bina
     },
     getPaths:function(){
         const paths={
