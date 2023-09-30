@@ -1,5 +1,5 @@
 export default {
-    icon:"icon-speedometer",
+    icon:"icon-heart",
     title:"Firmalar",
     columns:[ "firmalar_id", "firma_adi","firma_tip_id", "telefon", "eposta", "yetkili_isim", "yetkili_soyisim","yetkili_eposta", "yetkili_tel", "kayit_tarihi"],
     turkce:["#","Firma Adı","Firma Tipi","Telefon","E-posta","Y. İsim","Y. Soyisim","Y. E-posta","Y. Tel","Kayıt Tarihi"],

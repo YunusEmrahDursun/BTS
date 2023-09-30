@@ -50,12 +50,18 @@
                                                         span=menuChildItem.table 
                                                 ul
                                                     li
-                                                        a(href='/web/table/'+menuChildItem.table) Tablo
+                                                        a(href='/web/table/'+menuChildItem.table)
+                                                            i(class="icon-list")
+                                                            span="Tablo"
                                                     li
-                                                        a(href='/web/form/'+menuChildItem.table) İçerik Ekle
+                                                        a(href='/web/form/'+menuChildItem.table)
+                                                            i(class="icon-pencil")
+                                                            span="İçerik Ekle"
                                         else 
                                             li
-                                                a(href=menuItem.link)=menuItem.title                                                      
+                                                a(href=menuChildItem.link)
+                                                    i(class=menuChildItem.icon )
+                                                    span=menuChildItem.title                                                      
                             else
                                 li
                                     a(href=menuItem.link)=menuItem.title                            

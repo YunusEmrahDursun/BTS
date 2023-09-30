@@ -1,5 +1,5 @@
 export default{
-    icon:"icon-speedometer",
+    icon:" icon-flag",
     title:"Yetki",
     columns:[ "yetki_id","yetki_adi","yetki_key"],
     turkce:["#","Ad","Anahtar Kelime"],

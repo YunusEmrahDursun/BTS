@@ -4,57 +4,9 @@ c number text vs için
 
 */
 import * as Tables from './tables/index';
+import Menu from './menu';
 export default { 
-    // { title: "test", link:"/web/test", auth:["admin"] }
-    menu:[
-        { title: "Ana Sayfa", link:"/web/dashboard" },
-        {
-            title :  "Firma İşlemleri",
-            auth : ["admin"],
-            children : [
-                { table:"firmalar" },  { table:"firma_tip" }
-            ]
-        },
-        {
-            title :  "Adres",
-            auth : ["admin"],
-            children : [
-                { table:"ilceler" },  { table:"iller" }
-            ] 
-        },
-        {
-            title :  "İş Emirleri",
-            auth : ["admin","sube"],
-            children : [
-                { table:"is_emri" , auth:["sube","admin"] },  
-                { table:"is_emri_durum" , auth:["admin"] }
-            ] 
-        },
-        {
-            title :  "Binalar",
-            auth : ["admin","sube"],
-            children : [
-                { table:"bina" , auth:["admin","sube"] }
-            ] 
-        },
-        {
-            title :  "Şubeler",
-            auth : ["admin","sube"],
-            children : [
-                { table:"sube" , auth:["admin","sube"] }
-            ] 
-        },
-        {
-            title :  "Sistem İşlemleri",
-            auth : ["admin","sube"],
-            children : [
-                { table:"yetki" , auth:["admin"] },  
-                { table:"kullanici" , auth:["admin","sube"] }
-            ] 
-        },
-        { title: "Çıkış", link:"/web/exit" },
-       
-    ],
+    menu:Menu,
     tables:{
         //custom ekranlar
         "register":{
@@ -106,12 +58,12 @@ export default {
     checkTable:function(tableName){
         return this.tables[tableName]!=undefined;
     },
-    checkAuth:function(tableName,usr,auth_type){
+    checkAuth:function(tableName,auth,auth_type){
         const table=this.tables[tableName];
         if(  ["write","read"].includes(auth_type) ){
 
             if( table["auth_"+auth_type] ){
-                return table.auth_write.includes(usr.auth);
+                return table.auth_write.includes(auth);
             }else{
                 return true;
             }

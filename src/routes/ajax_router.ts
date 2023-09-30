@@ -17,7 +17,7 @@ const { CREATED, OK, NO_CONTENT,FORBIDDEN } = StatusCodes;
 //tablo request
 router.post('/table/:table',async function(req, res, next) {
     const { table } = req.params;
-    if(!Procedures.checkAuth(table,req.session.user,"read")) return res.status(FORBIDDEN).end();
+    if(!Procedures.checkAuth(table,req.session.auth,"read")) return res.status(FORBIDDEN).end();
 
     try {
       var data=JSON.parse(JSON.stringify(req.body.ndata));
@@ -41,7 +41,7 @@ router.get('/dyndata/:table', async function (req, res, next) {
     const { table } = req.params; 
     const { q,col,c,cq } = req.query;
     if(!Procedures.checkTable(table)  ) return res.status(NO_CONTENT).end();
-    if(!Procedures.checkAuth(table,req.session.user,"read")) return res.status(FORBIDDEN).end();
+    if(!Procedures.checkAuth(table,req.session.auth,"read")) return res.status(FORBIDDEN).end();
     const restTable=Procedures.tables[table]; 
     if(!restTable.props[col]?.f) return res.status(NO_CONTENT).end();
     
@@ -145,11 +145,8 @@ router.post("/login", async (req: Request, res: Response) => {
             let user = users[0];
             let auth = (await db.getById(user.yetki_id,"yetki_table"));
 
-            req.session.user = {
-              ...user,
-              auth: auth.yetki_key
-            };
-
+            req.session.user = user
+            req.session.auth= auth.yetki_key
         }else{
             throw "E-posta veya şifre hatalı! "
         }

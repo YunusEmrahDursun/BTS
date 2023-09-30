@@ -1,5 +1,5 @@
 export default {
-    icon:"icon-speedometer",
+    icon:"icon-directions",
     title:"İlçeler",
     columns:[ "ilce_id","il_id", "ilce_adi"],
     turkce:["#","İl","Ad"],

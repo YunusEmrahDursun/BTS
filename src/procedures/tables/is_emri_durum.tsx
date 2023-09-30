@@ -1,5 +1,5 @@
 export default{
-    icon:"icon-speedometer",
+    icon:"icon-wrench",
     title:"İş Emri Durumu",
     columns:[ "is_emri_durum_id","is_emri_durum_adi","is_emri_durum_key"],
     turkce:["#","Ad","Anahtar Kelime"],

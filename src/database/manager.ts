@@ -240,8 +240,8 @@ class Database {
         }
         return this.query(query,Object.keys(where).map(y=> "%"+where[y]+"%").concat(extraData));
     }
-    selectWithColumn = async (colNameS=[],tableName,where={},mode:"AND" | "OR" ="AND",databaseName=this.databaseName) => {
-        //var a=await new db().selectWithColumn(["id","a"],"test");
+    selectWithColumn = async (colNameS:string[]=[],tableName,where={},mode:"AND" | "OR" ="AND",databaseName=this.databaseName) => {
+        //var a=await db.selectWithColumn(["id","a"],"test");
         if(!tableName || tableName==""){
             throw "tabloismibulunamadi";
         }

@@ -1,5 +1,5 @@
 export default{
-    icon:"icon-speedometer",
+    icon:"icon-user",
     title:"Kullanıcı",
     check_firma_id:true,
     columns:[ "kullanici_id", "kullanici_isim", "kullanici_soyisim", "kullanici_eposta", "kullanici_telefon","yetki_id","sube_id"],

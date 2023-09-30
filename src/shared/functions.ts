@@ -36,3 +36,15 @@ export function getCurrentDate(){
         padL(dt.getSeconds())}`
 
 }
+
+var rand = function() {
+    return Math.random().toString(36).substr(2); 
+};
+
+var token = function() {
+    return rand() + rand() + rand() + "-" + rand() + rand() + rand(); 
+};
+
+export function createToken(){
+    return token();
+}

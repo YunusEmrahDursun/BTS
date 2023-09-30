@@ -1,5 +1,5 @@
 export default{
-    icon:"icon-speedometer",
+    icon:"icon-wrench",
     title:"Firma Tip",
     columns:[ "firma_tip_id","firma_tip_adi"],
     turkce:["#","Ad"],

@@ -1,5 +1,5 @@
 export default{
-    icon:"icon-speedometer",
+    icon:"icon-layers",
     title:"Şube",
     check_firma_id:true,
     columns:[ "sube_id","sube_adi", "il_id","ilce_id","yetkili_ad_soyad","yetkili_tel"],

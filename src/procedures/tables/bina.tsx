@@ -1,5 +1,5 @@
 export default{
-    icon:"icon-speedometer",
+    icon:"fa fa-building-o",
     title:"Bina",
     check_firma_id:true,
     columns:[ "bina_id","bina_adi", "sube_id","il_id","ilce_id","adres","yonetici_ad_soyad","yonetici_tel","yonetici_daire"],

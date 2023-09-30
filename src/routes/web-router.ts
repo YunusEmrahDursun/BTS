@@ -1,6 +1,6 @@
 import StatusCodes, { FORBIDDEN } from 'http-status-codes';
 import { Request, Response, Router,NextFunction } from 'express';
-
+import SocketIO from 'socket.io';
 import { ParamMissingError } from '@shared/errors';
 import db from '@database/manager';
 import path from 'path';
@@ -88,7 +88,7 @@ router.use('/dashboard', async (req: Request, res: Response) => {
     // (SELECT COUNT(*) FROM ${global.databaseName}.musteri_table WHERE firma_id=:firmaId and silindi_mi=0) as musteriSayisi,
     // (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and yetki_id=2 and silindi_mi=0) as teknikPersonelSayisi`
     // ,{firmaId});
-    console.log(s)
+    //console.log(s)
     res.render('dashboard/index',{title:"Ana Sayfa",data: Array.isArray(s) ? s[0] : {} });
 });
 
@@ -133,7 +133,7 @@ router.use('/dashboard', async (req: Request, res: Response) => {
 router.use('/table/:table',async (req: Request, res: Response) => {
     const { table } = req.params;
     if(!Procedures.checkTable(table) ) return res.status(NO_CONTENT).end();
-    if(!Procedures.checkAuth(table,req.session.user,"read")) return res.status(FORBIDDEN).end();
+    if(!Procedures.checkAuth(table,req.session.auth,"read")) return res.status(FORBIDDEN).end();
     const restTable=Procedures.tables[table];
     let s={};
     if(restTable.props){
@@ -154,7 +154,7 @@ router.use('/table/:table',async (req: Request, res: Response) => {
 router.use('/form/:table/:id?',async (req: Request, res: Response) => {
     const { table,id } = req.params;
     if(!Procedures.checkTable(table) )  return res.status(NO_CONTENT).end(); 
-    if(!Procedures.checkAuth(table,req.session.user,"write")) return res.status(FORBIDDEN).end();
+    if(!Procedures.checkAuth(table,req.session.auth,"write")) return res.status(FORBIDDEN).end();
     const restTable=Procedures.tables[table];
     let s={};
     if(restTable.props){
@@ -189,6 +189,8 @@ router.use('/test', async (req: Request, res: Response) => {
     //res.json(req.session).end()
     //console.log(req.session)
     //console.log(req.sessionID)
+    const io: SocketIO.Server = req.app.get('socketio');
+    io.emit("update","asd")
     res.json({}).end()
 });
 

@@ -32,7 +32,7 @@ router.get(p.get, async (req: Request, res: Response) => {
     const { table } = req.params;
     const restTable=Procedures.tables[table]; 
     let text, status=1 ,result:any[]=[]; 
-    if(!Procedures.checkAuth(table,req.session.user,"read")){
+    if(!Procedures.checkAuth(table,req.session.auth,"read")){
         text = "Yetkiniz Bulunmamaktadır!";
         status = 0;
     }else{
@@ -60,7 +60,7 @@ router.post(p.add, async (req: Request, res: Response) => {
     if (!data ) {
         text = "Parametre Eksik!";
         status = 0;
-    }else if(!Procedures.checkAuth(table,req.session.user,"write")){
+    }else if(!Procedures.checkAuth(table,req.session.auth,"write")){
         text = "Yetkiniz Bulunmamaktadır!";
         status = 0;
     }else{
@@ -91,7 +91,7 @@ router.put(p.update, async (req: Request, res: Response) => {
         text = "Parametre Eksik!";
         status = 0;
     }
-    else if(!Procedures.checkAuth(table,req.session.user,"write")){
+    else if(!Procedures.checkAuth(table,req.session.auth,"write")){
         text = "Yetkiniz Bulunmamaktadır!";
         status = 0;
     }
@@ -119,7 +119,7 @@ router.delete(p.delete, async (req: Request, res: Response) => {
         text = "Parametre Eksik!";
         status = 0;
     }
-    else if(!Procedures.checkAuth(table,req.session.user,"write")){
+    else if(!Procedures.checkAuth(table,req.session.auth,"write")){
         text = "Yetkiniz Bulunmamaktadır!";
         status = 0;
     }
@@ -146,7 +146,7 @@ router.get(p.getOne, async (req: Request, res: Response) => {
         text = "Parametre Eksik!";
         status = 0;
     }
-    else if(!Procedures.checkAuth(table,req.session.user,"read")){
+    else if(!Procedures.checkAuth(table,req.session.auth,"read")){
         text = "Yetkiniz Bulunmamaktadır!";
         status = 0;
     }

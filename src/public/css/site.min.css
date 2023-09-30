@@ -1942,8 +1942,8 @@ a:focus {
   -moz-border-radius: 5px;
   border-radius: 5px;
   background: #57595d;
-  content: '';
-  position: absolute;
+  /* content: '';
+  position: absolute; */
   left: 5px;
   height: 1px;
   width: 15px;

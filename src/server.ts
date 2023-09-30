@@ -21,22 +21,20 @@ if(!global.databaseName){
   global.databaseName=databaseName;
 }
 
-//import { Server as SocketIo } from 'socket.io';
+import { Server as SocketIo } from 'socket.io';
 import express, { NextFunction, Request, Response } from 'express';
 
 import 'express-async-errors';
 
 import Routes from '@routes/index';
 import logger from 'jet-logger';
-import { cookieProps } from '@routes/auth-router';
-import { CustomError } from '@shared/errors';
 
 const app = express();
 
 
 //session
 app.use(session({
-  secret: 'secret wisdom',
+  secret: 'keyboardCat',
   resave: true,
   store: sessionStore,
   saveUninitialized: true,
@@ -47,6 +45,7 @@ app.use(session({
 declare module 'express-session' {
   export interface SessionData {
     user: any;
+    auth: any;
   }
 }
 
@@ -55,18 +54,15 @@ if (app.get('env') === 'development') {
   app.locals.pretty = true;
 }
 
-/************************************************************************************
- *                              Set basic express settings
- ***********************************************************************************/
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(cookieParser(cookieProps.secret));
+app.use(cookieParser("WisdomWord"));
 app.set('view engine', 'pug');
 
 // Show routes called in console during development
 if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
+    //app.use(morgan('dev'));
 }
 
 // Security
@@ -94,9 +90,6 @@ if (app.get('env') === 'development') {
 }
 
 
-/************************************************************************************
- *                              Serve front-end content
- ***********************************************************************************/
 
 const viewsDir = path.join(__dirname, 'views');
 app.set('views', viewsDir);
@@ -105,8 +98,8 @@ app.use(express.static(staticDir));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  console.log(req.originalUrl)
-  next(createError(404));
+  //next(createError(404));
+  next();
 });
 
 // error handler
@@ -131,30 +124,18 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
 
 
 
-
-
-/************************************************************************************
- *                                   Setup Socket.io
- * Tutorial used for this: https://www.valentinog.com/blog/socket-react/
- ***********************************************************************************/
-
 const server = http.createServer(app);
-/* const io = new SocketIo(server,{
+const io = new SocketIo(server,{
     cors: {
       origin: '*',
     }
   });
 
 io.sockets.on('connect', (socket) => {
-    socket.on('news', (data) => {
-        return true
-    });
     
     return app.set('socketio', io);
 });
- */
-/************************************************************************************
- *                              Export Server
- ***********************************************************************************/
+ 
+
 
 export default server;

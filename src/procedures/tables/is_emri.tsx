@@ -1,5 +1,5 @@
 export default{
-    icon:"icon-speedometer",
+    icon:"icon-envelope",
     title:"İş Emri",
     check_firma_id:true,
     columns:["is_emri_id","is_emri_yonlendiren_kullanici_id", "is_emri_giden_kullanici_id", "is_emri_aciklama", "is_emri_olusturma_tarihi", "is_emri_kapanis_tarihi"],
