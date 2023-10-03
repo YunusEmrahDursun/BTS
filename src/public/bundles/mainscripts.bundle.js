@@ -30,7 +30,7 @@ $(function () {
     }, 50), $(window).on("load resize", function () {
         $(window).innerWidth() < 1201 ? $(".mini-sidebar-btn, .hmenu-btn").attr("disabled", "disabled") : $(".mini-sidebar-btn, .hmenu-btn").removeAttr("disabled", "disabled")
     }), $(window).bind("resize", function () {
-        console.log($(this).width()), $(this).width() < 1201 ? $("body.box_layout").removeClass("h-menu") : $("body.box_layout").addClass("h-menu")
+       // console.log($(this).width()), $(this).width() < 1201 ? $("body.box_layout").removeClass("h-menu") : $("body.box_layout").addClass("h-menu")
     }).trigger("resize");
     var e = function () {
             for (var e = new Array(20), t = 0; t < e.length; t++) e[t] = [5 + n(), 10 + n(), 15 + n(), 20 + n(), 30 + n(), 35 + n(), 40 + n(), 45 + n(), 50 + n()];

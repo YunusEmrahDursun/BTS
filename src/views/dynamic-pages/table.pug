@@ -14,17 +14,18 @@ block content
   .row.clearfix
     .col-lg-12
       .card
-        ul.nav.nav-tabs2
+        ul.nav.nav-tabs2.space-between
           li.nav-item
-            a.nav-link.show( href='/web/form/'+data.table)="Kayıt Ekle"
+            a.nav-link.show( href='#')=title +" Tablosu"
           li.nav-item
-            a.nav-link.active( href='#')=title +" Tablosu"
+            a.nav-link.active( href='/web/form/'+data.table)="Kayıt Ekle"
         .tab-content
           #e_list.tab-pane.active
             .table-responsive
               -if(!data.dateIndex) data.dateIndex=[]
               -if(!data.soloDateIndex) data.soloDateIndex=[]
               -if(!data.props) data.props=[]
+              -if(!data.hideColumn) data.hideColumn=[]
               #DataTables_Table_0_wrapper.dataTables_wrapper.dt-bootstrap4.no-footer
                 .row
                   .col-sm-12
@@ -32,29 +33,31 @@ block content
                       thead
                         tr(role='row')
                           each key,i in data.tableHead
-                            th.sorting( style='width: 0px;' col=data.tableHead[i])=data.turkce[i]
+                            if data.hideColumn.includes(data.tableHead[i]) == false
+                              th.sorting( style='width: 0px;' col=data.tableHead[i])=data.turkce[i]
                         tr(role='row')
                           each key,i in data.tableHead
-                            -var special= data.props[key] || {}
-                            th(col=key|| data.tableHead[i] ).col-searcher                    
-                              if special.t=="date"
-                                .input-group.no-border
-                                  input.form-control.date(type='text' value='' extra="min" value-type="date" placeholder="Başlangıç tarihi")
-                                .input-group.no-border
-                                  input.form-control.date(type='text' value='' extra="max" value-type="date" placeholder="Bitiş tarihi")
-                              else if  special.t=="select"
-                                select.border-secondary.custom-select.mb-2
-                                  option(value="") Hepsi
-                                  each s in data.static[special.f]
-                                    if s[key]==special.d
-                                      option(value=s[key] selected)=s[special.k]
-                                    else
-                                      option(value=s[key])=s[special.k]
-                              else if  special.t=="picture"
-                                div        
-                              else   
-                                .input-group.no-border
-                                  input.form-control(type='text' value='' placeholder=data.turkce[i] +" ara")
+                            if data.hideColumn.includes(data.tableHead[i]) == false
+                              -var special= data.props[key] || {}
+                              th(col=key|| data.tableHead[i] ).col-searcher                    
+                                if special.t=="date"
+                                  .input-group.no-border
+                                    input.form-control.date(type='text' value='' extra="min" value-type="date" placeholder="Başlangıç tarihi")
+                                  .input-group.no-border
+                                    input.form-control.date(type='text' value='' extra="max" value-type="date" placeholder="Bitiş tarihi")
+                                else if  special.t=="select"
+                                  select.border-secondary.custom-select.mb-2
+                                    option(value="") Hepsi
+                                    each s in data.static[special.f]
+                                      if s[key]==special.d
+                                        option(value=s[key] selected)=s[special.k]
+                                      else
+                                        option(value=s[key])=s[special.k]
+                                else if  special.t=="picture"
+                                  div        
+                                else   
+                                  .input-group.no-border
+                                    input.form-control(type='text' value='' placeholder=data.turkce[i] +" ara")
                       tbody
         .row
           .col-sm-12.col-md-12
@@ -73,73 +76,77 @@ block javascript
           $(".table>tbody").html("");
           if(result.d && result.d[0]?.length){
             result.d[0].forEach(row=> {
-                let tdExtra=""
-                if (data.checkbox || data.customNotifyText  ){
-                  tdExtra+=`<td class="notify center"  onclick="notify(${row.id},this)"> 
-                              <div class="form-check">
-                                <label class="form-check-label" for="cb${row.id}">
-                                  <input class="form-check-input" id="cb${row.id}" type="checkbox" name="cb" onclick="event.stopPropagation();" ${row.notify && row.notify==1 ? "checked" : "" }><span class="form-check-sign"></span>
-                                </label>
-                              </div>
-                            </td>`
-                }
-                if(data.skip){
+              let tdExtra=""
+
+              if (data.checkbox || data.customNotifyText  ){
+                tdExtra+=`<td class="notify center"  onclick="notify(${row.id},this)"> 
+                            <div class="form-check">
+                              <label class="form-check-label" for="cb${row.id}">
+                                <input class="form-check-input" id="cb${row.id}" type="checkbox" name="cb" onclick="event.stopPropagation();" ${row.notify && row.notify==1 ? "checked" : "" }><span class="form-check-sign"></span>
+                              </label>
+                            </div>
+                          </td>`
+              }
+              if(data.skip){
+                tdExtra+=`<td class="center" >
+                      <button class="btn btn-danger btn-icon btn-sm" type='button' rel='tooltip' onclick='skip(${row.id})'>
+                      <i class="fa fa-times"></i>
+                      </button> 
+                    </td>`
+              }
+              if(data.checker){
+                if(row.adi){
+                  tdExtra+=`<td class="checker center" onclick="checker(${row.id},this)"> 
+                      <div class="form-check">
+                        <label class="form-check-label" for="ccb${row.id}">
+                          <input class="form-check-input" id="ccb${row.id}" type="checkbox" name="cb" onclick="event.stopPropagation();" ${row.checker && row.checker==1 ? "checked" : "" }><span class="form-check-sign"></span>
+                        </label>
+                      </div>
+                    </td>`
+                }else{
                   tdExtra+=`<td class="center" >
-                        <button class="btn btn-danger btn-icon btn-sm" type='button' rel='tooltip' onclick='skip(${row.id})'>
-                        <i class="fa fa-times"></i>
-                        </button> 
-                      </td>`
+                      <i class="fa fa-times"></i>
+                    </td>`
                 }
-                if(data.checker){
-                  if(row.adi){
-                    tdExtra+=`<td class="checker center" onclick="checker(${row.id},this)"> 
-                        <div class="form-check">
-                          <label class="form-check-label" for="ccb${row.id}">
-                            <input class="form-check-input" id="ccb${row.id}" type="checkbox" name="cb" onclick="event.stopPropagation();" ${row.checker && row.checker==1 ? "checked" : "" }><span class="form-check-sign"></span>
-                          </label>
-                        </div>
-                      </td>`
-                  }else{
-                    tdExtra+=`<td class="center" >
-                        <i class="fa fa-times"></i>
-                      </td>`
-                  }
-                }
-                if(data.customCheckbox!=undefined){
-                  let check=customCheckboxRender(row.id)  
-                  if( $("[row-id='"+row.id+"']").length==0 )
-                  tdExtra+=`<td class="center" ${data.customCheckbox}  onclick="customCheckbox(${row.id},this)"> 
-                              <div class="form-check">
-                                <label class="form-check-label" for="cu${row.id}">
-                                  <input class="form-check-input" id="cu${row.id}" type="checkbox" name="cb" onclick="event.stopPropagation();" ${check  ? "checked" : "" }><span class="form-check-sign"></span>
-                                </label>
-                              </div>
-                            </td>`
-                }
+              }
+              if(data.customCheckbox!=undefined){
+                let check=customCheckboxRender(row.id)  
+                if( $("[row-id='"+row.id+"']").length==0 )
+                tdExtra+=`<td class="center" ${data.customCheckbox}  onclick="customCheckbox(${row.id},this)"> 
+                            <div class="form-check">
+                              <label class="form-check-label" for="cu${row.id}">
+                                <input class="form-check-input" id="cu${row.id}" type="checkbox" name="cb" onclick="event.stopPropagation();" ${check  ? "checked" : "" }><span class="form-check-sign"></span>
+                              </label>
+                            </div>
+                          </td>`
+              }
               let tr=`
-                  <tr class="tdata" row-id="${row[data.idColName]}" onclick="${data.link==undefined ? `window.open('/web/form/${data.table}/${row[data.idColName]}', '_self');` : `window.open('${data.link+row.id}', '_self');`}">
-                      ${data.tableHead.map((key,index)=>{
-                        let td;
-                        if(!data.dateIndex) data.dateIndex=[]
-                        if(data.dateIndex.some(dt=>dt-1==index  )){
-                          let tmp = row[key].substring(0,10).split("-")
-                          td= tmp[2]+"-"+tmp[1]+"-"+tmp[0]
-                        }else if(data.props[key]?.t=="picture"){
-                          if(row[key]){
-                            td=`<img class="w35 h35 rounded" src='/firmaImages/default/image_placeholder.jpg' onerror="this.onerror=null; this.src='/firmaImages/default/image_placeholder.jpg'"> `
-                          }
-                          else{
-                            td=`<img class="w35 h35 rounded" src='/firmaImages/default/image_placeholder.jpg'>`
-                          }
-                        }else{
-                          let special= data.props[key] || {}
-                          if(special.k) td=row[special.k] || ""
-                          else td= row[key] || ""
+                <tr class="tdata" row-id="${row[data.idColName]}" onclick="${data.link==undefined ? `window.open('/web/form/${data.table}/${row[data.idColName]}', '_self');` : `window.open('${data.link+row.id}', '_self');`}">
+                    ${data.tableHead.map((key,index)=>{
+
+                      if(data.hideColumn.includes(data.tableHead[index])){ return "" }
+
+                      let td;
+                      if(!data.dateIndex) data.dateIndex=[]
+                      if(data.dateIndex.some(dt=>dt-1==index  )){
+                        let tmp = row[key].substring(0,10).split("-")
+                        td= tmp[2]+"-"+tmp[1]+"-"+tmp[0]
+                      }else if(data.props[key]?.t=="picture"){
+                        if(row[key]){
+                          td=`<img class="w35 h35 rounded" src='/firmaImages/default/image_placeholder.jpg' onerror="this.onerror=null; this.src='/firmaImages/default/image_placeholder.jpg'"> `
                         }
-                        return "<td>"+ td +"</td>"
-                      }).join("")}   
-                      ${tdExtra}                       
-                  </tr>`
+                        else{
+                          td=`<img class="w35 h35 rounded" src='/firmaImages/default/image_placeholder.jpg'>`
+                        }
+                      }else{
+                        let special= data.props[key] || {}
+                        if(special.k) td=row[special.k] || ""
+                        else td= row[key] || ""
+                      }
+                      return "<td>"+ td +"</td>"
+                    }).join("")}   
+                    ${tdExtra}                       
+                </tr>`
               $(".table>tbody").append(tr)
             })
             //pager

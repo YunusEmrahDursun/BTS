@@ -35,11 +35,11 @@
             if menu != null
                 ul#main-menu.metismenu
                     each menuItem in menu
-                        if menuItem.auth == undefined || ( menuItem.auth && menuItem.auth.includes(session.auth) )
+                        if menuItem.auth == undefined || ( menuItem.auth && menuItem.auth.includes(auth) )
                             if menuItem.children 
                                 li.header=menuItem.title
                                 each menuChildItem in menuItem.children    
-                                    if menuChildItem.auth == undefined || ( menuChildItem.auth && menuChildItem.auth.includes(session.auth) )
+                                    if menuChildItem.auth == undefined || ( menuChildItem.auth && menuChildItem.auth.includes(auth) )
                                         if menuChildItem.table
                                             li
                                                 a.has-arrow(href='#'+menuChildItem.table)

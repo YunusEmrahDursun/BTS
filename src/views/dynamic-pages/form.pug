@@ -12,11 +12,12 @@ block content
   .row.clearfix
     .col-lg-12.col-md-12
       .card  
-        ul.nav.nav-tabs2
+        ul.nav.nav-tabs2.space-between
           li.nav-item
-            a.nav-link.show( href='/web/table/'+data.table)=title +" Tablosu"
-          li.nav-item
-            a.nav-link.active( href='#')="Kayıt Ekle"
+            a.nav-link.show( href='#')="Kayıt Ekle"
+          li.nav-item.float-right
+            a.nav-link.active( href='/web/table/'+data.table)=title +" Tablosu"
+
         .tab-content    
           .tab-content
             .body
@@ -44,10 +45,8 @@ block content
   if targetData && targetData[data.idColName] && targetData[data.idColName] != "" 
     script.     
       function formValitdate(e){
-          try {
-            var form = $(e);
-            form.parsley().validate();
-            if(form.parsley().isValid()){
+          try { 
+            if(!controls()){
               Http.Put('/api/!{data.table}/update/!{targetData[data.idColName]}',collectData("f"),formBasarili)
             }
           }catch(e){
@@ -59,9 +58,7 @@ block content
     script.     
       function formValitdate(e){
           try {
-            var form = $(e);
-            form.parsley().validate();
-            if(form.parsley().isValid()){
+            if(!controls()){
               Http.Post('/api/!{data.table}/add',collectData("f"),formBasarili)
             }
           }catch(e){

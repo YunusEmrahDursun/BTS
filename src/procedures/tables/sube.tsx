@@ -5,6 +5,7 @@ export default{
     columns:[ "sube_id","sube_adi", "il_id","ilce_id","yetkili_ad_soyad","yetkili_tel"],
     turkce:["#","Ad","İl","İlçe","Yetkili Ad Soyad", "Yetkili Tel"],
     defaultSize:6,
+    hideColumn:["yetkili_tel"],
     props:{
         "sube_adi":{size:6},
         "yetkili_tel":{t:"phone"},

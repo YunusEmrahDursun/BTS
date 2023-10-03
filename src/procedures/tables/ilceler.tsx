@@ -3,6 +3,7 @@ export default {
     title:"İlçeler",
     columns:[ "ilce_id","il_id", "ilce_adi"],
     turkce:["#","İl","Ad"],
+    required:["il_id","ilce_adi"],
     defaultSize:6,
     props:{
         "il_id":{f:"iller",k:"il_adi",q:"i",t:"search"},

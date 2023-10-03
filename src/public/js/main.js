@@ -67,9 +67,10 @@ function toLink(url){
 }
 function collectData(key,ndata){
     let kdata={};
-    $(`[ajax-key=${key}]:visible`).each(function(){
+    $(`[ajax-key=${key}]:visible,[ajax-key=${key}][type='checkbox']`).each(function(){
         var type=$(this).attr("type");
         var name=$(this).attr("name");
+
         if($(this).attr("hidden-value")!=undefined){
             kdata[name]=$(this).attr("hidden-value");
         }
@@ -77,11 +78,11 @@ function collectData(key,ndata){
             kdata[name]=$(`[ajax-key=${key}][name=${name}]:checked`).attr("radio-value");
         }
         else if(type=="checkbox"){
-            var tmpCheckbox=[];
-            $(`[ajax-key=${key}][name=${name}]:checked`).each(function () {
-                tmpCheckbox.push( $(this).attr("value") );
-            });
-            kdata[name]=tmpCheckbox;
+            //var tmpCheckbox=[];
+            //$(`[ajax-key=${key}][name=${name}]`).each(function () {
+            //    tmpCheckbox.push( $(this).attr("value") );
+            //});
+            kdata[name]=$(this).is(":checked") ? '1' : '0' ;
         }
         else if(type=="editor"){
             //data[name]=$(this).froalaEditor('html.get', true);
@@ -163,10 +164,54 @@ $(function() {
     });
 } */
 
+/* #region  zorunlu alan kontrolu */
+function enforcedControl() {
+    var result = false;
+    $("[enforced]:visible").each(function () {
+        if ($(this).val() == "" || $(this).val() == undefined || $(this).val() == null) {
+            result = true;
+            if( $(this).hasClass("select2") ){
+                $(this).next().css("border-bottom", "2px solid red");
+            }else{
+                $(this).css("border-bottom", "2px solid red");
+            }
+        }
+    });
+    if (result)
+    showNotification('top', 'right', 'error', "Zorunlu alanları doldurmanız gerekmektedir!");
+    return result;
+}
+$("body").delegate("[enforced]", "change keyup paste", function () {
+    if ($(this).val() != "" && $(this).val() != undefined && $(this).val() != null){
+
+        if( $(this).hasClass("select2") ){
+            $(this).next().css("border-bottom", "");
+        }else{
+            $(this).css("border-bottom", "");
+        }
+        
+
+    }
+});
+/* #endregion */
+
+/* #region  bütün kontroller */
+function controls() {
+    return (enforcedControl() )
+}
+/* #endregion */
+
 //function Dynajax(link,key="",callback,data,This=null,ask=false,async=true,clear=true)
 function Dynajax(link,key="",callback,This=null,checkControls=true,data,ask=false,async=true,clear=true){
+    
     if(key==""){
         throw "Key Bulunamadı!"
+    }
+    if(checkControls){
+        if(controls()) {
+            maskClose();    
+            return;
+        }
     }
     var answer;
     var _ajax={
@@ -247,7 +292,7 @@ function Dynajax(link,key="",callback,This=null,checkControls=true,data,ask=fals
         return answer;
     }
 }
-function showNotification(text,renk,from='top',align='right'){
+function showNotification(from='top',align='right',renk,text){
     $context = renk;
     $message = text;
     $position = align;

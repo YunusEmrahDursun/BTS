@@ -1,6 +1,6 @@
 -let special = ( data.props && data.props[key] ) || { }
 -let skipIndex = (data.noId && -1) || data.id  || 0
-
+-let required = data.required || []
 if !special.size
   if cols.size!=12
     -special.size=12
@@ -10,10 +10,10 @@ if !special.size
 if i!=skipIndex
   div(class="col-md-"+ ( special.size  )  )
     .form-group
-      if !data.placeholderMood
+      if !data.placeholderMood &&  special.t != "checkbox"
         label=data.turkce[i]
       if special.t=="select"
-        select.custom-select.mb-2(name=key ajax-key="f")
+        select.custom-select.mb-2(name=key ajax-key="f" enforced=required.includes(key))
           option(value="")=data.placeholderMood ?  data.turkce[i] : "Seçiniz"
           each s in data.static[special.f]
             if s[key]==targetData[key]
@@ -21,25 +21,25 @@ if i!=skipIndex
             else
               option(value=s[key])=s[special.k]
       else if special.t=="search"
-        select.select2(name=key ajax-key="f" connect=special.connect)
+        select.select2(name=key ajax-key="f" connect=special.connect enforced=required.includes(key))
           if targetData && targetData[key] 
             option(value=targetData[key] selected )=targetData[special.k] || targetData[key]
           else
             option(value='' selected='' )=data.placeholderMood ?  data.turkce[i] : "Seçiniz"
       else if special.t=="textarea"
-        textarea.form-control(type='text' ajax-key="f" rows="4" placeholder=data.placeholderMood && data.turkce[i] name=key hidden-value=targetData[special.k] && targetData[key]  )= targetData[special.k] || targetData[key]    
+        textarea.form-control(type='text' enforced=required.includes(key) ajax-key="f" rows="4" placeholder=data.placeholderMood && data.turkce[i] name=key hidden-value=targetData[special.k] && targetData[key]  )= targetData[special.k] || targetData[key]    
       else if special.t=="date"
         .input-group.mb-3
           .input-group-prepend
             span.input-group-text
               i.fa.icon-calendar
-          input.form-control.date(type='text' ajax-key="f" placeholder="Örnek: 30/07/2016" name=key value=targetData[special.k]  || targetData[key] hidden-value=targetData[special.k] && targetData[key]  )
+          input.form-control.date(type='text' ajax-key="f" enforced=required.includes(key) placeholder="Örnek: 30/07/2016" name=key value=targetData[special.k]  || targetData[key] hidden-value=targetData[special.k] && targetData[key]  )
       else if special.t=="phone"  
         .input-group.mb-3
           .input-group-prepend
             span.input-group-text
               i.fa.fa-phone
-          input.form-control.phone-number(type='text' placeholder='Örnek: +00 (000) 000-00-00' ajax-key="f" name=key value=targetData[special.k]  || targetData[key] || "90" hidden-value=targetData[special.k] && targetData[key]  )
+          input.form-control.phone-number(type='text' enforced=required.includes(key) placeholder='Örnek: +00 (000) 000-00-00' ajax-key="f" name=key value=targetData[special.k]  || targetData[key] || "90" hidden-value=targetData[special.k] && targetData[key]  )
       else if special.t=="picture"
         input.form-control(hidden,display-target=key,ajax-key="f",name=key,type='file',accept="image/jpeg,image/jpg,image/png")  
         a(href='#',fire-target="[name='"+key+"']")
@@ -47,7 +47,12 @@ if i!=skipIndex
             img.img-thumbnail(src= '/firmaImages/'+targetData[data.idColName]+'/'+targetData[key] display-id=key onerror="this.onerror=null; this.src='/firmaImages/default/image_placeholder.jpg'")
           else  
             img.img-thumbnail(src= '/firmaImages/default/image_placeholder.jpg' display-id=key)
+      else if special.t == "checkbox"
+        .fancy-checkbox
+          label
+            input(type="checkbox" ajax-key="f" name=key checked=(targetData[key] == '1' ? true : false  ) value=targetData[key]) 
+            span=data.turkce[i]
       else if special.t=="title"      
         .text-primary=data.turkce[i]
       else
-        input.form-control(type='text' ajax-key="f" name=key value=targetData[special.k]  || targetData[key] hidden-value=targetData[special.k] && targetData[key]  placeholder=data.placeholderMood &&  data.turkce[i])
+        input.form-control(type='text' enforced=required.includes(key) ajax-key="f" name=key value=targetData[special.k]  || targetData[key] hidden-value=targetData[special.k] && targetData[key]  placeholder=data.placeholderMood &&  data.turkce[i])

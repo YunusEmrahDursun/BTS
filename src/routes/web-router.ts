@@ -64,9 +64,11 @@ router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
         res.redirect('/web/login');
         return;
     }
+    
     res.locals.menu = Procedures.menu;
     res.locals.tables = Procedures.tables;
     res.locals.session=req.session.user;
+    res.locals.auth = req.session.auth;
     next(); 
 })
 
@@ -145,6 +147,7 @@ router.use('/table/:table',async (req: Request, res: Response) => {
     res.render('dynamic-pages/table',{title:restTable.title,data:{
         table:table,
         tableHead:restTable.columns,
+        hideColumn:restTable.hideColumn,
         turkce:restTable.turkce,
         static:s,
         props:restTable.props || {} ,

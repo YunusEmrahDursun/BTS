@@ -5,6 +5,7 @@ export default{
     columns:[ "bina_id","bina_adi", "sube_id","il_id","ilce_id","adres","yonetici_ad_soyad","yonetici_tel","yonetici_daire"],
     turkce:["#","Ad","Şube","İl","İlçe","Adres","Yönetici Ad Soyad", "Yönetici Tel","Yönetici Dairesi"],
     defaultSize:4,
+    hideColumn:["yonetici_ad_soyad","yonetici_tel","yonetici_daire","adres"],
     props:{
         "bina_adi":{size:12},
         "adres":{t:"textarea",size:12},

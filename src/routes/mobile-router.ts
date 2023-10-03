@@ -93,7 +93,43 @@ router.use('/subeler/:id', async (req: Request, res: Response) => {
     res.json(subeler);
 });
 
-router.use('/isEmirleri/:id', async (req: Request, res: Response) => {
+
+/*   session need below   */
+
+// middleware
+
+router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
+    const authToken = req.headers.authorization;
+    if(!authToken) return res.status(FORBIDDEN).end();
+
+    var users=(await  db.selectQuery({  kullanici_token:authToken},"kullanici_table"));
+    if(users && Array.isArray(users) && users.length>0){
+        let user = users[0];
+        let auth = (await db.getById(user.yetki_id,"yetki_table"));
+        req.session.user = user;
+        req.session.auth = auth.yetki_key;
+        next(); 
+    }else{
+        return res.status(FORBIDDEN).end(); 
+    }
+  
+})
+
+
+router.use('/isEmirleri', async (req: Request, res: Response) => {
+    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},"is_emri_table"));
+    res.json(isEmirleri)
+});
+
+router.use('/isEmiriTamamla', async (req: Request, res: Response) => {
+    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},"is_emri_table"));
+    res.json(isEmirleri)
+});
+
+router.post('/isEmiriYonlendir', async (req: Request, res: Response) => {
+
+    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},"is_emri_table"));
+    res.json(isEmirleri)
 });
 
 export default router;
