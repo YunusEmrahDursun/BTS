@@ -1,0 +1,109 @@
+extends ../static-pages/layout
+block content
+  .block-header
+    .row.clearfix
+      .col-md-6.col-sm-12
+        h1=title
+        nav(aria-label='breadcrumb')
+          ol.breadcrumb
+            li.breadcrumb-item
+              |  BTS
+            li.breadcrumb-item.active(aria-current='page')=title
+  .row.clearfix
+    .col-lg-6.col-md-12.col-sm-12
+      .row.clearfix
+        .col-lg-6.col-md-6
+          .card-wrapper.flip-left
+            .card.s-widget-top
+              .front.p-3.px-4
+                div Income status
+                .py-4.m-0.text-center.h2.text-info $2,258
+                .d-flex
+                  small.text-muted New income
+                  .ml-auto 0%
+              .back.p-3.px-4.bg-info.text-center
+                p.text-light This Week
+                span#minibar-chart2.mini-bar-chart
+                  canvas(width='154' height='80' style='display: inline-block; width: 154px; height: 80px; vertical-align: top;')
+        .col-lg-6.col-md-6
+          .card-wrapper.flip-left
+            .card.s-widget-top
+              .front.p-3.px-4.bg-danger.text-light
+                div Order status
+                .py-4.m-0.text-center.h2 428
+                .d-flex
+                  small New order
+                  .ml-auto
+                    i.fa.fa-caret-down
+                    | 10%
+              .back.p-3.px-4.text-center
+                p This Week
+                span#minibar-chart4.mini-bar-chart
+                  canvas(width='154' height='80' style='display: inline-block; width: 154px; height: 80px; vertical-align: top;')
+        .col-lg-6.col-md-6
+          .card-wrapper.flip-left
+            .card.s-widget-top
+              .front.p-3.px-4.bg-warning.text-light
+                div Customer status
+                .py-4.m-0.text-center.h2 232
+                .d-flex
+                  small New users
+                  .ml-auto
+                    i.fa.fa-caret-up
+                    | 3%
+              .back.p-3.px-4.text-center
+                p This Week
+                span#minibar-chart3.mini-bar-chart
+                  canvas(width='154' height='80' style='display: inline-block; width: 154px; height: 80px; vertical-align: top;')
+        .col-lg-6.col-md-6
+          .card-wrapper.flip-left
+            .card.s-widget-top
+              .front.p-3.px-4
+                div Total revenue
+                .py-4.m-0.text-center.h2.text-success $9,653
+                .d-flex
+                  small.text-muted Income
+                  .ml-auto
+                    i.fa.fa-caret-up.text-success
+                    | 4%
+              .back.p-3.px-4.bg-success.text-center
+                p.text-light This Week
+                span#minibar-chart1.mini-bar-chart
+                  canvas(width='154' height='80' style='display: inline-block; width: 154px; height: 80px; vertical-align: top;')
+    .col-lg-3.col-md-6.col-sm-12
+      .card
+        .body
+          - const color= ["bg-azura","bg-danger","bg-green","bg-indigo","bg-orange","bg-red","bg-azura","bg-danger","bg-green","bg-indigo","bg-orange","bg-red"]
+          each month,index in data.months
+            .row
+              .col-md-10
+                .form-group.mb-4
+                  label.d-block
+                    = month.text 
+                    span.float-right
+                      = month.percent+"%" 
+                  .progress.progress-xxs
+                    .progress-bar( class=color[index] role='progressbar' aria-valuenow=month.percent aria-valuemin='0' aria-valuemax='100' style=`width: ${month.percent}%;`)
+              .col-md-2
+                button.btn.btn-sm.btn-default(type='button' title='Print' data-toggle='tooltip' data-placement='top')
+                  i.icon-printer
+    .col-lg-3.col-md-6.col-sm-12
+      .card
+        .body
+          .row.text-center
+            .col-lg-12.col-md-5
+              .text-center
+                div(style='display:inline;width:68px;height:68px;')
+                  canvas(width='68' height='68')
+                  input.knob(type='text' value='77' data-width='68' data-height='68' data-thickness='0.1' data-bgcolor='#383b40' data-fgcolor='#17C2D7' style='width: 38px; height: 22px; position: absolute; vertical-align: middle; margin-top: 22px; margin-left: -53px; border: 0px; background: none; font: bold 13px Arial; text-align: center; color: rgb(23, 194, 215); padding: 0px; appearance: none;')
+              label.mb-0.mt-2 New Users
+              h4.h4.mb-0.font-weight-bold.text-cyan 225
+            .col-12.col-md-2.col-lg-12
+              hr.mt-4.mb-4
+            .col-lg-12.col-md-5
+              .text-center
+                div(style='display:inline;width:68px;height:68px;')
+                  canvas(width='68' height='68')
+                  input.knob(type='text' value='38' data-width='68' data-height='68' data-thickness='0.1' data-bgcolor='#383b40' data-fgcolor='#dc3545' style='width: 38px; height: 22px; position: absolute; vertical-align: middle; margin-top: 22px; margin-left: -53px; border: 0px; background: none; font: bold 13px Arial; text-align: center; color: rgb(220, 53, 69); padding: 0px; appearance: none;')
+              label.mb-0.mt-2 Return Visitors
+              h4.h4.mb-0.font-weight-bold.text-info 124

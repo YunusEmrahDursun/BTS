@@ -48,3 +48,13 @@ var token = function() {
 export function createToken(){
     return token();
 }
+
+// Verilen tarihi ay ve yıl olarak biçimlendirir
+// '2023-10'
+export function formatTarih(tarih) {
+    const ayYil = new Date(tarih);
+    const ayAdi = new Intl.DateTimeFormat('tr-TR', { month: 'long' }).format(ayYil);
+    const yil = ayYil.getFullYear();
+
+    return ayAdi + ' ' + yil;
+}

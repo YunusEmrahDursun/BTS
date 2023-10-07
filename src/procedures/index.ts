@@ -58,7 +58,7 @@ export default {
     checkTable:function(tableName){
         return this.tables[tableName]!=undefined;
     },
-    checkAuth:function(tableName,auth,auth_type){
+    checkAuth:function(tableName,auth,auth_type: "write" | "read"){
         const table=this.tables[tableName];
         if(  ["write","read"].includes(auth_type) ){
 

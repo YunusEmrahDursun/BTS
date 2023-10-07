@@ -9172,7 +9172,7 @@ hr {
   height: 100%;
   backface-visibility: hidden;
   transform: rotateX(0deg);
-  background: #282b2f
+  background:#eeeded;
 }
 
 .card-wrapper .card .front {

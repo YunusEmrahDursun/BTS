@@ -1,12 +1,13 @@
-import StatusCodes, { FORBIDDEN } from 'http-status-codes';
+import StatusCodes from 'http-status-codes';
 import { Request, Response, Router,NextFunction } from 'express';
 import SocketIO from 'socket.io';
 import { ParamMissingError } from '@shared/errors';
+import { formatTarih } from '@shared/functions';
 import db from '@database/manager';
 import path from 'path';
 import Procedures from '@procedures/index';
 const router = Router();
-const { CREATED, OK, NO_CONTENT } = StatusCodes;
+const { CREATED, OK, NO_CONTENT,FORBIDDEN } = StatusCodes;
 
 const viewsDir = path.join(__dirname, 'views');
 import logger from 'jet-logger';
@@ -92,6 +93,45 @@ router.use('/dashboard', async (req: Request, res: Response) => {
     // ,{firmaId});
     //console.log(s)
     res.render('dashboard/index',{title:"Ana Sayfa",data: Array.isArray(s) ? s[0] : {} });
+});
+router.use('/report', async (req: Request, res: Response) => {
+    const firmaId=req.session.user.firma_id;
+    if(!["admin","sube"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
+    if(!firmaId) return res.status(FORBIDDEN).end();
+
+    let result:any = await db.queryObject(`SELECT DATE_FORMAT(Months.month, '%Y-%m') AS ay_yil, IFNULL(COUNT(is_emri_olusturma_tarihi), 0) AS toplam, COUNT(durum.is_emri_durum_key) as basarili
+        FROM (
+            SELECT DATE_ADD(LAST_DAY(NOW() - INTERVAL 12 MONTH), INTERVAL n MONTH) AS month
+            FROM (
+                SELECT 0 AS n UNION ALL
+                SELECT 1 UNION ALL
+                SELECT 2 UNION ALL
+                SELECT 3 UNION ALL
+                SELECT 4 UNION ALL
+                SELECT 5 UNION ALL
+                SELECT 6 UNION ALL
+                SELECT 7 UNION ALL
+                SELECT 8 UNION ALL
+                SELECT 9 UNION ALL
+                SELECT 10 UNION ALL
+                SELECT 11 UNION ALL
+                SELECT 12
+            ) AS numbers
+        ) AS Months
+        LEFT JOIN ${global.databaseName}.is_emri_table AS is_emri ON DATE_FORMAT(Months.month, '%Y-%m') = DATE_FORMAT(is_emri_olusturma_tarihi, '%Y-%m') AND firma_id = 1
+        LEFT JOIN ${global.databaseName}.is_emri_durum_table AS durum ON durum.is_emri_durum_id= is_emri.is_emri_durum_id and durum.is_emri_durum_key = "success"
+        GROUP BY Months.month
+        ORDER BY Months.month DESC;`,{firmaId})
+
+    res.render('pages/report',{title:"Raporlama Sayfası",data: {
+         months:result.map(i=> {
+            return {
+                ...i,
+                text: "Toplam :" + i.toplam +" / "+ formatTarih(i.ay_yil),
+                percent: i.toplam !=0 ? (( 100 * i.basarili) / i.toplam).toFixed(2) : 0
+            }
+        }) 
+    }});
 });
 
 // router.use('/form/firmalar/:id?',async (req: Request, res: Response) => {

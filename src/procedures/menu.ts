@@ -14,6 +14,7 @@
                 { table:"sube" , auth:["admin","sube"] },
                 { table:"yetki" , auth:["admin"] },  
                 { table:"kullanici" , auth:["admin","sube"] },
+                { title: "Rapor", link:"/web/report", icon:"icon-pie-chart", auth:["admin","sube"] },
                 { title: "Çıkış", link:"/web/exit", icon:"icon-power" }
 
             ]
