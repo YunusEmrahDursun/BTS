@@ -321,38 +321,3 @@ function findPos(obj) {
     return [curtop];
     }
 }
-
-$(function() {
-	"use strict";
-    initSparkline();
-	
-	var values2 = getRandomValues();
-	var paramsBar = {
-        type: 'bar',
-        barWidth: 10,
-        height: 80,
-        barSpacing: 8,
-        barColor: '#ffffff'
-    };
-    $('#minibar-chart1').sparkline(values2[0], paramsBar);
-    $('#minibar-chart2').sparkline(values2[1], paramsBar);
-    $('#minibar-chart3').sparkline(values2[2], paramsBar);
-    $('#minibar-chart4').sparkline(values2[3], paramsBar);
-
-	function getRandomValues() {
-        // data setup
-        var values = new Array(20);
-
-        for (var i = 0; i < values.length; i++) {
-            values[i] = [5 + randomVal(), 10 + randomVal(), 15 + randomVal(), 20 + randomVal(), 30 + randomVal(),
-                35 + randomVal(), 40 + randomVal(), 45 + randomVal(), 50 + randomVal()
-            ];
-        }
-
-        return values;
-    }
-
-    function randomVal() {
-        return Math.floor(Math.random() * 80);
-	}
-});

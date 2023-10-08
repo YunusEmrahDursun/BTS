@@ -83,14 +83,14 @@ router.get('/exit', async (req: Request, res: Response) => {
 
 router.use('/dashboard', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;
-    let s;
-    // let s=await db.queryObject(` SELECT
-    // (SELECT COUNT(*) FROM ${global.databaseName}.cihaz_table WHERE firma_id=:firmaId and silindi_mi=0) as cihazSayisi, 
-    // (SELECT COUNT(*) FROM ${global.databaseName}.bolge_table WHERE firma_id=:firmaId and silindi_mi=0) as bolgeSayisi,
-    // (SELECT COUNT(*) FROM ${global.databaseName}.sikayet_table WHERE firma_id=:firmaId and silindi_mi=0) as talepSayisi,
-    // (SELECT COUNT(*) FROM ${global.databaseName}.musteri_table WHERE firma_id=:firmaId and silindi_mi=0) as musteriSayisi,
-    // (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and yetki_id=2 and silindi_mi=0) as teknikPersonelSayisi`
-    // ,{firmaId});
+    //düzeltilecek
+    let s=await db.queryObject(` SELECT
+    (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and silindi_mi=0) as personeller, 
+    (SELECT COUNT(*) FROM ${global.databaseName}.bolge_table WHERE firma_id=:firmaId and silindi_mi=0) as bolgeSayisi,
+    (SELECT COUNT(*) FROM ${global.databaseName}.sikayet_table WHERE firma_id=:firmaId and silindi_mi=0) as talepSayisi,
+    (SELECT COUNT(*) FROM ${global.databaseName}.musteri_table WHERE firma_id=:firmaId and silindi_mi=0) as musteriSayisi,
+    (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and yetki_id=2 and silindi_mi=0) as teknikPersonelSayisi`
+    ,{firmaId});
     //console.log(s)
     res.render('dashboard/index',{title:"Ana Sayfa",data: Array.isArray(s) ? s[0] : {} });
 });
@@ -118,17 +118,23 @@ router.use('/report', async (req: Request, res: Response) => {
                 SELECT 12
             ) AS numbers
         ) AS Months
-        LEFT JOIN ${global.databaseName}.is_emri_table AS is_emri ON DATE_FORMAT(Months.month, '%Y-%m') = DATE_FORMAT(is_emri_olusturma_tarihi, '%Y-%m') AND firma_id = 1
+        LEFT JOIN ${global.databaseName}.is_emri_table AS is_emri ON DATE_FORMAT(Months.month, '%Y-%m') = DATE_FORMAT(is_emri_olusturma_tarihi, '%Y-%m') AND firma_id = :firmaId and silindi_mi = 0
         LEFT JOIN ${global.databaseName}.is_emri_durum_table AS durum ON durum.is_emri_durum_id= is_emri.is_emri_durum_id and durum.is_emri_durum_key = "success"
         GROUP BY Months.month
-        ORDER BY Months.month DESC;`,{firmaId})
+        ORDER BY Months.month DESC;`,{firmaId});
 
+    let userCount:any = await db.queryObject(`SELECT count(*) as total FROM ${global.databaseName}.kullanici_table where firma_id = :firmaId and silindi_mi = 0;`,{firmaId});
+    let isEmiriCount:any = await db.queryObject(`SELECT count(*) as total FROM ${global.databaseName}.is_emri_table where firma_id = :firmaId and silindi_mi = 0;`,{firmaId}) ; 
     res.render('pages/report',{title:"Raporlama Sayfası",data: {
-         months:result.map(i=> {
+        userCount:userCount[0].total,
+        isEmiriCount:isEmiriCount[0].total,
+        months:result.map(i=> {
             return {
                 ...i,
-                text: "Toplam :" + i.toplam +" / "+ formatTarih(i.ay_yil),
-                percent: i.toplam !=0 ? (( 100 * i.basarili) / i.toplam).toFixed(2) : 0
+                bitmedi: i.toplam - i.basarili,
+                bitmeyenPercent: i.toplam !=0 ? (( 100 * (i.toplam - i.basarili)) / i.toplam).toFixed(0) : 0,
+                tarih: formatTarih(i.ay_yil),
+                percent: i.toplam !=0 ? (( 100 * i.basarili) / i.toplam).toFixed(0) : 0
             }
         }) 
     }});
