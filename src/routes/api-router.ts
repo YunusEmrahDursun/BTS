@@ -2,6 +2,7 @@ import StatusCodes from 'http-status-codes';
 import { Request, Response, Router,NextFunction } from 'express';
 
 import { ParamMissingError } from '@shared/errors';
+import customFunctions from './custom_router_functions';
 import Procedures from '@procedures/index';
 import db from '@database/manager';
 
@@ -68,6 +69,11 @@ router.post(p.add, async (req: Request, res: Response) => {
             const tempData = Procedures.checkData(Procedures.getColumnsWithoutId(table),data);
             if(Procedures.tables[table].check_firma_id){ tempData.firma_id = req.session.user.firma_id; }
             await db.insert(tempData,table+"_table");
+
+            if(customFunctions[Procedures.tables[table].create]){
+                customFunctions[Procedures.tables[table].create](data);
+            }
+           
             text = "Ekleme İşlemi Başarılı!";
         } catch (error) {
             logger.err(error, true);
@@ -99,6 +105,9 @@ router.put(p.update, async (req: Request, res: Response) => {
         try {
             await db.update(Procedures.checkData(Procedures.getColumnsWithoutId(table),data),{[Procedures.getTableIdColumnName(table)]:id},table+"_table");
             text = "Güncelleme İşlemi Başarılı!";
+            if(customFunctions[Procedures.tables[table].update]){
+                customFunctions[Procedures.tables[table].update](req,data);
+            }
         } catch (error) {
             logger.err(error, true);
             text = "Birşeyler ters gitti!";

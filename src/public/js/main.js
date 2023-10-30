@@ -178,7 +178,7 @@ function enforcedControl() {
         }
     });
     if (result)
-    showNotification('top', 'right', 'error', "Zorunlu alanları doldurmanız gerekmektedir!");
+    showNotification("Zorunlu alanları doldurmanız gerekmektedir!", 'error');
     return result;
 }
 $("body").delegate("[enforced]", "change keyup paste", function () {
@@ -292,7 +292,7 @@ function Dynajax(link,key="",callback,This=null,checkControls=true,data,ask=fals
         return answer;
     }
 }
-function showNotification(from='top',align='right',renk,text){
+function showNotification(text,renk,from='top',align='right'){
     $context = renk;
     $message = text;
     $position = align;

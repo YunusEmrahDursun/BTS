@@ -80,7 +80,7 @@ router.post("/register", async (req: Request, res: Response) => {
     var text, status=0 ;
     try {
         var user=(await  db.selectQuery({
-            kullanici_eposta:data.email
+          kullanici_adi:data.kullanici_adi
         },"kullanici_table"));
 
         if(user && Array.isArray(user) && user.length>0){
@@ -133,11 +133,11 @@ router.post("/login", async (req: Request, res: Response) => {
     const data=req.body.kdata;
     var text, status=0 ;
     try {
-        if(!data.kullanici_eposta || !data.kullanici_parola){
+        if(!data.kullanici_adi || !data.kullanici_parola){
             throw "Zorunlu alanların doldurulması gerekmektedir!"
         }
         var users=(await  db.selectQuery({
-            kullanici_eposta:data.kullanici_eposta,
+          kullanici_adi:data.kullanici_adi,
             kullanici_parola:md5(data.kullanici_parola)
         },"kullanici_table"));
 
@@ -148,7 +148,7 @@ router.post("/login", async (req: Request, res: Response) => {
             req.session.user = user
             req.session.auth= auth.yetki_key
         }else{
-            throw "E-posta veya şifre hatalı! "
+            throw "Kullanıcı adı veya şifre hatalı! "
         }
         text = "Giriş Yapılıyor!";
         status = 1;

@@ -4,33 +4,103 @@ import SocketIO from 'socket.io';
 import db from '@database/manager';
 import path from 'path';
 import Procedures from '@procedures/index';
-import {createToken} from '@shared/functions';
+import {createToken,currentTimestamp} from '@shared/functions';
 const router = Router();
 const { CREATED, OK, NO_CONTENT } = StatusCodes;
 const md5 = require('md5');
 import logger from 'jet-logger';
 
+router.get('/test', async (req: Request, res: Response) => {
+    
+    return res.status(OK).json({a:1});
+});
+
+
+
+router.post('/checkToken', async (req: Request, res: Response) => {
+    const data = req.body;
+    var text, status;
+
+    var users=(await  db.selectQuery({  kullanici_token:data.token},"kullanici_table"));
+    
+    if(users && Array.isArray(users) && users.length>0){
+        status = 1;
+    }else{
+        status = 0;
+    }
+    
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
+});
+
+router.get('/checkJoinLink/:link', async (req: Request, res: Response) => {
+    const { link } = req.params;
+    var text, status=1;
+
+    var katilimLinki=(await  db.selectQuery({
+        katilim_linki:link
+    },"katilim_linki_table"));
+
+    if(katilimLinki && Array.isArray(katilimLinki) && katilimLinki.length>0){
+        status = 1;
+    }
+    else{
+        text = "Katılım Linki Bulunamadı!";
+        status = 0;
+    }
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
+});
 
 router.post('/register', async (req: Request, res: Response) => {
-    const data = req.body.kdata;
-    var text, status=1 ;
+    const data = req.body;
+    var text, status=1, token="" ;
+    
     if (!data ) {
         text = "Parametre Eksik!";
         status = 0;
     }
     else{
         try {
-            const tempData = {
-                kullanici_isim: data.kullanici_isim,
-                kullanici_soyisim: data.kullanici_soyisim,
-                kullanici_eposta: data.kullanici_eposta,
-                kullanici_parola: md5(data.kullanici_parola),
-                kullanici_telefon: data.kullanici_telefon,
-                sube_id: data.sube_id,
-                firma_id: data.firma_id
+
+            var katilimLinki:any[]=(await  db.selectQuery({
+                katilim_linki:data.link
+            },"katilim_linki_table"));
+        
+            var yetki:any[]=(await  db.selectQuery({
+                yetki_key:"teknik"
+            },"yetki_table"));
+
+            if( yetki.length == 0 ){
+                text = "Birşeyler ters gitti!";
+                logger.err("yetki bulunamadı "+ JSON.stringify(yetki), true);
+                status = 0;
+            }else if(katilimLinki.length == 0){
+                text = "Katılım Linki Bulunamadı!";
+                status = 0;
             }
-            await db.insert(tempData,"kullanici_table_table");
-            text = "Ekleme İşlemi Başarılı!";
+            else{
+                token = createToken();
+                const tempData = {
+                    kullanici_isim: data.kullanici_isim,
+                    kullanici_soyisim: data.kullanici_soyisim,
+                    kullanici_adi:data.kullanici_adi,
+                    kullanici_parola: md5(data.kullanici_parola),
+                    kullanici_telefon: data.kullanici_telefon,
+                    sube_id: katilimLinki[0].sube_id,
+                    firma_id: katilimLinki[0].firma_id,
+                    kullanici_token:token,
+                    yetki_id:yetki[0].yetki_id
+                }
+                await db.insert(tempData,"kullanici_table");
+                await db.setSilindi({  katilim_linki:data.link },"katilim_linki_table");
+            }
+           
+           
         } catch (error) {
             logger.err(error, true);
             text = "Birşeyler ters gitti!";
@@ -41,19 +111,20 @@ router.post('/register', async (req: Request, res: Response) => {
     return res.status(OK).send({
         message: text,
         status: status,
+        token
     });
 });
 
 
 router.post('/login',async (req: Request, res: Response) => {
-    const data=req.body.kdata;
+    const data = req.body;
     var text, status=0, auth="", token="" ;
     try {
-        if(!data.kullanici_eposta || !data.kullanici_parola){
+        if(!data.kullanici_adi || !data.kullanici_parola){
             throw "Zorunlu alanların doldurulması gerekmektedir!"
         }
         var users=(await  db.selectQuery({
-            kullanici_eposta:data.kullanici_eposta,
+            kullanici_adi:data.kullanici_adi,
             kullanici_parola:md5(data.kullanici_parola)
         },"kullanici_table"));
 
@@ -65,7 +136,7 @@ router.post('/login',async (req: Request, res: Response) => {
             await db.update({kullanici_token:token},{kullanici_id:user.kullanici_id},"kullanici_table")
             auth = tempAuth.yetki_key;
         }else{
-            throw "E-posta veya şifre hatalı! "
+            throw "Kullanıcı Adı veya şifre hatalı! "
         }
         text = "Giriş Yapılıyor!";
         status = 1;
@@ -82,16 +153,16 @@ router.post('/login',async (req: Request, res: Response) => {
 
 });
 
-router.use('/firmalar', async (req: Request, res: Response) => {
-    const firmalar= await db.selectWithColumn(["firmalar_id","firma_adi"],"firmalar_table");
-    res.json(firmalar);
-});
+// router.use('/firmalar', async (req: Request, res: Response) => {
+//     const firmalar= await db.selectWithColumn(["firmalar_id","firma_adi"],"firmalar_table");
+//     res.json(firmalar);
+// });
 
-router.use('/subeler/:id', async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const subeler= await db.selectWithColumn(["sube_id","sube_adi"],"sube_table",{firma_id:id});
-    res.json(subeler);
-});
+// router.use('/subeler/:id', async (req: Request, res: Response) => {
+//     const { id } = req.params;
+//     const subeler= await db.selectWithColumn(["sube_id","sube_adi"],"sube_table",{firma_id:id});
+//     res.json(subeler);
+// });
 
 
 /*   session need below   */
@@ -115,21 +186,100 @@ router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
   
 })
 
+router.post('/setPushToken',async (req: Request, res: Response) => {
+    const data = req.body;
+    var text, status=0 ;
+    try {
+       
+        await db.update({kullanici_push_token:data.pushToken},{kullanici_id:req.session.user.kullanici_id},"kullanici_table")
+        text = "Giriş Yapılıyor!";
+        status = 1;
+    } catch (error) {
+        text=error.message || error
+        console.log(error)
+    }
+    
+    res.send({
+        message: text,
+        status
+    });
+
+});
 
 router.use('/isEmirleri', async (req: Request, res: Response) => {
-    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},"is_emri_table"));
+    let isEmirleri:any=await db.queryObject(`SELECT g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
+    inner join ${global.databaseName}.bina_table as bina on bina.bina_id = g.bina_id
+    inner join ${global.databaseName}.is_emri_durum_table as durum on durum.is_emri_durum_id=g.is_emri_durum_id
+    inner join ${global.databaseName}.iller_table as il on il.il_id=bina.il_id
+    inner join ${global.databaseName}.ilceler_table as ilce on ilce.ilce_id=bina.ilce_id 
+    where  durum.is_emri_durum_key!="success" and g.is_emri_giden_kullanici_id=:is_emri_giden_kullanici_id and g.silindi_mi = 0;`
+    ,{is_emri_giden_kullanici_id:req.session.user.kullanici_id});
     res.json(isEmirleri)
+});
+router.use('/tamamlananisEmirleri', async (req: Request, res: Response) => {
+    let isEmirleri:any=await db.queryObject(`SELECT g.*,bina.*,il.*,ilce.* FROM ${global.databaseName}.is_emri_table as g 
+    inner join ${global.databaseName}.bina_table as bina on bina.bina_id = g.bina_id
+    inner join ${global.databaseName}.is_emri_durum_table as durum on durum.is_emri_durum_id=g.is_emri_durum_id
+    inner join ${global.databaseName}.iller_table as il on il.il_id=bina.il_id
+    inner join ${global.databaseName}.ilceler_table as ilce on ilce.ilce_id=bina.ilce_id 
+    where  durum.is_emri_durum_key="success" and g.is_emri_giden_kullanici_id=:is_emri_giden_kullanici_id and g.silindi_mi = 0;`
+    ,{is_emri_giden_kullanici_id:req.session.user.kullanici_id});
+    res.json(isEmirleri)
+});
+
+
+
+router.post('/isEmiriYonlendir/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    var text, status=1;
+
+    try {
+        const transferDurumu = await db.selectOneQuery({is_emri_durum_key:'transfer'},'is_emri_durum_table')
+        await db.update({is_emri_durum_id:transferDurumu.is_emri_durum_id,guncellenme_zamani:currentTimestamp()},{is_emri_id:id,is_emri_giden_kullanici_id:req.session.user.kullanici_id},'is_emri_table')
+        refreshTable();
+    } catch (error) {
+        logger.err(error, true);
+        text = "Birşeyler ters gitti!";
+        status = 0;
+    }
+    
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
+});
+
+router.post('/servisIstegiTalebi/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const data = req.body;
+
+    var text, status=1;
+
+    try {
+        const transferDurumu = await db.selectOneQuery({is_emri_durum_key:'support'},'is_emri_durum_table');
+        const talepId=(await db.insert({destek_talebi_aciklama:data.aciklama,destek_talebi_iletisim_bilgisi:data.iletisim,destek_talebi_fiyat_bilgisi:data.fiyat},"destek_talebi_table")).insertId
+        await db.update({destek_talebi_id:talepId,is_emri_durum_id:transferDurumu.is_emri_durum_id,guncellenme_zamani:currentTimestamp()},{is_emri_id:id,is_emri_giden_kullanici_id:req.session.user.kullanici_id},'is_emri_table');
+        refreshTable();
+    } catch (error) {
+        logger.err(error, true);
+        text = "Birşeyler ters gitti!";
+        status = 0;
+    }
+    
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
 });
 
 router.use('/isEmiriTamamla', async (req: Request, res: Response) => {
-    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},"is_emri_table"));
+    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},'is_emri_table'));
     res.json(isEmirleri)
 });
 
-router.post('/isEmiriYonlendir', async (req: Request, res: Response) => {
-
-    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},"is_emri_table"));
-    res.json(isEmirleri)
-});
+const refreshTable = () => { 
+    const io: SocketIO.Server = global.socketio;
+    io.emit("update","refreshTable");
+}
 
 export default router;

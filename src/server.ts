@@ -130,12 +130,39 @@ const io = new SocketIo(server,{
       origin: '*',
     }
   });
+global.socketio = io;
 
-io.sockets.on('connect', (socket) => {
-    
-    return app.set('socketio', io);
-});
+// io.sockets.on('connect', (socket) => {
+//     return app.set('socketio', io);
+// });
  
+const { Expo } = require('expo-server-sdk');
+
+const expoToken = 'ABj2X9RjLV8Q3yOhVrHuiED7ldGeMtr-47BppNGy';
+const expo = new Expo({ accessToken: expoToken })
+
+global.sendNotification = (tagetToken,title="",mesage="") => { 
+    const messages = [
+        {
+          to: tagetToken,//"ExponentPushToken[1FaAtxKfUGjOjLjxdIiwKn]",
+          sound: 'default',
+          title: title || "1 Yeni Bildirim",
+          body: mesage,
+        },
+      ];
+    
+      expo.sendPushNotificationsAsync(messages)
+        .then((receipts) => {
+            console.log(receipts)
+          // Bildirim başarıyla gönderildi
+         // res.json({ success: true, receipts });
+        })
+        .catch((error) => {
+            console.log(error)
+          // Bildirim gönderme hatası
+         // res.status(500).json({ success: false, error });
+        });
+}
 
 
 export default server;

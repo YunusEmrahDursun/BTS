@@ -1,5 +1,5 @@
 import logger from 'jet-logger';
-
+const moment = require('moment');
 
 /**
  * Print an error object if it's truthy. Useful for testing.
@@ -57,4 +57,8 @@ export function formatTarih(tarih) {
     const yil = ayYil.getFullYear();
 
     return ayAdi + ' ' + yil;
+}
+
+export function currentTimestamp(){
+    return moment().format("YYYY-MM-DD HH:mm:ss");
 }

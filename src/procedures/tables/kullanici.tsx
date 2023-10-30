@@ -2,9 +2,9 @@ export default{
     icon:"icon-user",
     title:"Kullanıcı",
     check_firma_id:true,
-    columns:[ "kullanici_id", "kullanici_isim", "kullanici_soyisim", "kullanici_eposta", "kullanici_telefon","yetki_id","sube_id"],
+    columns:[ "kullanici_id", "kullanici_isim", "kullanici_soyisim", "kullanici_adi", "kullanici_telefon","yetki_id","sube_id"],
     turkce:["#","İsim","Soy İsim","E-posta","Telefon","Yetki","Şube"],
-    required:["kullanici_isim","kullanici_eposta"],
+    required:["kullanici_isim","kullanici_adi"],
     props:{
         "yetki_id":{k:"yetki_adi",q:"y",t:"select",f:"yetki"},
         "sube_id":{k:"sube_adi",q:"b",t:"select",f:"sube"},

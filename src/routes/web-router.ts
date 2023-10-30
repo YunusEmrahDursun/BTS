@@ -83,16 +83,15 @@ router.get('/exit', async (req: Request, res: Response) => {
 
 router.use('/dashboard', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;
-    //düzeltilecek
-    let s=await db.queryObject(` SELECT
-    (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and silindi_mi=0) as personeller, 
-    (SELECT COUNT(*) FROM ${global.databaseName}.bolge_table WHERE firma_id=:firmaId and silindi_mi=0) as bolgeSayisi,
-    (SELECT COUNT(*) FROM ${global.databaseName}.sikayet_table WHERE firma_id=:firmaId and silindi_mi=0) as talepSayisi,
-    (SELECT COUNT(*) FROM ${global.databaseName}.musteri_table WHERE firma_id=:firmaId and silindi_mi=0) as musteriSayisi,
-    (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and yetki_id=2 and silindi_mi=0) as teknikPersonelSayisi`
+    let degerler:any=await db.queryObject(` SELECT
+    (SELECT COUNT(*) FROM ${global.databaseName}.kullanici_table WHERE firma_id=:firmaId and silindi_mi=0) as personelSayisi, 
+    (SELECT COUNT(*) FROM ${global.databaseName}.sube_table WHERE firma_id=:firmaId and silindi_mi=0) as subeSayisi,
+    (SELECT COUNT(*) FROM ${global.databaseName}.bina_table WHERE firma_id=:firmaId and silindi_mi=0) as binaSayisi,
+    (SELECT COUNT(*) FROM ${global.databaseName}.is_emri_table WHERE firma_id=:firmaId and silindi_mi=0) as isEmriSayisi,
+    (SELECT COUNT(*) FROM ${global.databaseName}.is_emri_table as is_emri left join ${global.databaseName}.is_emri_durum_table AS durum ON durum.is_emri_durum_id= is_emri.is_emri_durum_id  WHERE firma_id=:firmaId and is_emri.silindi_mi=0 and durum.is_emri_durum_key = "success" ) as kapananIsEmirleri`
     ,{firmaId});
-    //console.log(s)
-    res.render('dashboard/index',{title:"Ana Sayfa",data: Array.isArray(s) ? s[0] : {} });
+    let isEmirleri = await db.queryObject(`SELECT * FROM ${global.databaseName}.is_emri_table where firma_id=:firmaId and silindi_mi=0 order by guncellenme_zamani desc limit 10;`,{firmaId});
+    res.render('dashboard/index',{title:"Ana Sayfa",data: { isEmirleri,degerler:degerler[0]  } });
 });
 router.use('/report', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;
@@ -238,8 +237,9 @@ router.use('/test', async (req: Request, res: Response) => {
     //res.json(req.session).end()
     //console.log(req.session)
     //console.log(req.sessionID)
-    const io: SocketIO.Server = req.app.get('socketio');
-    io.emit("update","asd")
+    const io: SocketIO.Server = global.socketio;
+    //const io: SocketIO.Server = req.app.get('socketio');
+    io.emit("update","refreshTable")
     res.json({}).end()
 });
 

@@ -48,7 +48,7 @@ if i!=skipIndex
           else  
             img.img-thumbnail(src= '/firmaImages/default/image_placeholder.jpg' display-id=key)
       else if special.t == "checkbox"
-        .fancy-checkbox
+        .fancy-checkbox(style={'margin-top':'40px'})
           label
             input(type="checkbox" ajax-key="f" name=key checked=(targetData[key] == '1' ? true : false  ) value=targetData[key]) 
             span=data.turkce[i]

@@ -14,7 +14,7 @@ export default{
         "il_id":{k:"il_adi",q:"i",f:"iller",t:"search"},
         "ilce_id":{k:"ilce_adi",q:"c",f:"ilceler",t:"search",connect:"il_id"},
     },
-    sql: `SELECT i.il_adi,c.ilce_adi,g.* FROM ${global.databaseName}.bina_table as g 
+    sql: `SELECT i.il_adi,c.ilce_adi,s.sube_adi,g.* FROM ${global.databaseName}.bina_table as g 
     left join ${global.databaseName}.iller_table as i on g.il_id=i.il_id
     left join ${global.databaseName}.ilceler_table as c on g.ilce_id=c.ilce_id
     left join ${global.databaseName}.sube_table as s on g.sube_id=s.sube_id 

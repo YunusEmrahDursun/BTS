@@ -265,7 +265,7 @@ block javascript
         event.stopPropagation();
         Dynajax('skip','s',function(obj,callbackData){
            if(obj.status){
-              showNotification('top','right',"success",obj.message);
+              showNotification(obj.message,"success");
               $(`[row-id='${id}']`).remove()
           }
         },{id:id},false,{ targetId:parseInt(id) },true);

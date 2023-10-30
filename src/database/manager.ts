@@ -111,7 +111,7 @@ class Database {
 
         return await this.queryObject(sql,values)
     }
-    query = async ( sql, args:any = null ) => {
+    query = async ( sql, args:any = null ): Promise<any> => {
         return new Promise( ( resolve, reject ) => {
             this.pool.getConnection(function(err, connection) {
                 if (err) throw err;
@@ -193,6 +193,23 @@ class Database {
             throw "sorgubulunamadi";
         }
         return this.query(query,Object.keys(where).map(y=> where[y]));
+    }
+    selectOneQuery = async (where={},tableName,mode:"AND" | "OR" ="AND",extra="",countRow=false,databaseName=this.databaseName) => {
+        if(!tableName || tableName==""){
+            throw "tabloismibulunamadi";
+        }
+        if(Object.keys(where).length==0){
+            throw "sorgualanieksik";
+        }
+        var query="";
+        query=selectQueryConverter(tableName,databaseName,where,mode,extra,countRow);
+        if(query==""){
+            throw "sorgubulunamadi";
+        }
+        const rows = await this.query(query,Object.keys(where).map(y=> where[y]));
+
+        return rows[0];
+         
     }
     getById = async (id,tableName,databaseName=this.databaseName)=>{
         let where={ [tableName.split("_")[0]+"_id"] :id};
