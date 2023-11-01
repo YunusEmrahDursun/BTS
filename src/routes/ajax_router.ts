@@ -162,6 +162,19 @@ router.post("/login", async (req: Request, res: Response) => {
     });
 });
 
+router.post('/isEmirleri', async function (req, res, next) {
+  const firmaId=req.session.user.firma_id;
+  let isEmirleri = await db.queryObject(`
+  SELECT g.*,durum.*,user.* FROM ${global.databaseName}.is_emri_table as g
+  inner join ${global.databaseName}.is_emri_durum_table as durum on durum.is_emri_durum_id=g.is_emri_durum_id
+  inner join ${global.databaseName}.kullanici_table as user on user.kullanici_id=g.is_emri_giden_kullanici_id
+  where g.firma_id=:firmaId and g.silindi_mi=0 order by g.guncellenme_zamani desc limit 10;
+  `,{firmaId});
+
+  res.send({d:isEmirleri,status:1});
+});
+
+
 /* #region  multer  */
 
 var storageFile = multer.diskStorage({

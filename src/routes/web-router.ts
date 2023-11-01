@@ -90,8 +90,9 @@ router.use('/dashboard', async (req: Request, res: Response) => {
     (SELECT COUNT(*) FROM ${global.databaseName}.is_emri_table WHERE firma_id=:firmaId and silindi_mi=0) as isEmriSayisi,
     (SELECT COUNT(*) FROM ${global.databaseName}.is_emri_table as is_emri left join ${global.databaseName}.is_emri_durum_table AS durum ON durum.is_emri_durum_id= is_emri.is_emri_durum_id  WHERE firma_id=:firmaId and is_emri.silindi_mi=0 and durum.is_emri_durum_key = "success" ) as kapananIsEmirleri`
     ,{firmaId});
-    let isEmirleri = await db.queryObject(`SELECT * FROM ${global.databaseName}.is_emri_table where firma_id=:firmaId and silindi_mi=0 order by guncellenme_zamani desc limit 10;`,{firmaId});
-    res.render('dashboard/index',{title:"Ana Sayfa",data: { isEmirleri,degerler:degerler[0]  } });
+    
+
+    res.render('dashboard/index',{title:"Ana Sayfa",data: { degerler:degerler[0]  } });
 });
 router.use('/report', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;

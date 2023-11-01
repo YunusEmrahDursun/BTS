@@ -7,7 +7,13 @@
     socket.on('connect', () => {
         socketIo = socket;
         socket.on('update', (msg) => {
-            console.log(msg);
+            if(msg == "refreshTable"){
+                try {
+                    getDasboardTableData()
+                } catch (error) {
+                    
+                }
+            }
         });
        
     });
