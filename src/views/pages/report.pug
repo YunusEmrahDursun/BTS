@@ -13,7 +13,7 @@ block content
     .col-lg-6.col-md-12.col-sm-12
       .row.clearfix
         .col-lg-6.col-md-6
-          .card-wrapper.flip-left
+          .card-wrapper.flip-left(onclick="thisMonthClosedTasks()")
             .card.s-widget-top
               .front.p-3.px-4
                 div Kapanmış İş Emirleri
@@ -26,7 +26,7 @@ block content
                 .py-4.m-0.text-center.h2
                   i.icon-printer
         .col-lg-6.col-md-6
-          .card-wrapper.flip-left
+          .card-wrapper.flip-left(onclick="thisMonthOpenTasks()")
             .card.s-widget-top
               .front.p-3.px-4
                 div Açık İş Emirleri
@@ -39,7 +39,7 @@ block content
                 .py-4.m-0.text-center.h2
                   i.icon-printer
         .col-lg-6.col-md-6
-          .card-wrapper.flip-left
+          .card-wrapper.flip-left(onclick="users()")
             .card.s-widget-top
               .front.p-3.px-4
                 div Personal Sayısı
@@ -49,7 +49,7 @@ block content
                 .py-4.m-0.text-center.h2
                   i.icon-printer
         .col-lg-6.col-md-6
-          .card-wrapper.flip-left
+          .card-wrapper.flip-left(onclick="allTask()")
             .card.s-widget-top
               .front.p-3.px-4
                 div İş Emirleri Tamamı
@@ -67,11 +67,34 @@ block content
               div(style="width:calc(100% - 50px)")
                 .form-group.mb-4
                   label.d-block
-                    = month.tarih 
+                    = month.tarih + ' - ' + month.toplam + ' adet.'
                     span.float-right
                       = month.percent+"% "
                   .progress.progress-xxs
                     .progress-bar( class=color[index] role='progressbar' aria-valuenow=month.percent aria-valuemin='0' aria-valuemax='100' style=`width: ${month.percent}%;`)
               div(style='width:50px;padding-left:20px')
-                button.btn.btn-sm.btn-default(type='button' title='Yazdır' data-toggle='tooltip' data-placement='top')
+                button.btn.btn-sm.btn-default(type='button' onclick=`month(${index})` title='Yazdır' data-toggle='tooltip' data-placement='top')
                   i.icon-printer
+block javascript
+  script.
+    function thisMonthClosedTasks(){
+      const data = Dynajax("pdf-thisMonthClosedTasks","z",null,null,false,null,false,false)
+      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"], data.d.map(i=> Object.values(i)) ,"Tamamlanmış-İş-Emirleri-" + moment().format("MMMM") )
+    }
+    function thisMonthOpenTasks(){
+      const data = Dynajax("pdf-thisMonthOpenTasks","z",null,null,false,null,false,false)
+      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"], data.d.map(i=> Object.values(i)) ,"Açık-İş-Emirleri-" + moment().format("MMMM") )
+    }
+    function users(){
+      const data = Dynajax("pdf-users","z",null,null,false,null,false,false)
+      excelDownload( ["İsim","Soyİsim","Telefon","Kayıt Defteri"], data.d.map(i=> Object.values(i)) ,"Personeller")
+    }
+    function allTask(){
+      const data = Dynajax("pdf-all-taks","z",null,null,false,null,false,false)
+      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"bütün-iş-emirleri")
+    }
+    function month(month){
+      const data = Dynajax("pdf-month/" + month,"z",null,null,false,null,false,false)
+      excelDownload(["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"Aylık-İş-Emirleri-" )
+    }
+  script(src='/bundles/excel.js')              

@@ -161,14 +161,12 @@
 			&.green{
 				background: linear-gradient(135deg,rgba($green,.5) 0%,rgba($green,.95) 100%);
 				&::after{
-					background: url("../../assets/images/image-gallery/13.jpg") repeat scroll center center/cover;	
 					opacity: 0.6;
 				}
 			}
 			&.blue{
 				background: linear-gradient(135deg,rgba($blue,.5) 0%,rgba($blue,.95) 100%);
 				&::after{
-					background: url("../../assets/images/image-gallery/2.jpg") repeat scroll center center/cover;	
 					opacity: 0.3;
 				}
 			}

@@ -91,8 +91,9 @@ router.use('/dashboard', async (req: Request, res: Response) => {
     (SELECT COUNT(*) FROM ${global.databaseName}.is_emri_table as is_emri left join ${global.databaseName}.is_emri_durum_table AS durum ON durum.is_emri_durum_id= is_emri.is_emri_durum_id  WHERE firma_id=:firmaId and is_emri.silindi_mi=0 and durum.is_emri_durum_key = "success" ) as kapananIsEmirleri`
     ,{firmaId});
     
+    const percent = degerler[0].isEmriSayisi !=0 ? (( 100 * ( degerler[0].kapananIsEmirleri)) / degerler[0].isEmriSayisi).toFixed(0) : 0
 
-    res.render('dashboard/index',{title:"Ana Sayfa",data: { degerler:degerler[0]  } });
+    res.render('dashboard/index',{title:"Ana Sayfa",data: { degerler:degerler[0] , percent } });
 });
 router.use('/report', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;

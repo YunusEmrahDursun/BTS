@@ -2881,7 +2881,6 @@ html.fullscreen-bg #wrapper {
 }
 
 .navbar-nav .dropdown-menu li.header.green::after {
-  background: url("../../assets/images/image-gallery/13.jpg") repeat scroll center center/cover;
   opacity: 0.6
 }
 
@@ -2890,7 +2889,6 @@ html.fullscreen-bg #wrapper {
 }
 
 .navbar-nav .dropdown-menu li.header.blue::after {
-  background: url("../../assets/images/image-gallery/2.jpg") repeat scroll center center/cover;
   opacity: 0.3
 }
 
@@ -11379,7 +11377,6 @@ hr {
 }
 
 .social .profile-header {
-  background: transparent url("../../../assets/images/image-gallery/10.jpg") repeat scroll center center/cover;
   color: #fff;
   padding: 20px;
   position: relative;

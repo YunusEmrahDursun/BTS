@@ -63,15 +63,15 @@ block content
           .form-group
             label.d-block
               | Taleplerin Durumu
-              span.float-right 77%
+              span.float-right=data.percent
             .progress.progress-xxs
-              .progress-bar.progress-bar-success(role='progressbar' aria-valuenow='77' aria-valuemin='0' aria-valuemax='100' style='width: 77%;')
-          .form-group
-            label.d-block
-              | Personel Musaitlik Durumu
-              span.float-right 50%
-            .progress.progress-xxs
-              .progress-bar.progress-bar-warning(role='progressbar' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' style='width: 50%;')
+              .progress-bar.progress-bar-success(role='progressbar' aria-valuenow=data.percent aria-valuemin='0' aria-valuemax=data.percent style=`width: ${data.percent}%;`)
+          //- .form-group
+          //-   label.d-block
+          //-     | Personel Musaitlik Durumu
+          //-     span.float-right 50%
+          //-   .progress.progress-xxs
+          //-     .progress-bar.progress-bar-warning(role='progressbar' aria-valuenow='50' aria-valuemin='0' aria-valuemax='100' style='width: 50%;')
     .col-lg-8.col-md-12
       .table-responsive
         table.table.table-hover.table-custom.spacing5

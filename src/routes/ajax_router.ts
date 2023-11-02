@@ -174,6 +174,57 @@ router.post('/isEmirleri', async function (req, res, next) {
   res.send({d:isEmirleri,status:1});
 });
 
+router.post('/pdf-thisMonthClosedTasks', async function (req, res, next) {
+  const firmaId=req.session.user.firma_id;
+  let tasks:any = await db.queryObject(`SELECT kullanici_isim,kullanici_soyisim,kullanici_telefon,kullanici_kayit_tarihi FROM ${global.databaseName}.kullanici_table where firma_id = :firmaId and silindi_mi = 0;`,{firmaId});
+  res.send({d:[1,2,3],status:1});
+});
+router.post('/pdf-thisMonthOpenTasks', async function (req, res, next) {
+  const firmaId=req.session.user.firma_id;
+  let tasks:any = await db.queryObject(`
+  SELECT g.is_emri_id,u.kullanici_isim,u.kullanici_soyisim,g.is_emri_aciklama,g.is_emri_olusturma_tarihi,g.guncellenme_zamani,d.is_emri_durum_adi FROM ${global.databaseName}.is_emri_table as g
+  inner join ${global.databaseName}.kullanici_table as u on u.kullanici_id = g.is_emri_giden_kullanici_id
+  inner join ${global.databaseName}.is_emri_durum_table as d on d.is_emri_durum_id = g.is_emri_durum_id
+  where g.firma_id = :firmaId and g.silindi_mi = 0;`
+  ,{firmaId}) ;
+  res.send({d:tasks,status:1});
+});
+router.post('/pdf-users', async function (req, res, next) {
+  const firmaId=req.session.user.firma_id;
+  let user:any = await db.queryObject(`SELECT kullanici_isim,kullanici_soyisim,kullanici_telefon,kullanici_kayit_tarihi FROM ${global.databaseName}.kullanici_table where firma_id = :firmaId and silindi_mi = 0;`,{firmaId});
+  res.send({d:user,status:1});
+});
+router.post('/pdf-all-taks', async function (req, res, next) {
+  const firmaId=req.session.user.firma_id;
+  let tasks:any = await db.queryObject(`
+  SELECT g.is_emri_id,u.kullanici_isim,u.kullanici_soyisim,g.is_emri_aciklama,g.is_emri_olusturma_tarihi,g.guncellenme_zamani,d.is_emri_durum_adi FROM ${global.databaseName}.is_emri_table as g
+  inner join ${global.databaseName}.kullanici_table as u on u.kullanici_id = g.is_emri_giden_kullanici_id
+  inner join ${global.databaseName}.is_emri_durum_table as d on d.is_emri_durum_id = g.is_emri_durum_id
+  where g.firma_id = :firmaId and g.silindi_mi = 0;`
+  ,{firmaId}) ;
+  res.send({d:tasks,status:1});
+});
+router.post('/pdf-month/:month', async function (req, res, next) {
+  const { month } = req.params;
+  const monthIndex= parseInt(month);
+  if(isNaN(monthIndex)){
+    res.send({
+      message: "Hata oluştu!",
+      status: 0,
+      color: "danger"
+    });
+  }else{
+    const firmaId=req.session.user.firma_id;
+    let tasks:any = await db.queryObject(`
+    SELECT g.is_emri_id,u.kullanici_isim,u.kullanici_soyisim,g.is_emri_aciklama,g.is_emri_olusturma_tarihi,g.guncellenme_zamani,d.is_emri_durum_adi FROM ${global.databaseName}.is_emri_table as g
+    inner join ${global.databaseName}.kullanici_table as u on u.kullanici_id = g.is_emri_giden_kullanici_id
+    inner join ${global.databaseName}.is_emri_durum_table as d on d.is_emri_durum_id = g.is_emri_durum_id
+    where g.firma_id = :firmaId and g.silindi_mi = 0 and  MONTH(is_emri_olusturma_tarihi) = (MONTH(CURDATE()) - ${monthIndex}) `
+    ,{firmaId}) ;
+    res.send({d:tasks,status:1});
+  }
+  
+});
 
 /* #region  multer  */
 
