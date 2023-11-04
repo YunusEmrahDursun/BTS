@@ -8,6 +8,7 @@ import {createToken,currentTimestamp} from '@shared/functions';
 const router = Router();
 const { CREATED, OK, NO_CONTENT } = StatusCodes;
 const md5 = require('md5');
+import multer from 'multer';
 import logger from 'jet-logger';
 
 router.get('/test', async (req: Request, res: Response) => {
@@ -217,7 +218,7 @@ router.use('/isEmirleri', async (req: Request, res: Response) => {
     res.json(isEmirleri)
 });
 router.use('/tamamlananisEmirleri', async (req: Request, res: Response) => {
-    let isEmirleri:any=await db.queryObject(`SELECT g.*,bina.*,il.*,ilce.* FROM ${global.databaseName}.is_emri_table as g 
+    let isEmirleri:any=await db.queryObject(`SELECT g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
     inner join ${global.databaseName}.bina_table as bina on bina.bina_id = g.bina_id
     inner join ${global.databaseName}.is_emri_durum_table as durum on durum.is_emri_durum_id=g.is_emri_durum_id
     inner join ${global.databaseName}.iller_table as il on il.il_id=bina.il_id
@@ -272,14 +273,99 @@ router.post('/servisIstegiTalebi/:id', async (req: Request, res: Response) => {
     });
 });
 
-router.use('/isEmiriTamamla', async (req: Request, res: Response) => {
-    var isEmirleri=(await  db.selectQuery({  is_emri_giden_kullanici_id:req.session.user.kullanici_id},'is_emri_table'));
-    res.json(isEmirleri)
+router.use('/isEmiriTamamla/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const data = req.body;
+
+    var text, status=1;
+
+    try {
+        const transferDurumu = await db.selectOneQuery({is_emri_durum_key:'success'},'is_emri_durum_table');
+        if(data && data.files){
+            for (let index = 0; index < data.files.length; index++) {
+                const item = data.files[index];
+                await db.insert({firma_id:req.session.user.firma_id,dosya_adi:item},"firma_dosya_table")
+            }
+            
+        }
+        await db.update({is_emri_sonuc_aciklama:data.aciklama,is_emri_durum_id:transferDurumu.is_emri_durum_id,guncellenme_zamani:currentTimestamp()},{is_emri_id:id,is_emri_giden_kullanici_id:req.session.user.kullanici_id},'is_emri_table');
+        refreshTable();
+    } catch (error) {
+        logger.err(error, true);
+        text = "Birşeyler ters gitti!";
+        status = 0;
+    }
+    
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
 });
 
 const refreshTable = () => { 
     const io: SocketIO.Server = global.socketio;
     io.emit("update","refreshTable");
 }
+
+/* #region  multer  */
+
+var storageFile = multer.diskStorage({
+    destination: function (req, file, cb) {
+      var ext=file.originalname.substr(file.originalname.lastIndexOf("."));
+      if(ext==".pdf"){
+        cb(null, 'src/public/firmaFiles/'+req.session?.user?.firma_id+"/");
+      }
+      else {
+        cb(null, 'src/public/firmaImages/'+req.session?.user?.firma_id+"/");
+      }
+    },
+    filename: function (req, file, cb) {
+      if(req.session.user && req.session.user.firma_id){
+        var ext=file.originalname.substr(file.originalname.lastIndexOf("."));
+        var fileName=md5(Math.random())+ext;
+        if(!req.fileName){
+          req.fileName=[];
+        }
+        if(ext==".pdf"){
+          req.fileName.push({ "fileName":file.originalname,"pathName":fileName,"colName":file.colName});
+        }
+        else{
+          req.fileName.push({"pathName":fileName,"colName":file.colName});
+        }
+        cb(null, fileName) ;
+      }
+      else{
+        req.fileValidationError='Yetki Bulunamadı!';
+        return cb(null, false)
+      }
+    }
+  });
+  
+  const accessFiles=['jpg', 'png', 'pdf','jpeg','mov'];
+  
+  var uploadFile = multer({ storage: storageFile, limits: { fileSize: 30 * 1024 * 1024 /*10MB*/ ,files: 10 } ,
+    fileFilter: function (req, file, cb) {
+    var obj=file.originalname;
+    file.colName=obj.colName;
+    if(!accessFiles.some(ext => file.originalname.endsWith("." + ext))){
+        req.fileValidationError='Dosya Tipi Geçersiz!';
+        return cb(null, false)
+    }
+    if (req.session.user && req.session.user.firma_id ) {
+      cb(null, true)
+    }
+    else{
+      req.fileValidationError='Yetki Bulunamadı!';
+      return cb(null, false)
+    }
+    
+  }});
+  router.use('/fileUpload',uploadFile.array('file',10),function(req,res,next){
+    res.send({
+      message: req["fileName"],
+      status: 1,
+    });
+  }); 
+  /* #endregion */
 
 export default router;

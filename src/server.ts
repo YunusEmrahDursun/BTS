@@ -153,7 +153,7 @@ global.sendNotification = (tagetToken,title="",mesage="") => {
     
       expo.sendPushNotificationsAsync(messages)
         .then((receipts) => {
-            console.log(receipts)
+           // console.log(receipts)
           // Bildirim başarıyla gönderildi
          // res.json({ success: true, receipts });
         })
