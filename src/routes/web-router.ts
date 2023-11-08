@@ -140,7 +140,15 @@ router.use('/report', async (req: Request, res: Response) => {
         }) 
     }});
 });
-
+router.use('/invite', async (req: Request, res: Response) => {
+    const firmaId=req.session.user.firma_id;
+    if(!["admin","sube"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
+    if(!firmaId) return res.status(FORBIDDEN).end();
+    var subeler=(await  db.selectQuery({  firma_id:firmaId  },"sube_table"));
+    res.render('pages/invite',{title:"Davet Linki Oluştur",data: {
+        subeler
+    }});
+});
 // router.use('/form/firmalar/:id?',async (req: Request, res: Response) => {
 //     const { id } = req.params;
 //     const table="firmalar";

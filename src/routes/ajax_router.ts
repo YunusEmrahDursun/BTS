@@ -1,8 +1,7 @@
 import StatusCodes from 'http-status-codes';
 import { Request, Response, Router,NextFunction } from 'express';
 
-import { getCurrentDate } from '@shared/functions';
-import { ParamMissingError } from '@shared/errors';
+import { generateLink } from '@shared/functions';
 import multer from 'multer';
 import db from '@database/manager';
 import Procedures from '@procedures/index';
@@ -164,6 +163,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.post('/isEmirleri', async function (req, res, next) {
   const firmaId=req.session.user.firma_id;
+  if(!firmaId) return res.status(FORBIDDEN).end();
   let isEmirleri = await db.queryObject(`
   SELECT g.*,durum.*,user.* FROM ${global.databaseName}.is_emri_table as g
   inner join ${global.databaseName}.is_emri_durum_table as durum on durum.is_emri_durum_id=g.is_emri_durum_id
@@ -172,6 +172,20 @@ router.post('/isEmirleri', async function (req, res, next) {
   `,{firmaId});
 
   res.send({d:isEmirleri,status:1});
+});
+
+router.use('/createLink', async (req: Request, res: Response) => {
+  const data=req.body.kdata;
+  const firmaId=req.session.user.firma_id;
+  if(!["admin","sube"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
+  if(!firmaId) return res.status(FORBIDDEN).end();
+  const createdLink=generateLink();
+  await db.insert({
+    katilim_linki:createdLink,
+    sube_id:data.sube_id,
+    firma_id:firmaId
+  },"katilim_linki_table")
+  res.send({d:createdLink,status:1});
 });
 
 router.post('/pdf-thisMonthClosedTasks', async function (req, res, next) {
