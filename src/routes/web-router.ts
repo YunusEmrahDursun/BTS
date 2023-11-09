@@ -24,37 +24,44 @@ router.use('/login', (req: Request, res: Response) => {
         res.redirect('/web/dashboard');
         return;
     }
-    res.render('pages/login',{title:"BTS | Giriş Yap"});
+    res.render('pages/login',{title:"BTS | Giriş"});
 });
 
-router.use('/register/:id?',async (req: Request, res: Response) => {
+router.use('/register',async (req: Request, res: Response) => {
     if(req.session.user){
         res.redirect('/web/dashboard');
         return;
     }
-    let { id } = req.params;
-    let abonelik_id=1; 
-    if ( !id ) {
-        id="1";
-    }
-    const restTable=Procedures.tables["register"];
-    let s={};
-    if(restTable && restTable.props){
-        for (let key in restTable.props ) {
-            let item=restTable.props[key]
-            if(item.f && item.t) s[item.f]=await db.selectAll(item.f+"_table");
-        }
-    }
-    let abonelik=(await db.getById(id,"abonelik_table")) || {};
-    //if( result ) abonelik_id=result.abonelik_id
-    res.render('pages/register',{title:"BTS | Kayıt Ol",abonelik ,data:{
-        table:"register",
-        static:s,
-        ...restTable
-    },targetData:{}});
+  
+    res.render('pages/register',{title:"BTS | Kayıt Ol" });
 });
 
-
+// router.use('/register/:id?',async (req: Request, res: Response) => {
+//     if(req.session.user){
+//         res.redirect('/web/dashboard');
+//         return;
+//     }
+//     let { id } = req.params;
+//     let abonelik_id=1; 
+//     if ( !id ) {
+//         id="1";
+//     }
+//     const restTable=Procedures.tables["register"];
+//     let s={};
+//     if(restTable && restTable.props){
+//         for (let key in restTable.props ) {
+//             let item=restTable.props[key]
+//             if(item.f && item.t) s[item.f]=await db.selectAll(item.f+"_table");
+//         }
+//     }
+//     let abonelik=(await db.getById(id,"abonelik_table")) || {};
+//     //if( result ) abonelik_id=result.abonelik_id
+//     res.render('pages/register',{title:"BTS | Kayıt Ol",abonelik ,data:{
+//         table:"register",
+//         static:s,
+//         ...restTable
+//     },targetData:{}});
+// });
 
 /*   session need below   */
 

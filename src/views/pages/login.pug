@@ -5,15 +5,14 @@ block content
       .card
         .body
           form.form-auth-small(novalidate data-parsley-validate onsubmit="formValitdate(this);return false" style="width: 350px;")
-            h1 BTS
-            .mb-3
-              p.lead Hesabınıza giriş yapın
+            h4(style="text-align: center;margin-bottom:10px")=title
             .form-group
               input#signin-text.form-control.round(type='text'  placeholder='Kullanıcı Adı' required ajax-key="l"  name='kullanici_adi')
             .form-group
               input#signin-password.form-control.round(type='password'  placeholder='Parola' required ajax-key="l" name='kullanici_parola')
 
             button.btn.btn-primary.btn-round.btn-block(type='submit') Giriş
+            button.btn.btn-primary.btn-round.btn-block(onclick="location.href='register'") Kayıt Ol
           .pattern
             span.red
             span.indigo

@@ -73,60 +73,62 @@ router.get('/dyndata/:table', async function (req, res, next) {
     const result=await db.selectLikeWithColumn(colNames,targetTable+"_table", where ,"AND",connect+" LIMIT 10",[c]);
     res.json( Array.isArray(result) && result.map(x=> ({ "id": x[tableIdName] , "text": x[textName] }) ));
   });
-router.post("/register", async (req: Request, res: Response) => {
+  router.post('/register/:link', async (req: Request, res: Response) => {
     const data=req.body.kdata;
-
-    var text, status=0 ;
-    try {
-        var user=(await  db.selectQuery({
-          kullanici_adi:data.kullanici_adi
-        },"kullanici_table"));
-
-        if(user && Array.isArray(user) && user.length>0){
-            throw "Bu email adresi sistemde kayıtlıdır!";
-        }
-        let insertedFirma:any=await db.insert({
-            tam_unvan:data.tam_unvan,
-            il_id:data.il_id,
-            ilce_id:data.ilce_id,
-            adres:data.adres,
-            telefon:data.telefon,
-            vergi_dairesi:data.vergi_dairesi,
-            vergi_no:data.vergi_no,
-            sektor_id:data.sektor_id,
-            yetkili_isim:data.yetkili_isim,
-            yetkili_soyisim:data.yetkili_soyisim,
-            yetkili_tel:data.yetkili_tel,
-            yetkili_eposta:data.yetkili_eposta,
-        },"firma_table")
-        let kullaniciId=await db.insert({
-            kullanici_isim:data.yetkili_isim,
-            kullanici_soyisim:data.yetkili_soyisim,
-            kullanici_eposta:data.yetkili_eposta,
-            kullanici_parola:md5(data.kullanici_parola),
-            kullanici_telefon:data.yetkili_tel,
-            firma_id:insertedFirma.insertId,
-            yetki_id:1
-        },"kullanici_table")
+    const { link } = req.params; 
+    var text, status=1 ;
+    
+    if (!data ) {
+        text = "Parametre Eksik!";
+        status = 0;
+    }
+    else{
         try {
-            const staticDir = path.join(__dirname+"../", 'public');
-            await fs.mkdirSync(staticDir+'./firmaFiles'+insertedFirma);
-            await fs.mkdirSync(staticDir+'./firmaImages'+insertedFirma);
+  
+            var katilimLinki:any[]=(await  db.selectQuery({
+                katilim_linki:link
+            },"katilim_linki_table"));
+        
+            var yetki:any[]=(await  db.selectQuery({
+                yetki_key:"teknik"
+            },"yetki_table"));
+  
+            if( yetki.length == 0 ){
+                text = "Birşeyler ters gitti!";
+                logger.err("yetki bulunamadı "+ JSON.stringify(yetki), true);
+                status = 0;
+            }else if(katilimLinki.length == 0){
+                text = "Katılım Linki Bulunamadı!";
+                status = 0;
+            }
+            else{
+                const tempData = {
+                    kullanici_isim: data.kullanici_isim,
+                    kullanici_soyisim: data.kullanici_soyisim,
+                    kullanici_adi:data.kullanici_adi,
+                    kullanici_parola: md5(data.kullanici_parola),
+                    kullanici_telefon: data.kullanici_telefon,
+                    sube_id: katilimLinki[0].sube_id,
+                    firma_id: katilimLinki[0].firma_id,
+                    yetki_id:yetki[0].yetki_id
+                }
+                await db.insert(tempData,"kullanici_table");
+                await db.setSilindi({  katilim_linki:data.link },"katilim_linki_table");
+            }
+           
+           
         } catch (error) {
             logger.err(error, true);
+            text = "Birşeyler ters gitti!";
+            status = 0;
         }
-
-        text = "Kayıt Başarılı!";
-        status = 1;
-    } catch (error) {
-        text=error.message || error
     }
     
-    res.send({
+    return res.status(OK).send({
         message: text,
-        status: status,
+        status: status
     });
-});
+  });
 
 router.post("/login", async (req: Request, res: Response) => {
     const data=req.body.kdata;
@@ -187,7 +189,26 @@ router.use('/createLink', async (req: Request, res: Response) => {
   },"katilim_linki_table")
   res.send({d:createdLink,status:1});
 });
+router.use('/checkJoinLink', async (req: Request, res: Response) => {
+  const data=req.body.kdata;
+  var text, status=1;
 
+  var katilimLinki=(await  db.selectQuery({
+      katilim_linki:data.link
+  },"katilim_linki_table"));
+
+  if(katilimLinki && Array.isArray(katilimLinki) && katilimLinki.length>0){
+      status = 1;
+  }
+  else{
+      text = "Katılım Linki Bulunamadı!";
+      status = 0;
+  }
+  return res.status(OK).send({
+      message: text,
+      status: status,
+  });
+});
 router.post('/pdf-thisMonthClosedTasks', async function (req, res, next) {
   const firmaId=req.session.user.firma_id;
   let tasks:any = await db.queryObject(`SELECT kullanici_isim,kullanici_soyisim,kullanici_telefon,kullanici_kayit_tarihi FROM ${global.databaseName}.kullanici_table where firma_id = :firmaId and silindi_mi = 0;`,{firmaId});
