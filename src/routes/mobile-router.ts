@@ -193,7 +193,6 @@ router.post('/setPushToken',async (req: Request, res: Response) => {
     try {
        
         await db.update({kullanici_push_token:data.pushToken},{kullanici_id:req.session.user.kullanici_id},"kullanici_table")
-        text = "Giriş Yapılıyor!";
         status = 1;
     } catch (error) {
         text=error.message || error
@@ -284,7 +283,7 @@ router.use('/isEmiriTamamla/:id', async (req: Request, res: Response) => {
         if(data && data.files){
             for (let index = 0; index < data.files.length; index++) {
                 const item = data.files[index];
-                await db.insert({firma_id:req.session.user.firma_id,dosya_adi:item},"firma_dosya_table")
+                await db.insert({firma_id:req.session.user.firma_id,dosya_adi:item,is_emri_id:id},"firma_dosya_table")
             }
             
         }

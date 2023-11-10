@@ -1,0 +1,113 @@
+extends ../static-pages/layout
+block content
+  .block-header
+    .row.clearfix
+      .col-md-6.col-sm-12
+        h1=title
+        nav(aria-label='breadcrumb')
+          ol.breadcrumb
+            li.breadcrumb-item
+              |  BTS
+            li.breadcrumb-item.active(aria-current='page')=title
+  .row.clearfix
+    .col-lg-12.col-md-12
+      .card  
+        ul.nav.nav-tabs2.space-between
+          li.nav-item
+            a.nav-link.show( href='#')="Kayıt Ekle"
+          li.nav-item.float-right
+            a.nav-link.active( href='/web/table/'+data.table)=title +" Tablosu"
+        .tab-content    
+          .tab-content
+            .body
+              form.form-auth-small.m-t-20(novalidate data-parsley-validate onsubmit="formValitdate(this);return false;")
+                include ./components/inputGen
+                div(class="row col-md-12")
+                  if targetData && targetData[data.idColName] && targetData[data.idColName] != ""
+                    div(class="col-md-6"  )
+                      .form-group  
+                        label Durum 
+                        select.custom-select.mb-2(name="is_emri_durum_id" ajax-key="f" enforced=true)
+                          option(value="")="Seçiniz"
+                          each s in data.static["is_emri_durum"]
+                            if s["is_emri_durum_id"]==targetData["is_emri_durum_id"]
+                              option(value=s["is_emri_durum_id"] selected)=s["is_emri_durum_adi"]
+                            else
+                              option(value=s["is_emri_durum_id"])=s["is_emri_durum_adi"]
+                  div(class="col-md-6"  )
+                    .fancy-checkbox(style={'margin-top':'40px'})
+                      label
+                        input(type="checkbox" ajax-key="f" name="faaliyet_raporunda_gozuksun" checked=(targetData["faaliyet_raporunda_gozuksun"] == '1' ? true : false  ) value=targetData["faaliyet_raporunda_gozuksun"]) 
+                        span Faaliyet Raporunda Gözüksün mü?
+                if data.extraData && data.extraData.files && data.extraData.files.length != 0 
+                  div(class="row col-md-12")
+                    div(class="col-md-12")
+                      .form-group 
+                        span -- Yüklü Dosyalar 
+                        div(style="margin-top: 10px;")  
+                          each s,index in data.extraData.files
+                            div
+                              span="Dosya "+(index+1) 
+                              a(href="/firmaImages/"+s.firma_id+"/"+s.dosya_adi target="_blank")="  Görüntüle"
+                if targetData && targetData["destek_talebi_id"] 
+                  div(class="row col-md-12")
+                    div(class="col-md-12")
+                      .form-group
+                        span -- Teknik Destek Talep Bilgisi  
+                    div(class="col-md-12")
+                      .form-group
+                        label Açıklama
+                        textarea.form-control(type='text' disabled ajax-key="p" rows="4")=targetData["destek_talebi_aciklama"] 
+                    div(class="col-md-6")
+                      .form-group
+                        label İletişim Bilgisi
+                        input.form-control(type='text' disabled  ajax-key="p"  value=targetData["destek_talebi_iletisim_bilgisi"] )
+                    div(class="col-md-6")
+                      .form-group
+                        label Fiyat
+                        input.form-control(type='text' disabled ajax-key="p"  value=targetData["destek_talebi_fiyat_bilgisi"] )
+                .form-footer
+                  button.btn.btn-primary(type='submit') Kaydet
+                  a(href='/web/table/'+data.table)
+                    button.btn.btn-secondary(type='button' ) Vazgeç
+                  if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
+                    .float-right    
+                      button.btn.btn-danger(type='button' onclick=`Http.Delete('/api/${data.table}/delete/${targetData[data.idColName]}',formBasarili)`) Sil
+
+block javascript 
+  script.
+    function formBasarili(obj){
+      if(obj.status==1){
+        setTimeout(()=>{
+            showNotification(obj.message,"success");
+            location.href="/web/table/#{data.table}";
+        },200)
+      }else{
+        showNotification(obj.message,"error");
+      }
+
+    }
+  if targetData && targetData[data.idColName] && targetData[data.idColName] != "" 
+    script.     
+      function formValitdate(e){
+          try { 
+            if(!controls()){
+              Http.Put('/api/!{data.table}/update/!{targetData[data.idColName]}',collectData("f"),formBasarili)
+            }
+          }catch(e){
+            console.log(e);
+          }
+            
+      } 
+  else 
+    script.     
+      function formValitdate(e){
+          try {
+            if(!controls()){
+              Http.Post('/api/!{data.table}/add',collectData("f"),formBasarili)
+            }
+          }catch(e){
+            console.log(e);
+          }
+            
+      } 

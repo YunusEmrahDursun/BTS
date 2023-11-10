@@ -66,12 +66,17 @@ router.post(p.add, async (req: Request, res: Response) => {
         status = 0;
     }else{
         try {
-            const tempData = Procedures.checkData(Procedures.getColumnsWithoutId(table),data);
+            let tempData = Procedures.checkData(Procedures.getColumnsWithoutId(table),data);
             if(Procedures.tables[table].check_firma_id){ tempData.firma_id = req.session.user.firma_id; }
-            await db.insert(tempData,table+"_table");
+
+            
+            if(customFunctions[Procedures.tables[table].beforeCreate]){
+                tempData =await customFunctions[Procedures.tables[table].beforeCreate](req,tempData);
+            }
+            const insertId=(await db.insert(tempData,table+"_table")).insertId;
 
             if(customFunctions[Procedures.tables[table].create]){
-                customFunctions[Procedures.tables[table].create](data);
+                customFunctions[Procedures.tables[table].create](req,{id:insertId,...data});
             }
            
             text = "Ekleme İşlemi Başarılı!";
@@ -106,7 +111,7 @@ router.put(p.update, async (req: Request, res: Response) => {
             await db.update(Procedures.checkData(Procedures.getColumnsWithoutId(table),data),{[Procedures.getTableIdColumnName(table)]:id},table+"_table");
             text = "Güncelleme İşlemi Başarılı!";
             if(customFunctions[Procedures.tables[table].update]){
-                customFunctions[Procedures.tables[table].update](req,data);
+                customFunctions[Procedures.tables[table].update](req,{id:id,...data});
             }
         } catch (error) {
             logger.err(error, true);

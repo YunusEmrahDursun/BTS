@@ -13,6 +13,26 @@ block content
     .col-lg-6.col-md-12.col-sm-12
       .row.clearfix
         .col-lg-6.col-md-6
+          .card-wrapper.flip-left(onclick="faaliyetRapor()")
+            .card.s-widget-top
+              .front.p-3.px-4
+                div Faaliyet Raporu
+                .py-4.m-0.text-center.h2.text-info=data.faaliyetTaskCount
+              .back.p-3.px-4.bg-info.text-center
+                p.text-light Bu Ay
+                .py-4.m-0.text-center.h2
+                  i.icon-printer
+        .col-lg-6.col-md-6
+          .card-wrapper.flip-left(onclick="allTask()")
+            .card.s-widget-top
+              .front.p-3.px-4
+                div İş Emirleri Tamamı
+                .py-4.m-0.text-center.h2.text-info=data.isEmiriCount
+              .back.p-3.px-4.bg-info.text-center
+                p.text-light Hepsi
+                .py-4.m-0.text-center.h2
+                  i.icon-printer
+        .col-lg-6.col-md-6
           .card-wrapper.flip-left(onclick="thisMonthClosedTasks()")
             .card.s-widget-top
               .front.p-3.px-4
@@ -48,16 +68,7 @@ block content
                 p.text-light Personel Bilgileri
                 .py-4.m-0.text-center.h2
                   i.icon-printer
-        .col-lg-6.col-md-6
-          .card-wrapper.flip-left(onclick="allTask()")
-            .card.s-widget-top
-              .front.p-3.px-4
-                div İş Emirleri Tamamı
-                .py-4.m-0.text-center.h2.text-info=data.isEmiriCount
-              .back.p-3.px-4.bg-info.text-center
-                p.text-light Hepsi
-                .py-4.m-0.text-center.h2
-                  i.icon-printer
+
     .col-lg-6.col-md-6.col-sm-12
       .card
         .body
@@ -77,6 +88,10 @@ block content
                   i.icon-printer
 block javascript
   script.
+    function faaliyetRapor(){
+      const data = Dynajax("pdf-faaliyetRaporu","z",null,null,false,null,false,false)
+      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"Faaliyet-raporu")
+    }
     function thisMonthClosedTasks(){
       const data = Dynajax("pdf-thisMonthClosedTasks","z",null,null,false,null,false,false)
       excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"], data.d.map(i=> Object.values(i)) ,"Tamamlanmış-İş-Emirleri-" + moment().format("MMMM") )
@@ -91,7 +106,7 @@ block javascript
     }
     function allTask(){
       const data = Dynajax("pdf-all-taks","z",null,null,false,null,false,false)
-      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"bütün-iş-emirleri")
+      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"Bütün-iş-emirleri")
     }
     function month(month){
       const data = Dynajax("pdf-month/" + month,"z",null,null,false,null,false,false)

@@ -133,9 +133,13 @@ router.use('/report', async (req: Request, res: Response) => {
 
     let userCount:any = await db.queryObject(`SELECT count(*) as total FROM ${global.databaseName}.kullanici_table where firma_id = :firmaId and silindi_mi = 0;`,{firmaId});
     let isEmiriCount:any = await db.queryObject(`SELECT count(*) as total FROM ${global.databaseName}.is_emri_table where firma_id = :firmaId and silindi_mi = 0;`,{firmaId}) ; 
+    let faaliyetTaskCount:any = await db.queryObject(`
+    SELECT count(*)  as total FROM ${global.databaseName}.is_emri_table where firma_id = :firmaId and silindi_mi = 0 and faaliyet_raporunda_gozuksun=1 and  MONTH(is_emri_olusturma_tarihi) = MONTH(CURDATE());`
+    ,{firmaId}) ;
     res.render('pages/report',{title:"Raporlama Sayfası",data: {
         userCount:userCount[0].total,
         isEmiriCount:isEmiriCount[0].total,
+        faaliyetTaskCount:faaliyetTaskCount[0].total,
         months:result.map(i=> {
             return {
                 ...i,
@@ -193,7 +197,6 @@ router.use('/invite', async (req: Request, res: Response) => {
 
 
 
-
 router.use('/table/:table',async (req: Request, res: Response) => {
     const { table } = req.params;
     if(!Procedures.checkTable(table) ) return res.status(NO_CONTENT).end();
@@ -216,6 +219,7 @@ router.use('/table/:table',async (req: Request, res: Response) => {
         idColName:Procedures.getTableIdColumnName(table)
     }});
 });
+
 router.use('/form/:table/:id?',async (req: Request, res: Response) => {
     const { table,id } = req.params;
     if(!Procedures.checkTable(table) )  return res.status(NO_CONTENT).end(); 
@@ -226,6 +230,13 @@ router.use('/form/:table/:id?',async (req: Request, res: Response) => {
         for (let key in restTable.props ) {
             let item=restTable.props[key]
             if(item.f && item.t && item.t=="select") s[item.f]=await db.selectAll(item.f+"_table");
+        }
+    }
+    let extraData={};
+    if(restTable.extra){
+        const firmaId=req.session.user.firma_id;
+        for (let item of restTable.extra ) {
+            extraData[item.key] = await db.queryObject(item.sql,{id:id,firmaId:firmaId});
         }
     }
     let result={};
@@ -243,6 +254,7 @@ router.use('/form/:table/:id?',async (req: Request, res: Response) => {
     res.render(pug,{title:restTable.title,data:{
         table:table,
         static:s,
+        extraData,
         idColName:Procedures.getTableIdColumnName(table),
         ...restTable
     },targetData:result});
