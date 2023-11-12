@@ -9,6 +9,7 @@
                 { table:"ilceler" ,auth : ["admin"] },  
                 { table:"iller",auth : ["admin"] },
                 { table:"is_emri" , auth:["sube","admin"] },
+                { table:"temizlik" , auth:["sube","admin"] },
                 { table:"is_emri_durum" , auth:["admin"] },
                 { table:"bina" , auth:["admin","sube"] },
                 { table:"sube" , auth:["admin","sube"] },

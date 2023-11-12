@@ -39,7 +39,8 @@ export default {
         "sube":Tables.sube,
         "kullanici":Tables.kullanici,
         "yetki":Tables.yetki,
-        "bina":Tables.bina
+        "bina":Tables.bina,
+        "temizlik":Tables.temizlik
     },
     getPaths:function(){
         const paths={

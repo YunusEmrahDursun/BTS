@@ -1,13 +1,7 @@
 script.
   let select2ConnectWarning;
-  $(document).ready(function(){
-      $(window).keydown(function(event){
-        if(event.keyCode == 13) {
-          event.preventDefault();
-          return false;
-        }
-      });
-      $(".select2").select2({
+  function initSelect2(){
+    $(".select2").select2({
         language: {
            noResults: function () {
             if(select2ConnectWarning){
@@ -49,6 +43,23 @@ script.
           cache: true
         },
       });
+      $('.select2').each(function(){
+        if($(this).attr("initialValue")){
+
+          const data = Dynajax("dyndata/!{data && data.table}","_",null,null,true,{ id :$(this).attr("initialValue"),col:$(this).attr("name") },false,false);
+          $(this).append(`<option selected value="${$(this).attr("initialValue")}">${data.d}</option>`)
+
+        }
+      })
+  }
+  $(document).ready(function(){
+      $(window).keydown(function(event){
+        if(event.keyCode == 13) {
+          event.preventDefault();
+          return false;
+        }
+      });
+      initSelect2();
       let round=#{(data && data.round) || false }
       if(round){
         document.querySelectorAll("[ajax-key='f']").forEach((e)=> e.classList.add("round"));

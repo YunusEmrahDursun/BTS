@@ -72,15 +72,16 @@ router.post('/register', async (req: Request, res: Response) => {
                 katilim_linki:data.link
             },"katilim_linki_table"));
         
-            var yetki:any[]=(await  db.selectQuery({
-                yetki_key:"teknik"
-            },"yetki_table"));
+            // var yetki:any[]=(await  db.selectQuery({
+            //     yetki_key:"teknik"
+            // },"yetki_table"));
 
-            if( yetki.length == 0 ){
-                text = "Birşeyler ters gitti!";
-                logger.err("yetki bulunamadı "+ JSON.stringify(yetki), true);
-                status = 0;
-            }else if(katilimLinki.length == 0){
+            // if( yetki.length == 0 ){
+            //     text = "Birşeyler ters gitti!";
+            //     logger.err("yetki bulunamadı "+ JSON.stringify(yetki), true);
+            //     status = 0;
+            // }else
+             if(katilimLinki.length == 0){
                 text = "Katılım Linki Bulunamadı!";
                 status = 0;
             }
@@ -95,7 +96,7 @@ router.post('/register', async (req: Request, res: Response) => {
                     sube_id: katilimLinki[0].sube_id,
                     firma_id: katilimLinki[0].firma_id,
                     kullanici_token:token,
-                    yetki_id:yetki[0].yetki_id
+                    yetki_id:katilimLinki[0].yetki_id
                 }
                 await db.insert(tempData,"kullanici_table");
                 await db.setSilindi({  katilim_linki:data.link },"katilim_linki_table");

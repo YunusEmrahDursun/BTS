@@ -102,6 +102,9 @@ function collectData(key,ndata){
             }
             
         }
+        else if($(this).hasClass("date")){
+            kdata[name]= moment($(this).val()+" 00:00","DD/MM/YYYY HH:mm").format("YYYY-MM-DD HH:mm:ss");
+        }
         else{
             kdata[name]=$(this).val();
         }

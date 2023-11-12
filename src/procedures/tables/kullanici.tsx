@@ -3,7 +3,7 @@ export default{
     title:"Kullanıcı",
     check_firma_id:true,
     columns:[ "kullanici_id", "kullanici_isim", "kullanici_soyisim", "kullanici_adi", "kullanici_telefon","yetki_id","sube_id"],
-    turkce:["#","İsim","Soy İsim","E-posta","Telefon","Yetki","Şube"],
+    turkce:["#","İsim","Soy İsim","Kullanıcı Adı","Telefon","Yetki","Şube"],
     required:["kullanici_isim","kullanici_adi"],
     props:{
         "yetki_id":{k:"yetki_adi",q:"y",t:"select",f:"yetki"},

@@ -35,6 +35,40 @@ router.post('/table/:table',async function(req, res, next) {
     }
   
 });
+
+//select initial get Text
+router.post('/dyndata/:table', async function (req, res, next) {
+  const { table } = req.params; 
+  const id = req.body.ndata.id;
+  const col = req.body.ndata.col;
+  if(!Procedures.checkTable(table)  ) return res.status(NO_CONTENT).end();
+  if(!Procedures.checkAuth(table,req.session.auth,"read")) return res.status(FORBIDDEN).end();
+  const restTable=Procedures.tables[table]; 
+  if(!restTable.props[col]?.f) return res.status(NO_CONTENT).end();
+  
+  const targetTable=restTable.props[col].f;
+  const tableIdName:string=Procedures.getTableIdColumnName(targetTable);
+  const textName:string=restTable.props[col]?.k || col
+  const colNames=[  textName ];
+  
+  const where= { };
+  try {
+    if( Procedures.tables[restTable.props[col].f].check_firma_id ){
+      const firmaId= req.session.user.firma_id;
+      where["firma_id"] = firmaId;
+    }
+  } catch (error) {
+    logger.err(error, true);
+    res.status(NO_CONTENT).end();
+  }
+ 
+  if(id){
+    where[tableIdName] = id;
+  }
+  const result = await db.selectOneQuery(where,targetTable+"_table")
+  res.send({d:result[textName],status:1});
+});
+
 //select search
 router.get('/dyndata/:table', async function (req, res, next) {
     const { table } = req.params; 
@@ -89,15 +123,16 @@ router.get('/dyndata/:table', async function (req, res, next) {
                 katilim_linki:link
             },"katilim_linki_table"));
         
-            var yetki:any[]=(await  db.selectQuery({
-                yetki_key:"teknik"
-            },"yetki_table"));
+            // var yetki:any[]=(await  db.selectQuery({
+            //     yetki_key:"teknik"
+            // },"yetki_table"));
   
-            if( yetki.length == 0 ){
-                text = "Birşeyler ters gitti!";
-                logger.err("yetki bulunamadı "+ JSON.stringify(yetki), true);
-                status = 0;
-            }else if(katilimLinki.length == 0){
+            // if( yetki.length == 0 ){
+            //     text = "Birşeyler ters gitti!";
+            //     logger.err("yetki bulunamadı "+ JSON.stringify(yetki), true);
+            //     status = 0;
+            // }else 
+            if(katilimLinki.length == 0){
                 text = "Katılım Linki Bulunamadı!";
                 status = 0;
             }
@@ -110,7 +145,7 @@ router.get('/dyndata/:table', async function (req, res, next) {
                     kullanici_telefon: data.kullanici_telefon,
                     sube_id: katilimLinki[0].sube_id,
                     firma_id: katilimLinki[0].firma_id,
-                    yetki_id:yetki[0].yetki_id
+                    yetki_id:katilimLinki[0].yetki_id
                 }
                 await db.insert(tempData,"kullanici_table");
                 await db.setSilindi({  katilim_linki:data.link },"katilim_linki_table");
@@ -185,7 +220,8 @@ router.use('/createLink', async (req: Request, res: Response) => {
   await db.insert({
     katilim_linki:createdLink,
     sube_id:data.sube_id,
-    firma_id:firmaId
+    firma_id:firmaId,
+    yetki_id:data.yetki_id
   },"katilim_linki_table")
   res.send({d:createdLink,status:1});
 });

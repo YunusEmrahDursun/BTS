@@ -156,8 +156,10 @@ router.use('/invite', async (req: Request, res: Response) => {
     if(!["admin","sube"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
     if(!firmaId) return res.status(FORBIDDEN).end();
     var subeler=(await  db.selectQuery({  firma_id:firmaId  },"sube_table"));
+    var yetkiler=(await  db.selectAll("yetki_table"));
     res.render('pages/invite',{title:"Davet Linki Oluştur",data: {
-        subeler
+        subeler,
+        yetkiler
     }});
 });
 // router.use('/form/firmalar/:id?',async (req: Request, res: Response) => {

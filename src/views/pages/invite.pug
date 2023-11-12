@@ -17,18 +17,25 @@ block content
             .body
               form.form-auth-small.m-t-20(novalidate data-parsley-validate onsubmit="return false;")
                 div(class="row col-md-12")
-                  div(class="col-md-4"  )
+                  div(class="col-md-3"  )
                     .form-group
                         label Şube
                         select.custom-select.mb-2(name="sube_id" ajax-key="f" enforced=true)
                           option(value="")= "Seçiniz"
                           each s in data.subeler
                             option(value=s.sube_id)=s.sube_adi
+                  div(class="col-md-3"  )
+                    .form-group
+                        label Yetkisi
+                        select.custom-select.mb-2(name="yetki_id" ajax-key="f" enforced=true)
+                          option(value="")= "Seçiniz"
+                          each s in data.yetkiler
+                            option(value=s.yetki_id)=s.yetki_adi
                   div(class="col-md-1"  )
                     button.btn.btn-primary(onclick="generateLink()" style="margin-top: 2em;") Oluştur          
-                  div(class="col-md-4"  )
+                  div(class="col-md-3"  )
                     .form-group
-                        label Oluşturulan Link
+                        label Oluşturulan Kod
                         input.form-control(type='text' disabled=true  value="" id="createdLink" )
                   div(class="col-md-1"  )
                     button.btn.btn-primary(onclick="copyIt()" style="margin-top: 2em;") Kopyala 

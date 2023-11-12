@@ -12027,7 +12027,7 @@ ul.gallery li a {
 .theme-cyan .fancy-checkbox input[type="checkbox"]:checked+span:before {
   color: #17C2D7;
   border-color: #17C2D7;
-  padding: 2px 1px;
+  padding: 1.1px 1px;
 }
 
 .theme-cyan .chat-widget li.right .chat-info {

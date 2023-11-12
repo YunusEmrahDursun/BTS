@@ -1,0 +1,123 @@
+extends ../static-pages/layout
+block content
+  .block-header
+    .row.clearfix
+      .col-md-6.col-sm-12
+        h1=title
+        nav(aria-label='breadcrumb')
+          ol.breadcrumb
+            li.breadcrumb-item
+              |  BTS
+            li.breadcrumb-item.active(aria-current='page')=title
+  .row.clearfix
+    .col-lg-12.col-md-12
+      .card  
+        ul.nav.nav-tabs2.space-between
+          li.nav-item
+            a.nav-link.show( href='#')="Kayıt Ekle"
+          li.nav-item.float-right
+            a.nav-link.active( href='/web/table/'+data.table)=title +" Tablosu"
+        .tab-content    
+          .tab-content
+            .body
+              form.form-auth-small.m-t-20(novalidate data-parsley-validate onsubmit="formValitdate(this);return false;")
+                include ./components/inputGen
+                div(id="binaListArea" )  
+                  div(class="row col-md-12" )
+                    div(class="col-md-12")                    
+                      .form-group 
+                        span -- Temizlik Sırası
+                  if targetData && targetData[data.idColName] && targetData[data.idColName] != ""  && targetData["data"] && JSON.parse(targetData["data"]).length != 0 
+                    -const binaArrData = JSON.parse(targetData["data"])
+                    each item in binaArrData
+                      div(class="row col-md-12 mb-3 bina" )
+                        div(class="col-md-6")
+                          select.select2(name="bina_id" initialValue=item )
+                            option(value='' selected='' )= "Seçiniz"
+                        div(class="col-md-6")
+                          button.btn.btn-success.btn-round(type='button' onclick="addNode(this)" ) Yeni Ekle
+                          button.btn.btn-danger.btn-round(type='button' onclick="deleteNode(this)" ) Sil   
+                  else
+                    div(class="row col-md-12 mb-3 bina" )
+                      div(class="col-md-6")
+                        select.select2(name="bina_id"  )
+                          option(value='' selected='' )= "Seçiniz"
+                      div(class="col-md-6")
+                        button.btn.btn-success.btn-round(type='button' onclick="addNode(this)" ) Yeni Ekle
+                        button.btn.btn-danger.btn-round(type='button' onclick="deleteNode(this)" ) Sil
+                .form-footer
+                  button.btn.btn-primary(type='submit') Kaydet
+                  a(href='/web/table/'+data.table)
+                    button.btn.btn-secondary(type='button' ) Vazgeç
+                  if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
+                    .float-right    
+                      button.btn.btn-danger(type='button' onclick=`Http.Delete('/api/${data.table}/delete/${targetData[data.idColName]}',formBasarili)`) Sil
+
+block javascript 
+  script.
+    function formBasarili(obj){
+      if(obj.status==1){
+        setTimeout(()=>{
+            showNotification(obj.message,"success");
+            location.href="/web/table/#{data.table}";
+        },200)
+      }else{
+        showNotification(obj.message,"error");
+      }
+    }
+    function addNode(e){
+      $(e).parent().parent().after(`
+        <div class="row col-md-12 mb-3 bina">
+          <div class="col-md-6">
+            <select class="select2" name="bina_id" tabindex="-1" >
+              <option value="" selected="">Seçiniz</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <button class="btn btn-success btn-round" type="button" onclick="addNode(this)">Yeni Ekle</button>
+            <button class="btn btn-danger btn-round" type="button" onclick="deleteNode(this)">Sil</button>
+          </div>
+        </div>
+      `);
+      initSelect2();
+    }
+    function deleteNode(e){
+      if($("#binaListArea .bina").length != 1)
+      $(e).parent().parent().remove()
+    }
+  if targetData && targetData[data.idColName] && targetData[data.idColName] != "" 
+    script.     
+      function formValitdate(e){
+          try { 
+            if(!controls()){
+              var binaArr=[];
+              document.querySelectorAll("#binaListArea .bina").forEach(i=>  {
+                  const value=i.querySelector("[name='bina_id']").value;
+                  if( value )  
+                    binaArr.push(value)
+              })
+              Http.Put('/api/!{data.table}/update/!{targetData[data.idColName]}',{kdata:{...collectData("f").kdata,data:JSON.stringify(binaArr)}},formBasarili)
+            }
+          }catch(e){
+            console.log(e);
+          }
+            
+      } 
+  else 
+    script.     
+      function formValitdate(e){
+          try {
+            if(!controls()){
+              var binaArr=[];
+              document.querySelectorAll("#binaListArea .bina").forEach(i=>  {
+                  const value=i.querySelector("[name='bina_id']").value;
+                  if( value )  
+                    binaArr.push(value)
+              })
+              Http.Post('/api/!{data.table}/add',{kdata:{...collectData("f").kdata,data:JSON.stringify(binaArr)}},formBasarili)
+            }
+          }catch(e){
+            console.log(e);
+          }
+            
+      } 
