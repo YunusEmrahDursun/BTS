@@ -46,7 +46,7 @@ script.
       $('.select2').each(function(){
         if($(this).attr("initialValue")){
 
-          const data = Dynajax("dyndata/!{data && data.table}","_",null,null,true,{ id :$(this).attr("initialValue"),col:$(this).attr("name") },false,false);
+          const data = Dynajax("dyndata/!{data && data.table}","_",null,null,false,{ id :$(this).attr("initialValue"),col:$(this).attr("name") },false,false);
           $(this).append(`<option selected value="${$(this).attr("initialValue")}">${data.d}</option>`)
 
         }

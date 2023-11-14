@@ -39,8 +39,25 @@ async function beforeTaskCreated(req, data) {
         logger.err(error);
     }
 }
+async function temizlikDataAddTaskStatus(req, data) {
+    try {
+        
+        const durum = await db.selectOneQuery({temizlik_durum_key:'open'},'temizlik_durum_table')
+        
+        try {
+            const arr = JSON.parse(data.data);
+            data.data = JSON.stringify(arr.map(i=> { if(!i.temizlik_durum_id) { return {...i,temizlik_durum_id:durum.temizlik_durum_id} } else return i}))
+        } catch (error) {
+            
+        }
+        return data;
+    } catch (error) {
+        logger.err(error);
+    }
+}
 export default {
     taskCreated,
     taskUpdated,
-    beforeTaskCreated
+    beforeTaskCreated,
+    temizlikDataAddTaskStatus
 }

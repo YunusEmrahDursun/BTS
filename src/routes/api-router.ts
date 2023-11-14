@@ -108,7 +108,14 @@ router.put(p.update, async (req: Request, res: Response) => {
     }
     else{
         try {
-            await db.update(Procedures.checkData(Procedures.getColumnsWithoutId(table),data),{[Procedures.getTableIdColumnName(table)]:id},table+"_table");
+            let tempData = Procedures.checkData(Procedures.getColumnsWithoutId(table),data);
+            if(Procedures.tables[table].check_firma_id){ tempData.firma_id = req.session.user.firma_id; }
+
+            if(customFunctions[Procedures.tables[table].beforeUpdate]){
+                tempData =await customFunctions[Procedures.tables[table].beforeUpdate](req,tempData);
+            }
+
+            await db.update(tempData,{[Procedures.getTableIdColumnName(table)]:id},table+"_table");
             text = "Güncelleme İşlemi Başarılı!";
             if(customFunctions[Procedures.tables[table].update]){
                 customFunctions[Procedures.tables[table].update](req,{id:id,...data});
