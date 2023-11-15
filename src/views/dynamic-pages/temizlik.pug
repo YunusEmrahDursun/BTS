@@ -1,5 +1,7 @@
 extends ../static-pages/layout
 block content
+  div(id="id"  data=targetData[data.idColName])
+  div(id="table"  data=data.table)
   .block-header
     .row.clearfix
       .col-md-6.col-sm-12
@@ -20,7 +22,7 @@ block content
         .tab-content    
           .tab-content
             .body
-              form.form-auth-small.m-t-20(novalidate data-parsley-validate onsubmit="formValitdate(this);return false;")
+              form.form-auth-small.m-t-20#form(novalidate data-parsley-validate )
                 include ./components/inputGen
                 div(id="binaListArea" )  
                   div(class="row col-md-12" )
@@ -47,8 +49,8 @@ block content
                                 else
                                   option(value=s["temizlik_durum_id"])=s["temizlik_durum_adı"]
                         div(class="col-md-4")
-                          button.btn.btn-success.btn-round.mt-4(type='button' onclick="addNode(this)" ) Yeni Ekle
-                          button.btn.btn-danger.btn-round.mt-4(type='button' onclick="deleteNode(this)" ) Sil   
+                          button.btn.btn-success.btn-round.mt-4.addNode(type='button'  ) Yeni Ekle
+                          button.btn.btn-danger.btn-round.mt-4.deleteNode(type='button'  ) Sil   
                   else
                     div(class="row col-md-12 mb-3 bina" )
                       div(class="col-md-4")
@@ -57,89 +59,15 @@ block content
                           select.select2(name="bina_id"  )
                             option(value='' selected='' )= "Seçiniz"
                       div(class="col-md-6")
-                        button.btn.btn-success.btn-round.mt-4(type='button' onclick="addNode(this)" ) Yeni Ekle
-                        button.btn.btn-danger.btn-round.mt-4(type='button' onclick="deleteNode(this)" ) Sil
+                        button.btn.btn-success.btn-round.mt-4.addNode(type='button'  ) Yeni Ekle
+                        button.btn.btn-danger.btn-round.mt-4.deleteNode(type='button'  ) Sil
                 .form-footer
                   button.btn.btn-primary(type='submit') Kaydet
                   a(href='/web/table/'+data.table)
                     button.btn.btn-secondary(type='button' ) Vazgeç
                   if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
                     .float-right    
-                      button.btn.btn-danger(type='button' onclick=`Http.Delete('/api/${data.table}/delete/${targetData[data.idColName]}',formBasarili)`) Sil
+                      button.btn.btn-danger#deleteForm(type='button' ) Sil
 
 block javascript 
-  script.
-    function formBasarili(obj){
-      if(obj.status==1){
-        setTimeout(()=>{
-            showNotification(obj.message,"success");
-            location.href="/web/table/#{data.table}";
-        },200)
-      }else{
-        showNotification(obj.message,"error");
-      }
-    }
-    function addNode(e){
-      $(e).parent().parent().after(`
-        <div class="row col-md-12 mb-3 bina">
-          <div class="col-md-4">
-            <div class="form-group"> 
-              <label>Bina </label>
-              <select class="select2" name="bina_id" tabindex="-1" >
-                <option value="" selected="">Seçiniz</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <button class="btn btn-success btn-round mt-4" type="button" onclick="addNode(this)">Yeni Ekle</button>
-            <button class="btn btn-danger btn-round mt-4" type="button" onclick="deleteNode(this)">Sil</button>
-          </div>
-        </div>
-      `);
-      initSelect2();
-    }
-    function deleteNode(e){
-      if($("#binaListArea .bina").length != 1)
-      $(e).parent().parent().remove()
-    }
-  if targetData && targetData[data.idColName] && targetData[data.idColName] != "" 
-    script.     
-      function formValitdate(e){
-          try { 
-            if(!controls()){
-              var binaArr=[];
-              document.querySelectorAll("#binaListArea .bina").forEach(i=>  {
-
-                  if(i.querySelector("[name='bina_id']").value){
-                    const obj = {}
-                    try{ obj["bina_id"] = i.querySelector("[name='bina_id']").value }catch(error){}
-                    try{ obj["temizlik_durum_id"] = i.querySelector("[name='temizlik_durum_id']").value }catch(error){}
-                    binaArr.push(obj)
-                  }
-              
-              })
-              Http.Put('/api/!{data.table}/update/!{targetData[data.idColName]}',{kdata:{...collectData("f").kdata,data:JSON.stringify(binaArr)}},formBasarili)
-            }
-          }catch(e){
-            console.log(e);
-          }
-            
-      } 
-  else 
-    script.     
-      function formValitdate(e){
-          try {
-            if(!controls()){
-              var binaArr=[];
-              document.querySelectorAll("#binaListArea .bina").forEach(i=>  {
-                  const value=i.querySelector("[name='bina_id']").value;
-                  if( value )  
-                    binaArr.push(value)
-              })
-              Http.Post('/api/!{data.table}/add',{kdata:{...collectData("f").kdata,data:JSON.stringify(binaArr)}},formBasarili)
-            }
-          }catch(e){
-            console.log(e);
-          }
-            
-      } 
+  script(src='/scripts/pages/temizlik.js')

@@ -32,23 +32,12 @@ block content
                           each s in data.yetkiler
                             option(value=s.yetki_id)=s.yetki_adi
                   div(class="col-md-1"  )
-                    button.btn.btn-primary(onclick="generateLink()" style="margin-top: 2em;") Oluştur          
+                    button.btn.btn-primary#generateLink( style="margin-top: 2em;") Oluştur          
                   div(class="col-md-3"  )
                     .form-group
                         label Oluşturulan Kod
                         input.form-control(type='text' disabled=true  value="" id="createdLink" )
                   div(class="col-md-1"  )
-                    button.btn.btn-primary(onclick="copyIt()" style="margin-top: 2em;") Kopyala 
+                    button.btn.btn-primary#copyIt( style="margin-top: 2em;") Kopyala 
 block javascript
-  script.
-    function generateLink(){
-      const data = Dynajax("createLink","f",null,null,true,null,false,false);
-      if(data)
-      $("#createdLink").val(data.d)
-
-    }
-    function copyIt(){
-      let copyText = document.querySelector('#createdLink')
-      copyText.select();
-      navigator.clipboard.writeText(copyText.value);
-    }
+  script(src='/scripts/pages/invite.js')

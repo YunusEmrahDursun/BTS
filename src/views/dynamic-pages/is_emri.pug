@@ -1,5 +1,7 @@
 extends ../static-pages/layout
 block content
+  div(id="id"  data=targetData[data.idColName])
+  div(id="table"  data=data.table)
   .block-header
     .row.clearfix
       .col-md-6.col-sm-12
@@ -20,7 +22,7 @@ block content
         .tab-content    
           .tab-content
             .body
-              form.form-auth-small.m-t-20(novalidate data-parsley-validate onsubmit="formValitdate(this);return false;")
+              form.form-auth-small.m-t-20#form(novalidate data-parsley-validate )
                 include ./components/inputGen
                 div(class="row col-md-12")
                   if targetData && targetData[data.idColName] && targetData[data.idColName] != ""
@@ -72,42 +74,7 @@ block content
                     button.btn.btn-secondary(type='button' ) Vazgeç
                   if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
                     .float-right    
-                      button.btn.btn-danger(type='button' onclick=`Http.Delete('/api/${data.table}/delete/${targetData[data.idColName]}',formBasarili)`) Sil
+                      button.btn.btn-danger#deleteForm(type='button' ) Sil
 
 block javascript 
-  script.
-    function formBasarili(obj){
-      if(obj.status==1){
-        setTimeout(()=>{
-            showNotification(obj.message,"success");
-            location.href="/web/table/#{data.table}";
-        },200)
-      }else{
-        showNotification(obj.message,"error");
-      }
-
-    }
-  if targetData && targetData[data.idColName] && targetData[data.idColName] != "" 
-    script.     
-      function formValitdate(e){
-          try { 
-            if(!controls()){
-              Http.Put('/api/!{data.table}/update/!{targetData[data.idColName]}',collectData("f"),formBasarili)
-            }
-          }catch(e){
-            console.log(e);
-          }
-            
-      } 
-  else 
-    script.     
-      function formValitdate(e){
-          try {
-            if(!controls()){
-              Http.Post('/api/!{data.table}/add',collectData("f"),formBasarili)
-            }
-          }catch(e){
-            console.log(e);
-          }
-            
-      } 
+  script(src='/scripts/pages/is_emri.js')

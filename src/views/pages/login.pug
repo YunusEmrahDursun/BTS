@@ -4,7 +4,7 @@ block content
     .auth_div.vivify.fadeInTop
       .card
         .body
-          form.form-auth-small(novalidate data-parsley-validate onsubmit="formValitdate(this);return false" style="width: 350px;")
+          form#form.form-auth-small(novalidate data-parsley-validate style="width: 350px;")
             h4(style="text-align: center;margin-bottom:10px")=title
             .form-group
               input#signin-text.form-control.round(type='text'  placeholder='Kullanıcı Adı' required ajax-key="l"  name='kullanici_adi')
@@ -12,7 +12,7 @@ block content
               input#signin-password.form-control.round(type='password'  placeholder='Parola' required ajax-key="l" name='kullanici_parola')
 
             button.btn.btn-primary.btn-round.btn-block(type='submit') Giriş
-            button.btn.btn-primary.btn-round.btn-block(onclick="location.href='register'") Kayıt Ol
+            button.btn.btn-primary.btn-round.btn-block#goRegister Kayıt Ol
           .pattern
             span.red
             span.indigo
@@ -22,12 +22,4 @@ block content
     #particles-js
       canvas.particles-js-canvas-el(width='1920' height='612' style='width: 100%; height: 100%;')
 block javascript 
-  script.
-    function formValitdate(e){
-        var form = $(e);
-        form.parsley().validate();
-        console.log(form.parsley().isValid())
-        if(form.parsley().isValid()){
-            Dynajax( 'login', 'l', ()=>{toLink("/web/dashboard")} )
-        }
-    }
+  script(src='/scripts/pages/login.js')
