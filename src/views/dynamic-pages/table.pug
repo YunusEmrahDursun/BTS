@@ -3,6 +3,7 @@ block style
   link(rel='stylesheet' href='/css/dataTables.bootstrap4.min.css')
 block content
   div(id="data"  data=JSON.stringify(data))
+  div(id="table"  data=data.table)
   .block-header
     .row.clearfix
       .col-md-6.col-sm-12

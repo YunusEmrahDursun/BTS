@@ -1,5 +1,5 @@
 function formBasarili(obj){
-    let table = $("#table").attr("data");
+let table = $("#table").attr("data");
   if(obj.status==1){
     setTimeout(()=>{
         showNotification(obj.message,"success");

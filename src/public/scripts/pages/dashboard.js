@@ -1,6 +1,10 @@
 function getDasboardTableData(){
     Dynajax('isEmirleri','x',table,null,false);
   }
+  function rowData(e){
+    let rowId=$(e.currentTarget).attr("row-id")
+    window.open('/web/form/is_emri/'+rowId, '_self');
+  }
   function table(result){
     try{
         $(".table>tbody").html("");
@@ -19,7 +23,7 @@ function getDasboardTableData(){
               color = 'primary';
             }
             let tr=`
-              <tr class="tdata" row-id="${row.is_emri_id}" onclick="${`window.open('/web/form/is_emri/${row.is_emri_id}', '_self');`}">
+              <tr class="tdata rowData" row-id="${row.is_emri_id}" >
                  <td><span>${row.is_emri_id} </span></td>
                   <td>
                     <div class="d-flex align-items-center">
@@ -34,6 +38,7 @@ function getDasboardTableData(){
                   <td><span class="badge badge-${color} ml-0 mr-0">${row.is_emri_durum_adi}</span></td>
               </tr>`
             $(".table>tbody").append(tr)
+            $(".rowData").on("click",function(e)  {rowData(e);return false})
           })
         
         }else{

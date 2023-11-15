@@ -14,6 +14,7 @@ export default{
     props:{
         "bina_id":{f:"bina",k:"bina_adi",q:"b",t:"search"},
         "is_emri_olusturma_tarihi":{ t:"date"},
+        "ariza_bildiren_telefon":{ t:"phone"},
         "is_emri_kapanis_tarihi":{ t:"date"},
         "is_emri_aciklama":{ size:12 ,t:"textarea"},
         "is_emri_giden_kullanici_id":{f:"kullanici",k:"kullanici_isim",q:"gk",t:"search"},

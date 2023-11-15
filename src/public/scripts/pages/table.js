@@ -44,6 +44,17 @@ $(function() {
           refresh(1,this)
       }
   });
+  function rowData(e){
+    let table = $("#table").attr("data");
+    let link=$(e.currentTarget).attr("link")
+    let row_Id=$(e.currentTarget).attr("row-id")
+    let rowId=$(e.currentTarget).attr("rowId")
+    if(link && link  != "undefined"){
+      window.open(link+rowId, '_self');
+    }else{
+      window.open(`/web/form/${table}/${row_Id}`, '_self');
+    }
+  }
   function table(result){
     try{
       $(".table>tbody").html("");
@@ -94,10 +105,10 @@ $(function() {
                       </td>`
           }
           let tr=`
-            <tr class="tdata" row-id="${row[data.idColName]}" onclick="${data.link==undefined ? `window.open('/web/form/${data.table}/${row[data.idColName]}', '_self');` : `window.open('${data.link+row.id}', '_self');`}">
+            <tr class="tdata rowData" row-id="${row[data.idColName]}" rowId=${row.id} link=${data.link} >
                 ${data.tableHead.map((key,index)=>{
   
-                  if(data.hideColumn.includes(data.tableHead[index])){ return "" }
+                  if(data.hideColumn && data.hideColumn.includes(data.tableHead[index])){ return "" }
   
                   let td;
                   if(!data.dateIndex) data.dateIndex=[]
@@ -121,7 +132,9 @@ $(function() {
                 ${tdExtra}                       
             </tr>`
           $(".table>tbody").append(tr)
+          $(".rowData").on("click",function(e)  {rowData(e);return false})
         })
+        $(".rowData").on("click",function(e)  {rowData(e);return false})
         //pager
         var max ; 
         if(result.d[1][0].max)
