@@ -3,7 +3,7 @@
  */
 (function() {
     // Setup socket-io main connection
-    const socket = io('http://localhost:3000');
+    const socket = io(location.origin);
     socket.on('connect', () => {
         socketIo = socket;
         socket.on('update', (msg) => {
