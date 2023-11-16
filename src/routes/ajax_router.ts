@@ -252,7 +252,7 @@ router.post('/pdf-faaliyetRaporu', async function (req, res, next) {
   SELECT g.is_emri_id,u.kullanici_isim,u.kullanici_soyisim,g.is_emri_aciklama,g.is_emri_olusturma_tarihi,g.guncellenme_zamani,d.is_emri_durum_adi FROM ${global.databaseName}.is_emri_table as g
   inner join ${global.databaseName}.kullanici_table as u on u.kullanici_id = g.is_emri_giden_kullanici_id
   inner join ${global.databaseName}.is_emri_durum_table as d on d.is_emri_durum_id = g.is_emri_durum_id
-  where g.firma_id = :firmaId and g.silindi_mi = 0 and g.faaliyet_raporunda_gozuksun=1 and  MONTH(is_emri_olusturma_tarihi) = MONTH(CURDATE());`
+  where g.firma_id = :firmaId and g.silindi_mi = 0 and g.faaliyet_raporunda_gozuksun=1 and  MONTH(g.is_emri_olusturma_tarihi) = MONTH(CURDATE());`
   ,{firmaId}) ;
   res.send({d:tasks,status:1});
 });
@@ -263,7 +263,7 @@ router.post('/pdf-thisMonthClosedTasks', async function (req, res, next) {
   SELECT g.is_emri_id,u.kullanici_isim,u.kullanici_soyisim,g.is_emri_aciklama,g.is_emri_olusturma_tarihi,g.guncellenme_zamani,d.is_emri_durum_adi FROM ${global.databaseName}.is_emri_table as g
   inner join ${global.databaseName}.kullanici_table as u on u.kullanici_id = g.is_emri_giden_kullanici_id
   inner join ${global.databaseName}.is_emri_durum_table as d on d.is_emri_durum_id = g.is_emri_durum_id
-  where g.firma_id = :firmaId and d.is_emri_durum_id=:durumId and g.silindi_mi = 0 and  MONTH(is_emri_olusturma_tarihi) = MONTH(CURDATE());`
+  where g.firma_id = :firmaId and d.is_emri_durum_id=:durumId and g.silindi_mi = 0 and  MONTH(g.is_emri_olusturma_tarihi) = MONTH(CURDATE());`
   ,{firmaId,durumId:durum.is_emri_durum_id}) ;
   res.send({d:tasks,status:1});
 });
@@ -274,8 +274,8 @@ router.post('/pdf-thisMonthOpenTasks', async function (req, res, next) {
   SELECT g.is_emri_id,u.kullanici_isim,u.kullanici_soyisim,g.is_emri_aciklama,g.is_emri_olusturma_tarihi,g.guncellenme_zamani,d.is_emri_durum_adi FROM ${global.databaseName}.is_emri_table as g
   inner join ${global.databaseName}.kullanici_table as u on u.kullanici_id = g.is_emri_giden_kullanici_id
   inner join ${global.databaseName}.is_emri_durum_table as d on d.is_emri_durum_id = g.is_emri_durum_id
-  where g.firma_id = :firmaId and d.is_emri_durum_id!=:durumId and g.silindi_mi = 0 and  MONTH(is_emri_olusturma_tarihi) = MONTH(CURDATE());`
-  ,{firmaId,durum:durum.is_emri_durum_id}) ;
+  where g.firma_id = :firmaId and d.is_emri_durum_id!=:durumId and g.silindi_mi = 0 and  MONTH(g.is_emri_olusturma_tarihi) = MONTH(CURDATE());`
+  ,{firmaId,durumId:durum.is_emri_durum_id}) ;
   res.send({d:tasks,status:1});
 });
 router.post('/pdf-users', async function (req, res, next) {
