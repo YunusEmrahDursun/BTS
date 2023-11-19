@@ -313,9 +313,11 @@ var storageFile = multer.diskStorage({
     destination: function (req, file, cb) {
       var ext=file.originalname.substr(file.originalname.lastIndexOf("."));
       if(ext==".pdf"){
+        //path.join(__dirname, '../public/firmaFiles/')
         cb(null, 'src/public/firmaFiles/'+req.session?.user?.firma_id+"/");
       }
       else {
+        //path.join(__dirname, '../public/firmaFiles/')
         cb(null, 'src/public/firmaImages/'+req.session?.user?.firma_id+"/");
       }
     },
