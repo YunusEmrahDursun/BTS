@@ -4,8 +4,8 @@
             title:"",
             children:[
                 { title: "Ana Sayfa", link:"/web/dashboard",icon:"icon-home" },
-                { table:"firmalar",auth : ["admin"] },  
-                { table:"firma_tip",auth : ["admin"] },
+                // { table:"firmalar",auth : ["admin"] },  
+                // { table:"firma_tip",auth : ["admin"] },
                 { table:"ilceler" ,auth : ["admin"] },  
                 { table:"iller",auth : ["admin"] },
                 { table:"is_emri" , auth:["sube","admin"] },

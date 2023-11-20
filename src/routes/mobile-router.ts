@@ -90,7 +90,7 @@ router.post('/register', async (req: Request, res: Response) => {
                 const tempData = {
                     kullanici_isim: data.kullanici_isim,
                     kullanici_soyisim: data.kullanici_soyisim,
-                    kullanici_adi:data.kullanici_adi,
+                    kullanici_adi:data.kullanici_adi.trim(),
                     kullanici_parola: md5(data.kullanici_parola),
                     kullanici_telefon: data.kullanici_telefon,
                     sube_id: katilimLinki[0].sube_id,
