@@ -111,32 +111,32 @@ function collectData(key,ndata){
     });
     return {kdata,ndata};
 }
-$(function() {
-    $("form").delegate("[type='file']","change",function(){
-        var name=$(this).attr("name");
-        var callback=$(this).attr("callback");
-        var formData = new FormData();
-        Object.keys(this.files).map(x=>{
-            formData.append("file",this.files[x],JSON.stringify({ name: this.files[x].name,colName:name}));
-        });
-        $.ajax({
-            type: "POST",
-            url: "/ajax/fileUpload",
-            processData: false,
-            contentType: false,
-            data: formData,
-            success: function (result) {
-                window[callback](result)
-                console.log(result)
-            },
-            error: function (jqXHR, exception) {
-                maskClose();
-                console.log(jqXHR);
-                console.log(exception);
-            }
-        });
-    })
-});
+// $(function() {
+//     $("form").delegate("[type='file']","change",function(){
+//         var name=$(this).attr("name");
+//         var callback=$(this).attr("callback");
+//         var formData = new FormData();
+//         Object.keys(this.files).map(x=>{
+//             formData.append("file",this.files[x],JSON.stringify({ name: this.files[x].name,colName:name}));
+//         });
+//         $.ajax({
+//             type: "POST",
+//             url: "/ajax/fileUpload",
+//             processData: false,
+//             contentType: false,
+//             data: formData,
+//             success: function (result) {
+//                 window[callback](result)
+//                 console.log(result)
+//             },
+//             error: function (jqXHR, exception) {
+//                 maskClose();
+//                 console.log(jqXHR);
+//                 console.log(exception);
+//             }
+//         });
+//     })
+// });
 
 /* function uploadFile(key=""){
     var formData = new FormData();
@@ -168,18 +168,32 @@ $(function() {
 } */
 
 /* #region  zorunlu alan kontrolu */
-function enforcedControl() {
+function enforcedControl(key="") {
     var result = false;
-    $("[enforced]:visible").each(function () {
-        if ($(this).val() == "" || $(this).val() == undefined || $(this).val() == null) {
-            result = true;
-            if( $(this).hasClass("select2") ){
-                $(this).next().css("border-bottom", "2px solid red");
-            }else{
-                $(this).css("border-bottom", "2px solid red");
+    if(key!=""){
+        $(`[ajax-key='${key}'][enforced]:visible`).each(function () {
+            if ($(this).val() == "" || $(this).val() == undefined || $(this).val() == null) {
+                result = true;
+                if( $(this).hasClass("select2") ){
+                    $(this).next().css("border-bottom", "2px solid red");
+                }else{
+                    $(this).css("border-bottom", "2px solid red");
+                }
             }
-        }
-    });
+        });
+    }else{
+        $("[enforced]:visible").each(function () {
+            if ($(this).val() == "" || $(this).val() == undefined || $(this).val() == null) {
+                result = true;
+                if( $(this).hasClass("select2") ){
+                    $(this).next().css("border-bottom", "2px solid red");
+                }else{
+                    $(this).css("border-bottom", "2px solid red");
+                }
+            }
+        });
+    }
+    
     if (result)
     showNotification("Zorunlu alanları doldurmanız gerekmektedir!", 'error');
     return result;
@@ -199,19 +213,17 @@ $("body").delegate("[enforced]", "change keyup paste", function () {
 /* #endregion */
 
 /* #region  bütün kontroller */
-function controls() {
-    return (enforcedControl() )
+function controls(key="") {
+    return (enforcedControl(key) )
 }
 /* #endregion */
 
 //function Dynajax(link,key="",callback,data,This=null,ask=false,async=true,clear=true)
 function Dynajax(link,key="",callback,This=null,checkControls=true,data,ask=false,async=true,clear=true){
     
-    if(key==""){
-        throw "Key Bulunamadı!"
-    }
+    
     if(checkControls){
-        if(controls()) {
+        if(controls(key)) {
             maskClose();    
             return;
         }

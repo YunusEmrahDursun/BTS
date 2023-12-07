@@ -32,7 +32,8 @@ var Http = (function () {
         Post: async function (path, data,callback) {
             maskOpen();
             Response(await fetch(path, getOptions("POST", data)),callback);
-            if(callback) callback(result)
+            //if(callback) callback() 
+            //callback(result)
         },
         Put: async function (path, data,callback) {
             maskOpen();

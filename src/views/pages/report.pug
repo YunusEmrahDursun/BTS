@@ -9,66 +9,84 @@ block content
             li.breadcrumb-item
               |  BTS
             li.breadcrumb-item.active(aria-current='page')=title
-  .row.clearfix
-    .col-lg-6.col-md-12.col-sm-12
-      .row.clearfix
-        .col-lg-6.col-md-6
-          .card-wrapper.flip-left#faaliyetRapor
-            .card.s-widget-top
-              .front.p-3.px-4
-                div Faaliyet Raporu
-                .py-4.m-0.text-center.h2.text-info=data.faaliyetTaskCount
-              .back.p-3.px-4.bg-info.text-center
-                p.text-light Bu Ay
-                .py-4.m-0.text-center.h2
-                  i.icon-printer
-        .col-lg-6.col-md-6
-          .card-wrapper.flip-left#allTask
-            .card.s-widget-top
-              .front.p-3.px-4
-                div İş Emirleri Tamamı
-                .py-4.m-0.text-center.h2.text-info=data.isEmiriCount
-              .back.p-3.px-4.bg-info.text-center
-                p.text-light Hepsi
-                .py-4.m-0.text-center.h2
-                  i.icon-printer
-        .col-lg-6.col-md-6
-          .card-wrapper.flip-left#thisMonthClosedTasks
-            .card.s-widget-top
-              .front.p-3.px-4
-                div Kapanmış İş Emirleri
-                .py-4.m-0.text-center.h2.text-success=data.months[0].basarili
-                .d-flex
-                  small.text-muted="Toplam: " + data.months[0].toplam
-                  .ml-auto= data.months[0].percent +'%'
-              .back.p-3.px-4.bg-info.text-center
-                p.text-light Bu Ay
-                .py-4.m-0.text-center.h2
-                  i.icon-printer
-        .col-lg-6.col-md-6
-          .card-wrapper.flip-left#thisMonthOpenTasks
-            .card.s-widget-top
-              .front.p-3.px-4
-                div Açık İş Emirleri
-                .py-4.m-0.text-center.h2.text-danger=data.months[0].bitmedi
-                .d-flex
-                  small.text-muted="Toplam: " + data.months[0].toplam
-                  .ml-auto= data.months[0].bitmeyenPercent +'%'
-              .back.p-3.px-4.bg-info.text-center
-                p.text-light Bu Ay
-                .py-4.m-0.text-center.h2
-                  i.icon-printer
-        .col-lg-6.col-md-6
-          .card-wrapper.flip-left#users
-            .card.s-widget-top
-              .front.p-3.px-4
-                div Personal Sayısı
-                .py-4.m-0.text-center.h2.text-info=data.userCount
-              .back.p-3.px-4.bg-info.text-center
-                p.text-light Personel Bilgileri
-                .py-4.m-0.text-center.h2
-                  i.icon-printer
-
+  .row.clearfix        
+    .col-lg-6.col-md-6.col-sm-12
+      .card    
+        .body
+          div(style="display:flex")
+            div(style="width:calc(100% - 50px)")
+              .form-group.mb-4
+                label.d-block
+                  = 'Faaliyet Raporu - ' + data.faaliyetTaskCount + ' kayıt.'
+                .progress.progress-xxs
+                  .progress-bar( class="bg-indigo" role='progressbar' aria-valuenow=100 aria-valuemin='0' aria-valuemax='100' style=`width: 100%;`)
+            div(style='width:50px;padding-left:20px')
+              button.btn.btn-sm.btn-default#faaliyetRapor(type='button' data=index title='Yazdır' data-toggle='tooltip' data-placement='top')
+                i.icon-printer
+          div(style="display:flex")
+            div(style="width:calc(100% - 50px)")
+              .form-group.mb-4
+                label.d-block
+                  = 'İş Emirleri Tamamı - ' + data.isEmiriCount + ' kayıt.'
+                .progress.progress-xxs
+                  .progress-bar( class="bg-orange" role='progressbar' aria-valuenow=100 aria-valuemin='0' aria-valuemax='100' style=`width: 100%;`)
+            div(style='width:50px;padding-left:20px')
+              button.btn.btn-sm.btn-default#allTask(type='button' data=index title='Yazdır' data-toggle='tooltip' data-placement='top')
+                i.icon-printer
+          div(style="display:flex")
+            div(style="width:calc(100% - 50px)")
+              .form-group.mb-4
+                label.d-block
+                  = 'Kapanmış İş Emirleri - ' + data.months[0].basarili + ' kayıt.'
+                .progress.progress-xxs
+                  .progress-bar( class="bg-green" role='progressbar' aria-valuenow=100 aria-valuemin='0' aria-valuemax='100' style=`width: 100%;`)
+            div(style='width:50px;padding-left:20px')
+              button.btn.btn-sm.btn-default#thisMonthClosedTasks(type='button' data=index title='Yazdır' data-toggle='tooltip' data-placement='top')
+                i.icon-printer
+          div(style="display:flex")
+            div(style="width:calc(100% - 50px)")
+              .form-group.mb-4
+                label.d-block
+                  = 'Açık İş Emirleri - ' + data.months[0].bitmedi + ' kayıt.'
+                .progress.progress-xxs
+                  .progress-bar( class="bg-danger" role='progressbar' aria-valuenow=100 aria-valuemin='0' aria-valuemax='100' style=`width: 100%;`)
+            div(style='width:50px;padding-left:20px')
+              button.btn.btn-sm.btn-default#thisMonthOpenTasks(type='button' data=index title='Yazdır' data-toggle='tooltip' data-placement='top')
+                i.icon-printer
+          div(style="display:flex")
+            div(style="width:calc(100% - 50px)")
+              .form-group.mb-4
+                label.d-block
+                  = 'Personal Sayısı - ' + data.userCount + ' kayıt.'
+                .progress.progress-xxs
+                  .progress-bar( class="bg-azura" role='progressbar' aria-valuenow=100 aria-valuemin='0' aria-valuemax='100' style=`width: 100%;`)
+            div(style='width:50px;padding-left:20px')
+              button.btn.btn-sm.btn-default#users(type='button' data=index title='Yazdır' data-toggle='tooltip' data-placement='top')
+                i.icon-printer
+          div(style="display:flex")
+            div(style="width:calc(100% - 50px)")
+              .form-group.mb-4
+                label.d-block
+                  = 'Personel Bazlı'
+                select.custom-select.mb-2(name="kullanici_id" ajax-key="k" enforced=true)
+                  option(value="")="Seçiniz"
+                  each s in data.personel
+                    option(value=s["kullanici_id"])=s["kullanici_isim"] + ' ' +s["kullanici_soyisim"]
+            div(style='width:50px;padding-left:20px')
+              button.btn.btn-sm.btn-default#userTask(type='button' style='margin-top: 30px;' data=index title='Yazdır' data-toggle='tooltip' data-placement='top')
+                i.icon-printer
+          div(style="display:flex")
+            div(style="width:calc(100% - 50px)")
+              .form-group.mb-4
+                label.d-block
+                  = 'Bina Bazlı'
+                select.custom-select.mb-2(name="bina_id" ajax-key="b" enforced=true)
+                  option(value="")="Seçiniz"
+                  each s in data.bina
+                    option(value=s["bina_id"])=s["bina_adi"] 
+            div(style='width:50px;padding-left:20px')
+              button.btn.btn-sm.btn-default#binaTask(type='button' style='margin-top: 30px;' data=index title='Yazdır' data-toggle='tooltip' data-placement='top')
+                i.icon-printer
     .col-lg-6.col-md-6.col-sm-12
       .card
         .body
@@ -78,7 +96,7 @@ block content
               div(style="width:calc(100% - 50px)")
                 .form-group.mb-4
                   label.d-block
-                    = month.tarih + ' - ' + month.toplam + ' adet.'
+                    = month.tarih + ' - ' + month.toplam + ' kayıt.'
                     span.float-right
                       = month.percent+"% "
                   .progress.progress-xxs

@@ -107,7 +107,7 @@ $(function() {
           let tr=`
             <tr class="tdata rowData" row-id="${row[data.idColName]}" rowId=${row.id} link=${data.link} >
                 ${data.tableHead.map((key,index)=>{
-  
+                  
                   if(data.hideColumn && data.hideColumn.includes(data.tableHead[index])){ return "" }
   
                   let td;
@@ -122,14 +122,33 @@ $(function() {
                     else{
                       td=`<img class="w35 h35 rounded" src='/firmaImages/default/image_placeholder.jpg'>`
                     }
-                  }else{
+                  }else if(data.props[key]?.color){
+
                     let special= data.props[key] || {}
-                    if(special.k) td=row[special.k] || ""
+                    let tdValue;
+                    if(special.k) tdValue=row[special.k] || ""
+                    else tdValue= row[key] || ""
+
+                    td=`<span class="badge badge-${row[data.props[key].color]} ml-0 mr-0">${tdValue}</span>`
+                    
+                  }
+                  else{
+                    let special= data.props[key] || {}
+                    if(special.k){
+
+                      if(typeof special.k == 'string'){
+                        td=row[special.k] || ""
+                      }else{
+                        td=special.k.map(i=> row[i]).join(' ')
+                      }
+                    }
                     else td= row[key] || ""
                   }
                   return "<td>"+ td +"</td>"
                 }).join("")}   
-                ${tdExtra}                       
+
+                ${tdExtra}    
+
             </tr>`
           $(".table>tbody").append(tr)
           $(".rowData").on("click",function(e)  {rowData(e);return false})

@@ -3,10 +3,10 @@ export default{
     title:"Bina",
     check_firma_id:true,
     columns:[ "bina_id","bina_adi", "sube_id","il_id","ilce_id","adres","yonetici_ad_soyad","yonetici_tel","yonetici_daire","qr_code"],
-    turkce:["#","Ad","Şube","İl","İlçe","Adres","Yönetici Ad Soyad", "Yönetici Tel","Yönetici Dairesi","QR Kod"],
+    turkce:["#","Ad","Şube","İl","İlçe","Adres","Yetkili Ad Soyad", "Yetkili Tel","QR Kod"],
     defaultSize:4,
-    hideColumn:["bina_adi","yonetici_ad_soyad","yonetici_tel","yonetici_daire","adres","qr_code"],
-    required:["sube_id","il_id","ilce_id"],
+    hideColumn:["bina_adi","yonetici_ad_soyad","yonetici_tel","adres","qr_code"],
+    required:["sube_id"],
     props:{
         "bina_adi":{size:12},
         "adres":{t:"textarea",size:12},

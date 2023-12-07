@@ -19,7 +19,7 @@ export default{
     left join ${global.databaseName}.kullanici_table as gk on g.temizlik_giden_kullanici_id=gk.kullanici_id 
     where g.silindi_mi=0 and g.firma_id=:firmaId  :srcTxt`,
   
-    auth_write:["admin","sube"],
-    auth_read:["admin","sube"],
+    auth_write:["admin","sube","onay"],
+    auth_read:["admin","sube","onay"],
     custom:"temizlik"
 }

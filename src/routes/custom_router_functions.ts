@@ -1,8 +1,15 @@
 import db from '@database/manager';
 import logger from 'jet-logger';
-
+import {currentTimestamp} from '@shared/functions';
 async function taskCreated(req, data) {
     try {
+        if(req.body.ndata){
+            for (let index = 0; index < req.body.ndata.length; index++) {
+                const item =req.body.ndata[index];
+                await db.insert({firma_id:req.session.user.firma_id,dosya_adi:item,is_emri_id:data.id,type:0},"firma_dosya_table")
+            }
+            
+        }
         const yonlendirilenKullanici = await db.selectOneQuery({kullanici_id:data.is_emri_giden_kullanici_id},'kullanici_table');
         
         if(yonlendirilenKullanici && yonlendirilenKullanici.kullanici_push_token){
@@ -16,13 +23,26 @@ async function taskCreated(req, data) {
 }
 async function taskUpdated(req, data) {
     try {
-        const yonlendirilenKullanici = await db.selectOneQuery({kullanici_id:data.is_emri_giden_kullanici_id},'kullanici_table');
 
-        if(yonlendirilenKullanici && yonlendirilenKullanici.kullanici_push_token){
+        if(req.body.ndata){
+            for (let index = 0; index < req.body.ndata.length; index++) {
+                const item =req.body.ndata[index];
+                await db.insert({firma_id:req.session.user.firma_id,dosya_adi:item,is_emri_id:data.id,type:1},"firma_dosya_table")
+            }
+            
+        }
+        const transferDurumu = await db.selectOneQuery({is_emri_durum_key:'success'},'is_emri_durum_table');
 
-            global.sendNotification(yonlendirilenKullanici.kullanici_push_token,"İş Emri Güncellemesi","İş Emri Numarası : "+data.id);
+        if(transferDurumu.is_emri_durum_id != data.is_emri_durum_id){
+            const yonlendirilenKullanici = await db.selectOneQuery({kullanici_id:data.is_emri_giden_kullanici_id},'kullanici_table');
 
-        } 
+            if(yonlendirilenKullanici && yonlendirilenKullanici.kullanici_push_token){
+    
+                global.sendNotification(yonlendirilenKullanici.kullanici_push_token,"İş Emri Güncellemesi","İş Emri Numarası : "+data.id);
+    
+            } 
+        }
+      
 
     } catch (error) {
         logger.err(error);
@@ -34,6 +54,21 @@ async function beforeTaskCreated(req, data) {
         const durum = await db.selectOneQuery({is_emri_durum_key:'open'},'is_emri_durum_table')
         
         return {...data,is_emri_durum_id:durum.is_emri_durum_id};
+
+    } catch (error) {
+        logger.err(error);
+    }
+}
+async function beforeTaskUpdate(req, data) {
+    try {
+        
+        const transferDurumu = await db.selectOneQuery({is_emri_durum_key:'success'},'is_emri_durum_table');
+        if(transferDurumu.is_emri_durum_id == data.is_emri_durum_id){
+            return {...data,kapatan_kullanici_id:req.session.user.kullanici_id,is_emri_kapanis_tarihi:currentTimestamp()};
+        }else{
+            return data;
+        }
+        
 
     } catch (error) {
         logger.err(error);
@@ -59,5 +94,6 @@ export default {
     taskCreated,
     taskUpdated,
     beforeTaskCreated,
+    beforeTaskUpdate,
     temizlikDataAddTaskStatus
 }

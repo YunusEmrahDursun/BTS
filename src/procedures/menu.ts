@@ -8,14 +8,14 @@
                 // { table:"firma_tip",auth : ["admin"] },
                 { table:"ilceler" ,auth : ["admin"] },  
                 { table:"iller",auth : ["admin"] },
-                { table:"is_emri" , auth:["sube","admin"] },
-                { table:"temizlik" , auth:["sube","admin"] },
+                { table:"is_emri" , auth:["sube","admin","onay"] },
+                { table:"temizlik" , auth:["sube","admin","onay"] },
                 { table:"is_emri_durum" , auth:["admin"] },
-                { table:"bina" , auth:["admin","sube"] },
-                { table:"sube" , auth:["admin","sube"] },
+                { table:"bina" , auth:["admin","sube","onay"] },
+                { table:"sube" , auth:["admin","sube","onay"] },
                 { table:"yetki" , auth:["admin"] },  
-                { table:"kullanici" , auth:["admin","sube"] },
-                { title: "Rapor", link:"/web/report", icon:"icon-pie-chart", auth:["admin","sube"] },
+                { table:"kullanici" , auth:["admin","sube","onay"] },
+                { title: "Rapor", link:"/web/report", icon:"icon-pie-chart", auth:["admin","sube","onay"] },
                 { title: "Çıkış", link:"/web/exit", icon:"icon-power" }
 
             ]

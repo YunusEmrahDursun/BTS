@@ -11,7 +11,7 @@
                 try {
                     getDasboardTableData()
                 } catch (error) {
-                    
+                    console.log(error)
                 }
             }
         });

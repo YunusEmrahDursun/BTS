@@ -20,8 +20,21 @@ function faaliyetRapor(){
   }
   function month(e){
     month=$(e.currentTarget).attr("data")
-    const data = Dynajax("pdf-month/" + month,"z",null,null,false,null,false,false)
+    const data = Dynajax("pdf-month/" + month,"",null,null,false,null,false,false)
     excelDownload(["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"Aylık-İş-Emirleri-" )
+  }
+  function userTask(){
+    const data = Dynajax("userTask","k",null,null,true,null,false,false)
+    try{
+      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"Personel-iş-emirleri")
+    }catch(error){}
+  }
+  function binaTask(){
+
+    const data = Dynajax("binaTask","b",null,null,true,null,false,false)
+    try{
+      excelDownload( ["#","İsim","Soyİsim","is_emri_aciklama","Oluşturulma Tarihi","Güncelleme Tarihi","Durum"],data.d.map(i=> Object.values(i)) ,"Bina-iş-emirleri")
+    }catch(error){}
   }
 
   $(function() {
@@ -30,5 +43,7 @@ function faaliyetRapor(){
     $("#thisMonthOpenTasks").on("click",function(e)  {thisMonthOpenTasks(e);return false})
     $("#users").on("click",function(e)  {users(e);return false})
     $("#allTask").on("click",function(e)  {allTask(e);return false})
+    $("#userTask").on("click",function(e)  {userTask(e);return false})
+    $("#binaTask").on("click",function(e)  {binaTask(e);return false})
     $(".month").on("click",function(e)  {month(e);return false})
   });

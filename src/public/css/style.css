@@ -1,3 +1,25 @@
 .nav.space-between{
     justify-content: space-between;
 }
+
+.badge-success {
+    background: transparent;
+    border-color: #5CB65F;
+    color: #5CB65F;
+}
+.badge-support {
+    background: transparent;
+    border-color: #3C89DA;
+    color: #3C89DA
+  }
+  .badge-transfer {
+    background: transparent;
+    border-color: #FFA117;
+    color: #FFA117
+  }
+  
+  .badge-open {
+    background: transparent;
+    border-color: #E15858;
+    color: #E15858
+  }

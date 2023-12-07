@@ -30,7 +30,9 @@ import Routes from '@routes/index';
 import logger from 'jet-logger';
 
 const app = express();
-
+const moment = require('moment');
+moment.locale('tr');
+app.locals.moment = moment;
 
 //session
 app.use(session({
@@ -66,9 +68,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Security
-if (process.env.NODE_ENV === 'production') {
-    app.use(helmet());
-}
+// if (process.env.NODE_ENV === 'production') {
+//     app.use(helmet());
+// }
 
 app.use( (req: Request, res: Response,next:NextFunction) => {
     const period = 84600

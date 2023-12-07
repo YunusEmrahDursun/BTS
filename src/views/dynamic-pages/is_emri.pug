@@ -1,7 +1,22 @@
 extends ../static-pages/layout
 block content
+  button.btn.btn-round.btn-primary#openBinaModal(type='button', data-toggle='modal', data-target='.new-bina-modal' hidden)
+  .modal.fade.new-bina-modal(tabindex='-1', role='dialog', aria-labelledby='exampleModalLabel', aria-hidden='true')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title Bina Ekle
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true') &times;
+        .modal-body
+          .input-group.mb-3
+            input.form-control(type='text' name="bina_adi"  ajax-key="b" placeholder='Bina Adı' enforced )
+        .modal-footer
+          button.btn.btn-round.btn-default(type='button', data-dismiss='modal') Vazgeç
+          button.btn.btn-round.btn-success#binaAdd(type='button', data-dismiss='modal') Kaydet
   div(id="id"  data=targetData[data.idColName])
   div(id="table"  data=data.table)
+  div(id="firma"  data=session.firma_id)
   .block-header
     .row.clearfix
       .col-md-6.col-sm-12
@@ -14,15 +29,43 @@ block content
   .row.clearfix
     .col-lg-12.col-md-12
       .card  
+        //TEKLİFLER
+        if data.extraData && data.extraData.talepler && data.extraData.talepler.length != 0 && targetData && targetData[data.idColName] && targetData[data.idColName] != "" && targetData["is_emri_durum_key"]=='support'
+          div 
+            ul.nav.nav-tabs2.space-between        
+              li.nav-item
+                a.nav-link.show( href='#')=" -- Teklifler"
+            div(class="row" style="gap:20px;")
+              each s,index in data.extraData.talepler
+                .p-0
+                  .card.mb-2
+                    .body
+                      .d-flex.align-items-center
+                        .icon-in-bg.bg-indigo.text-white.rounded-circle
+                          i.fa.fa-briefcase
+                        .ml-4
+                          span=s.firma_adi
+                          h4.mb-0.font-weight-medium=s.fiyat+ ' TL'
+                      .p-2.mt-2
+                        label.font-weight-bold İletişim :
+                        span=' '+s.firma_iletisim
+                        div
+                          label.font-weight-bold Açıklama:
+                          div
+                            span=s.aciklama
+                        .d-flex.mt-2( style="justify-content:center;")
+                          button.btn.btn-primary.teklif(data=s.is_emri_teklif_id) Seç
         ul.nav.nav-tabs2.space-between
           li.nav-item
             a.nav-link.show( href='#')="Kayıt Ekle"
-          li.nav-item.float-right
+          li.nav-item.float-right(style="display: flex;")
+            a.nav-link.active#fastBina(style="background-color: #d39e00;border-color: #c69500;color: #fff;" href='javascript:void(0);')="Hızlı Bina Ekle"  
             a.nav-link.active( href='/web/table/'+data.table)=title +" Tablosu"
         .tab-content    
           .tab-content
-            .body
-              form.form-auth-small.m-t-20#form(novalidate data-parsley-validate )
+            
+            form.form-auth-small.m-t-20#form(novalidate data-parsley-validate )
+              .body
                 include ./components/inputGen
                 div(class="row col-md-12")
                   if targetData && targetData[data.idColName] && targetData[data.idColName] != ""
@@ -39,42 +82,110 @@ block content
                   div(class="col-md-6"  )
                     .fancy-checkbox(style={'margin-top':'40px'})
                       label
-                        input(type="checkbox" ajax-key="f" name="faaliyet_raporunda_gozuksun" checked=(targetData["faaliyet_raporunda_gozuksun"] == '1' ? true : false  ) value=targetData["faaliyet_raporunda_gozuksun"]) 
+                        if targetData && targetData[data.idColName] && targetData[data.idColName] != "" 
+                          input(type="checkbox" ajax-key="f" name="faaliyet_raporunda_gozuksun" checked=(targetData["faaliyet_raporunda_gozuksun"] == '1' ? true : false  ) value=targetData["faaliyet_raporunda_gozuksun"]) 
+                        else
+                          input(type="checkbox" ajax-key="f" name="faaliyet_raporunda_gozuksun" checked=(true) value="1") 
                         span Faaliyet Raporunda Gözüksün mü?
-                if data.extraData && data.extraData.files && data.extraData.files.length != 0 
+                //DOSYA YÜKLEME
+                if targetData && !targetData[data.idColName] 
                   div(class="row col-md-12")
-                    div(class="col-md-12")
-                      .form-group 
-                        span -- Yüklü Dosyalar 
-                        div(style="margin-top: 10px;")  
+                    include ./components/upload
+                    #uploadedFiles
+              .row    
+                //YÖNLENDİRMELER
+                if data.extraData && data.extraData.yonlendirmeler && data.extraData.yonlendirmeler.length != 0  
+                  .col-md-12.p-0.mt-3
+                    .form-group
+                      span -- Yönlendirilmeler
+                    .card.mb-2
+                      .body
+                        div(class="col-md-12")
+                          each s,index in data.extraData.yonlendirmeler
+                            div
+                              span
+                                | İş emri 
+                                label.font-weight-bold=s.kullanici_isim + ' ' + s.kullanici_soyisim 
+                                |  isimli personele yönlendirildi.
+                              span= ` (${  moment(s.yonelendirme_date).format('Do MMMM YYYY, HH:mm') })`
+                //DOSYALAR
+                if data.extraData && data.extraData.files && data.extraData.files.length != 0  
+                  .col-md-12.p-0.mt-3
+                    .form-group
+                      span -- Yüklü Dosyalar 
+                    .card.mb-2
+                      .body
+                        div(class="col-md-12")
                           each s,index in data.extraData.files
                             div
                               span="Dosya "+(index+1) 
-                              a(href="/firmaImages/"+s.firma_id+"/"+s.dosya_adi target="_blank")="  Görüntüle"
+                              a(href="/firmaImages/"+s.firma_id+"/"+s.dosya_adi target="_blank")="  Görüntüle " 
+                              span= ` (${ s.type == '0' ? 'İş Açık':'İş Tamamlandı'})`
+                //SEÇİLİ TEKLİF
                 if targetData && targetData["destek_talebi_id"] 
-                  div(class="row col-md-12")
-                    div(class="col-md-12")
-                      .form-group
-                        span -- Teknik Destek Talep Bilgisi  
-                    div(class="col-md-12")
-                      .form-group
-                        label Açıklama
-                        textarea.form-control(type='text' disabled ajax-key="p" rows="4")=targetData["destek_talebi_aciklama"] 
-                    div(class="col-md-6")
-                      .form-group
-                        label İletişim Bilgisi
-                        input.form-control(type='text' disabled  ajax-key="p"  value=targetData["destek_talebi_iletisim_bilgisi"] )
-                    div(class="col-md-6")
-                      .form-group
-                        label Fiyat
-                        input.form-control(type='text' disabled ajax-key="p"  value=targetData["destek_talebi_fiyat_bilgisi"] )
-                .form-footer
-                  button.btn.btn-primary(type='submit') Kaydet
-                  a(href='/web/table/'+data.table)
-                    button.btn.btn-secondary(type='button' ) Vazgeç
-                  if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
-                    .float-right    
-                      button.btn.btn-danger#deleteForm(type='button' ) Sil
+                  .col-md-4.p-0.mt-3
+                    .form-group
+                      span -- Seçili Teklif
+                    .card.mb-2
+                      .body.mr-2
+                        .d-flex.align-items-center
+                          .icon-in-bg.bg-indigo.text-white.rounded-circle
+                            i.fa.fa-briefcase
+                          .ml-4
+                            span=targetData.firma_adi
+                            h4.mb-0.font-weight-medium=targetData.fiyat+ ' TL'
+                        .p-2.mt-2
+                          label.font-weight-bold İletişim :
+                          span=' '+targetData.firma_iletisim
+                          div
+                            label.font-weight-bold Açıklama:
+                            div
+                              span=targetData.aciklama
+                //İŞ EMRİ KAPAT               
+                if  targetData && targetData[data.idColName] && targetData[data.idColName] != "" && targetData["is_emri_durum_key"]=='open'
+                  .p-0.mt-3(class= targetData["destek_talebi_id"]  ? "col-md-8" : "col-md-12" )
+                    .form-group
+                      span -- İş Emrini Sonuçlandır
+                    .card.mb-2
+                      .body
+                        div(class="col-md-12")
+                          .form-group
+                            label Açıklama
+                            textarea.form-control(type='text' ajax-key="f" rows="4" name="is_emri_sonuc_aciklama")=targetData["is_emri_sonuc_aciklama"] 
+                        include ./components/upload
+                        #uploadedFiles 
+                else if  targetData && targetData[data.idColName] && targetData[data.idColName] != "" && targetData["is_emri_durum_key"]=='success' 
+                  .p-0.mt-3(class= targetData["destek_talebi_id"]  ? "col-md-8" : "col-md-12" )
+                    .form-group
+                      span -- İş Emri Sonucu
+                    .card.mb-2
+                      .body
+                        div(class="col-md-12")
+                          .form-group
+                            label Açıklama
+                            textarea.form-control(type='text' disabled ajax-key="p" rows="4")=targetData["is_emri_sonuc_aciklama"] 
+                //KAPATAN KULLANICI
+                if  targetData && targetData[data.idColName] && targetData[data.idColName] != "" && targetData["is_emri_durum_key"]=='success' && targetData["kapatan_kullanici_id"] 
+                  .col-md-12.p-0.mt-3
+                    .form-group
+                      span -- İş Emrini Kapatan Kullanıcı
+                    .card.mb-2
+                      .body
+                        div(class="col-md-12")
+                            div
+                              span
+                                | İş emrini 
+                                label.font-weight-bold=data.extraData.kapatan[0].kullanici_isim + ' ' + data.extraData.kapatan[0].kullanici_soyisim 
+                                |  isimli personel kapattı.
+                              span= ` (${  moment(targetData.is_emri_kapanis_tarihi).format('Do MMMM YYYY, HH:mm') })`
+              .form-footer
+                button.btn.btn-primary(type='submit') Kaydet
+                a(href='/web/table/'+data.table)
+                  button.btn.btn-secondary(type='button' ) Vazgeç
+                if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
+                  .float-right    
+                    button.btn.btn-danger#deleteForm(type='button' ) Sil
 
 block javascript 
   script(src='/scripts/pages/is_emri.js')
+  script(src='https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.15/dist/browser-image-compression.js')

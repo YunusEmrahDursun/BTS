@@ -104,7 +104,7 @@ router.use('/dashboard', async (req: Request, res: Response) => {
 });
 router.use('/report', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;
-    if(!["admin","sube"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
+    if(!["admin","sube","onay"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
     if(!firmaId) return res.status(FORBIDDEN).end();
 
     let result:any = await db.queryObject(`SELECT DATE_FORMAT(Months.month, '%Y-%m') AS ay_yil, IFNULL(COUNT(is_emri_olusturma_tarihi), 0) AS toplam, COUNT(durum.is_emri_durum_key) as basarili
@@ -136,10 +136,15 @@ router.use('/report', async (req: Request, res: Response) => {
     let faaliyetTaskCount:any = await db.queryObject(`
     SELECT count(*)  as total FROM ${global.databaseName}.is_emri_table where firma_id = :firmaId and silindi_mi = 0 and faaliyet_raporunda_gozuksun=1 and  MONTH(is_emri_olusturma_tarihi) = MONTH(CURDATE());`
     ,{firmaId}) ;
+
+    let personel = await db.selectWithColumn(["kullanici_id","kullanici_isim","kullanici_soyisim"],"kullanici_table",{firma_id:firmaId});
+    let bina = await db.selectWithColumn(["bina_id","bina_adi"],"bina_table",{firma_id:firmaId});
     res.render('pages/report',{title:"Raporlama Sayfası",data: {
         userCount:userCount[0].total,
         isEmiriCount:isEmiriCount[0].total,
         faaliyetTaskCount:faaliyetTaskCount[0].total,
+        personel,
+        bina,
         months:result.map(i=> {
             return {
                 ...i,
@@ -153,7 +158,7 @@ router.use('/report', async (req: Request, res: Response) => {
 });
 router.use('/invite', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;
-    if(!["admin","sube"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
+    if(!["admin","sube","onay"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
     if(!firmaId) return res.status(FORBIDDEN).end();
     var subeler=(await  db.selectQuery({  firma_id:firmaId  },"sube_table"));
     var yetkiler=(await  db.selectAll("yetki_table"));

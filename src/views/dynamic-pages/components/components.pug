@@ -23,7 +23,12 @@ if i!=skipIndex
       else if special.t=="search"
         select.select2(name=key ajax-key="f" connect=special.connect enforced=required.includes(key))
           if targetData && targetData[key] 
-            option(value=targetData[key] selected )=targetData[special.k] || targetData[key]
+            if typeof special.k == "string"
+              option(value=targetData[key] selected )=targetData[special.k] 
+            else if typeof special.k == "object"
+              option(value=targetData[key] selected )= special.k.map(i=> targetData[i]).join(" ") 
+            else
+              option(value=targetData[key] selected )= targetData[key]
           else
             option(value='' selected='' )=data.placeholderMood ?  data.turkce[i] : "Seçiniz"
       else if special.t=="textarea"
