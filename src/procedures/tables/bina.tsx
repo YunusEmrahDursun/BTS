@@ -2,10 +2,10 @@ export default{
     icon:"fa fa-building-o",
     title:"Bina",
     check_firma_id:true,
-    columns:[ "bina_id","bina_adi", "sube_id","il_id","ilce_id","adres","yonetici_ad_soyad","yonetici_tel","yonetici_daire","qr_code"],
+    columns:[ "bina_id","bina_adi", "sube_id","il_id","ilce_id","adres","yonetici_ad_soyad","yonetici_tel","qr_code"],
     turkce:["#","Ad","Şube","İl","İlçe","Adres","Yetkili Ad Soyad", "Yetkili Tel","QR Kod"],
     defaultSize:4,
-    hideColumn:["bina_adi","yonetici_ad_soyad","yonetici_tel","adres","qr_code"],
+    hideColumn:["yonetici_ad_soyad","yonetici_tel","adres","qr_code"],
     required:["sube_id"],
     props:{
         "bina_adi":{size:12},
