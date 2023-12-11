@@ -8,7 +8,6 @@ import session from 'express-session';
 import config from '@database/config';
 import md5 from 'md5';
 
-
 var MySQLStore = require('express-mysql-session')(session);
 
 const sessionStore = new MySQLStore(config.sessionServer);
@@ -20,6 +19,7 @@ const databaseName = config.databaseName;
 if(!global.databaseName){
   global.databaseName=databaseName;
 }
+import db from '@database/manager';
 
 import { Server as SocketIo } from 'socket.io';
 import express, { NextFunction, Request, Response } from 'express';
@@ -77,11 +77,30 @@ app.use( (req: Request, res: Response,next:NextFunction) => {
     try {
         if(["/fonts","/images","/javascripts","/stylesheets", "/favicon.ico"].some(x=> req.url.indexOf(x)==0  )){
           res.set('Cache-control', `public, max-age=${period}`)
+        }else if(req.session.user) {
+
         }
       } catch (error) {
         
       }
     next();
+});
+
+app.use( (req: Request, res: Response,next:NextFunction) => {
+  if(!req.session.user){
+    next(); 
+    return
+  }
+  Promise.all([db.selectOneQuery({kullanici_id:req.session.user.kullanici_id},"kullanici_table"), db.selectOneQuery({yetki_id:req.session.user.yetki_id},"yetki_table")]).then((values) => {
+    const user = values[0];
+    const auth = values[1];
+    res.locals.session=user;
+    res.locals.auth =auth.yetki_key;
+
+    req.session.user=user;
+    req.session.auth=auth.yetki_key;
+    next();
+  });
 });
 
 
@@ -123,7 +142,6 @@ app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) 
     res.render('error',{  error: err.message,status:status    });
 });
 */
-
 
 
 const server = http.createServer(app);
