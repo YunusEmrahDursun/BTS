@@ -115,9 +115,10 @@ block content
                       span -- Yüklü Dosyalar 
                     .card.mb-2
                       .body
-                        div(class="col-md-12")
+                        div(class="col-md-12" style="display: flex;")
                           each s,index in data.extraData.files
-                            div
+                            div( style= "display: flex;flex-direction: column;align-content: center;width: 150px;align-items: center;")
+                              img(src="/firmaImages/"+s.firma_id+"/"+s.dosya_adi style="width: 100px;height: 100px;")
                               span="Dosya "+(index+1) 
                               a(href="/firmaImages/"+s.firma_id+"/"+s.dosya_adi target="_blank")="  Görüntüle " 
                               span= ` (${ s.type == '0' ? 'İş Açık':'İş Tamamlandı'})`

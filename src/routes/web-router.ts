@@ -77,6 +77,8 @@ router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
     res.locals.tables = Procedures.tables;
     res.locals.session=req.session.user;
     res.locals.auth = req.session.auth;
+    const transferDurumu = await db.selectOneQuery({is_emri_durum_key:'support'},'is_emri_durum_table');
+    res.locals.notif = await db.selectQuery({is_emri_durum_id:transferDurumu.is_emri_durum_id,firma_id:req.session.user.firma_id},"is_emri_table")
     next(); 
 })
 
@@ -273,9 +275,14 @@ router.use('/test', async (req: Request, res: Response) => {
     //res.json(req.session).end()
     //console.log(req.session)
     //console.log(req.sessionID)
+    // const io: SocketIO.Server = global.socketio;
+    // //const io: SocketIO.Server = req.app.get('socketio');
+    // const msg = JSON.stringify({msg:"refreshTable"})
+    // io.emit("update",msg);
     const io: SocketIO.Server = global.socketio;
-    //const io: SocketIO.Server = req.app.get('socketio');
-    io.emit("update","refreshTable")
+    const data = await db.selectOneQuery({is_emri_id:20},'is_emri_table');
+    const msg = JSON.stringify({msg:"newNotif",data})
+    io.emit("update",msg);
     res.json({}).end()
 });
 

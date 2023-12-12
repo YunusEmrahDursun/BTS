@@ -340,6 +340,7 @@ router.post('/servisIstegiTalebi/:id', async (req: Request, res: Response) => {
             
         }
         await db.update({is_emri_durum_id:transferDurumu.is_emri_durum_id,guncellenme_zamani:currentTimestamp()},{is_emri_id:id,is_emri_giden_kullanici_id:req.session.user.kullanici_id},'is_emri_table');
+        newNotif(id);
         refreshTable();
     } catch (error) {
         logger.err(error, true);
@@ -445,9 +446,15 @@ router.use('/isEmiriTamamla/:id', async (req: Request, res: Response) => {
 
 const refreshTable = () => { 
     const io: SocketIO.Server = global.socketio;
-    io.emit("update","refreshTable");
+    const msg = JSON.stringify({msg:"refreshTable"})
+    io.emit("update",msg);
 }
-
+const newNotif = async (id) => { 
+    const io: SocketIO.Server = global.socketio;
+    const data = await db.selectOneQuery({is_emri_id:id},'is_emri_table');
+    const msg = JSON.stringify({msg:"newNotif",data})
+    io.emit("update",msg);
+}
 /* #region  multer  */
 
 var storageFile = multer.diskStorage({

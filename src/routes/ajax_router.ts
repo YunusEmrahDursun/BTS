@@ -476,7 +476,8 @@ var storageFile = multer.diskStorage({
   
   const refreshTable = () => { 
     const io: SocketIO.Server = global.socketio;
-    io.emit("update","refreshTable");
+    const msg = JSON.stringify({msg:"refreshTable"})
+    io.emit("update",msg);
 }
 
 export default router;
