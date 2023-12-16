@@ -1,0 +1,45 @@
+extends ../static-pages/layout
+block content
+  div(id="id"  data=targetData[data.idColName])
+  div(id="table"  data=data.table)
+  div(id="firma"  data=session.firma_id)
+  div(id="qr_code" style="display:none")
+  div(id="bina_adi"  data=targetData["bina_adi"])
+  .block-header
+    .row.clearfix
+      .col-md-6.col-sm-12
+        h1=title
+        nav(aria-label='breadcrumb')
+          ol.breadcrumb
+            li.breadcrumb-item
+              |  BTS
+            li.breadcrumb-item.active(aria-current='page')=title
+  .row.clearfix
+    .col-lg-12.col-md-12
+      .card  
+        ul.nav.nav-tabs2.space-between
+          li.nav-item
+            a.nav-link.show( href='#')="Kayıt Ekle"
+          li.nav-item.float-right(style="display: flex;")
+            if targetData && targetData[data.idColName] && targetData[data.idColName] != ""
+              a.nav-link.active#qrCodeIndir(style="background-color: #d39e00;border-color: #c69500;color: #fff;" href='javascript:void(0);')="QR Kod İndir" 
+              a.nav-link.active#isemirleriniGoster(style="background-color: #117a8b;border-color: #c69500;color: #fff;" href='javascript:void(0);')="İş Emirlerini Görüntüle"  
+            a.nav-link.active( href='/web/table/'+data.table)=title +" Tablosu"
+        .tab-content    
+          .tab-content
+            form.form-auth-small.m-t-20#form(novalidate data-parsley-validate )
+              .body
+                include ./components/inputGen
+              .form-footer
+                button.btn.btn-primary(type='submit') Kaydet
+                a(href='/web/table/'+data.table)
+                  button.btn.btn-secondary(type='button' ) Vazgeç
+                if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
+                  .float-right    
+                    button.btn.btn-danger#deleteForm(type='button' ) Sil
+
+block javascript 
+  script(src='https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.debug.js')
+  script(src='https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js')
+  script(src='/scripts/pages/bina.js')

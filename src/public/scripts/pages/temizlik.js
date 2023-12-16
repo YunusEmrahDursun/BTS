@@ -11,8 +11,8 @@ let table = $("#table").attr("data");
 }
 function addNode(e){
   $(e.currentTarget).parent().parent().after(`
-    <div class="row col-md-12 mb-3 bina">
-      <div class="col-md-4">
+    <div class="mb-3 bina" style="width: 100%;display:flex;">
+      <div style="width: 200px;">
         <div class="form-group"> 
           <label>Bina </label>
           <select class="select2" name="bina_id" tabindex="-1" >
@@ -20,18 +20,17 @@ function addNode(e){
           </select>
         </div>
       </div>
-      <div class="col-md-4">
-        <button class="btn btn-success btn-round mt-4 addNode" type="button" >Yeni Ekle</button>
-        <button class="btn btn-danger btn-round mt-4 deleteNode" type="button" >Sil</button>
+      <div style="width: 100px;margin-left:10px">
+        <button class="btn btn-success mt-4 addNode" type="button">+</button>
+        <button class="btn btn-danger mt-4 deleteNode" type="button">-</button>
       </div>
     </div>
   `);
-  $(".addNode").on("click",function(e)  {addNode(e);return false})
-  $(".deleteNode").on("click",function(e)  {deleteNode(e);return false})
+
   initSelect2();
 }
 function deleteNode(e){
-  if($("#binaListArea .bina").length != 1)
+  if($(e.currentTarget).parent().parent().parent().find(".bina").length != 1)
   $(e.currentTarget).parent().parent().remove()
 }
 
@@ -41,17 +40,13 @@ function deleteNode(e){
     if(id){
         try { 
             if(!controls()){
-              var binaArr=[];
+              var binaArr=[[],[],[],[],[],[],[]];
               document.querySelectorAll("#binaListArea .bina").forEach(i=>  {
-    
-                  if(i.querySelector("[name='bina_id']").value){
-                    const obj = {}
-                    try{ obj["bina_id"] = i.querySelector("[name='bina_id']").value }catch(error){}
-                    try{ obj["temizlik_durum_id"] = i.querySelector("[name='temizlik_durum_id']").value }catch(error){}
-                    binaArr.push(obj)
-                  }
-              
-              })
+                const value=i.querySelector("[name='bina_id']").value;
+                const indx = i.parentElement.getAttribute("gun")
+                if( value )  
+                  binaArr[indx].push(value)
+            })
               Http.Put(`/api/${table}/update/${id}`,{kdata:{...collectData("f").kdata,data:JSON.stringify(binaArr)}},formBasarili)
             }
           }catch(e){
@@ -60,11 +55,12 @@ function deleteNode(e){
     }else{
         try {
             if(!controls()){
-              var binaArr=[];
+              var binaArr=[[],[],[],[],[],[],[]];
               document.querySelectorAll("#binaListArea .bina").forEach(i=>  {
                   const value=i.querySelector("[name='bina_id']").value;
+                  const indx = i.parentElement.getAttribute("gun")
                   if( value )  
-                    binaArr.push(value)
+                    binaArr[indx].push(value)
               })
               Http.Post(`/api/${table}/add`,{kdata:{...collectData("f").kdata,data:JSON.stringify(binaArr)}},formBasarili)
             }
@@ -84,8 +80,13 @@ function deleteNode(e){
   }
   
   $(function() {
+    $("body").delegate(".addNode", "click", function (e) {
+      addNode(e);
+    });
+    $("body").delegate(".deleteNode", "click", function (e) {
+      deleteNode(e);
+    });
+
     $("#form").on("submit",function(e)  {formValitdate(e);return false})
     $("#deleteForm").on("click",function()  {deleteForm();return false})
-    $(".addNode").on("click",function(e)  {addNode(e);return false})
-    $(".deleteNode").on("click",function(e)  {deleteNode(e);return false})
   });

@@ -65,7 +65,19 @@ class Database {
                             
                             switch (f.t) {
                                 case "text":
-                                    tmp+=` and ${f.q}.${f.k} like `+ this.pool.escape(`%${x.v}%`) +" "
+                                    if( typeof f.k == 'string'){
+                                        tmp+=` and ${f.q}.${f.k} like `+ this.pool.escape(`%${x.v}%`) +" "
+                                    }else{
+                                        tmp+=' and ( '
+                                        f.k.forEach((eachK,indexK)=> {
+                                            if( indexK == 0 ){
+                                                tmp+=` ${f.q}.${eachK} like `+ this.pool.escape(`%${x.v}%`) +" "
+                                            }else{
+                                                tmp+=` or ${f.q}.${eachK} like `+ this.pool.escape(`%${x.v}%`) +" "
+                                            }
+                                        })
+                                        tmp+= ' )'
+                                    }
                                     break;
                                 case "select":    
                                 case "number":

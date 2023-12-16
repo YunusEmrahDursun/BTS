@@ -6,10 +6,11 @@ import Procedures from '@procedures/index';
 import {createToken,currentTimestamp} from '@shared/functions';
 const router = Router();
 const { CREATED, OK, NO_CONTENT } = StatusCodes;
-const md5 = require('md5');
 import multer from 'multer';
 import logger from 'jet-logger';
 const path = require('path');
+const md5 = require('md5');
+const moment = require('moment');
 router.get('/test', async (req: Request, res: Response) => {
     return res.status(OK).json({a:1});
 });
@@ -221,6 +222,36 @@ router.use('/subeBinalari', async (req: Request, res: Response) => {
 });
 
 
+
+router.use('/temizlikListesi', async (req: Request, res: Response) => {
+    const firmaId=req.session.user.firma_id;
+    let sira = 0;
+    let temizlik:any=await  db.selectOneQuery({  firma_id:firmaId,temizlik_giden_kullanici_id:req.session.user.kullanici_id},"temizlik_table");
+
+    let temizlikLog:any=await db.queryObject(`SELECT g.* FROM ${global.databaseName}.temizlik_log_table as g 
+    where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.sira desc;`
+    ,{gun:moment().format("DDMMYYYY"),kullanici_id:req.session.user.kullanici_id});
+    
+    if(temizlikLog[0]){
+        sira = parseInt(temizlikLog[0].sira) + 1;
+    }
+    const dayIndex = moment().day() - 1;
+    const temizlikArr = JSON.parse(temizlik.data);
+    const binaId= temizlikArr[dayIndex][sira];
+    let bina:any=null;
+    if(binaId){
+        bina=await  db.selectOneQuery({  bina_id:binaId},"bina_table");
+        if(bina){
+            bina.qr=md5(bina.bina_id+"-bts")
+            bina.sira=sira;
+            bina.dayIndex=dayIndex;
+            bina.gun=moment().format("DDMMYYYY");
+        }
+    }
+
+    res.json(bina)
+});
+
 router.use('/yonlendirmeTalepleri', async (req: Request, res: Response) => {
     let talepler:any=await db.queryObject(`SELECT g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
     inner join ${global.databaseName}.is_emri_yonlendirme_table as yonlendirme on yonlendirme.is_emri_id=g.is_emri_id 
@@ -378,6 +409,32 @@ router.use('/taskOlustur/', async (req: Request, res: Response) => {
             
         }
         refreshTable();
+    } catch (error) {
+        logger.err(error, true);
+        text = "Birşeyler ters gitti!";
+        status = 0;
+    }
+    
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
+});
+
+router.use('/temizlikTamamla/', async (req: Request, res: Response) => {
+    const data = req.body;
+    console.log(data)
+    var text, status=1;
+
+    try {
+        await db.insert({
+            bina_id:data.bina_id,
+            gun:data.gun,
+            sira:data.index,
+            kullanici_id:req.session.user.kullanici_id
+
+        },"temizlik_log_table");
+       
     } catch (error) {
         logger.err(error, true);
         text = "Birşeyler ters gitti!";

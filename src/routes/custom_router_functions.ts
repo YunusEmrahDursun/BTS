@@ -95,5 +95,4 @@ export default {
     taskUpdated,
     beforeTaskCreated,
     beforeTaskUpdate,
-    temizlikDataAddTaskStatus
 }

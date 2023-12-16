@@ -2,6 +2,7 @@ extends ../static-pages/layout
 block content
   div(id="id"  data=targetData[data.idColName])
   div(id="table"  data=data.table)
+  -const gun = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"]
   .block-header
     .row.clearfix
       .col-md-6.col-sm-12
@@ -24,43 +25,49 @@ block content
             .body
               form.form-auth-small.m-t-20#form(novalidate data-parsley-validate )
                 include ./components/inputGen
-                div(id="binaListArea" )  
-                  div(class="row col-md-12" )
-                    div(class="col-md-12")                    
-                      .form-group 
-                        span -- Temizlik Sırası
+                div(id="binaListArea" style="overflow-x: auto;")  
                   if targetData && targetData[data.idColName] && targetData[data.idColName] != ""  && targetData["data"] && JSON.parse(targetData["data"]).length != 0 
-                    -const binaArrData = JSON.parse(targetData["data"])
-                    each item in binaArrData
-                      div(class="row col-md-12 mb-3 bina" )
-                        div(class="col-md-4")
-                          .form-group  
-                            label Bina 
-                            select.select2(name="bina_id" initialValue=item.bina_id )
-                              option(value='' selected='' )= "Seçiniz"
-                        div(class="col-md-4")
-                          .form-group  
-                            label Durum 
-                            select.custom-select.mb-2(name="temizlik_durum_id" ajax-key="f")
-                              option(value="")="Seçiniz"
-                              each s in data.static["temizlik_durum"]
-                                if s["temizlik_durum_id"]==item.temizlik_durum_id
-                                  option(value=s["temizlik_durum_id"] selected)=s["temizlik_durum_adı"]
-                                else
-                                  option(value=s["temizlik_durum_id"])=s["temizlik_durum_adı"]
-                        div(class="col-md-4")
-                          button.btn.btn-success.btn-round.mt-4.addNode(type='button'  ) Yeni Ekle
-                          button.btn.btn-danger.btn-round.mt-4.deleteNode(type='button'  ) Sil   
+                    div(style="width: 100%;display: flex;margin-left:30px")
+                      -const binaArrData = JSON.parse(targetData["data"])
+                      each g,index in binaArrData
+                        div( style="width: 300px;" gun=index)  
+                          .form-group 
+                            span='-- '+gun[index] 
+                          each item in g
+                            div(class="mb-3 bina" style="width: 100%;display:flex;" )
+                              div(style="width: 200px;")
+                                .form-group  
+                                  label Bina 
+                                  select.select2(name="bina_id" initialValue=item )
+                                    option(value='' selected='' )= "Seçiniz"
+                              div(style="width: 100px;margin-left:10px")
+                                button.btn.btn-success.mt-4.addNode(type='button'  ) +
+                                button.btn.btn-danger.mt-4.deleteNode(type='button'  ) -
+                          if g.length == 0
+                            div(class="mb-3 bina" style="width: 100%;display:flex;" )
+                              div(style="width: 200px;")
+                                .form-group  
+                                  label Bina 
+                                  select.select2(name="bina_id"  )
+                                    option(value='' selected='' )= "Seçiniz"
+                              div(style="width: 100px;margin-left:10px")
+                                button.btn.btn-success.mt-4.addNode(type='button'  ) +
+                                button.btn.btn-danger.mt-4.deleteNode(type='button'  ) -      
                   else
-                    div(class="row col-md-12 mb-3 bina" )
-                      div(class="col-md-4")
-                        .form-group  
-                          label Bina 
-                          select.select2(name="bina_id"  )
-                            option(value='' selected='' )= "Seçiniz"
-                      div(class="col-md-6")
-                        button.btn.btn-success.btn-round.mt-4.addNode(type='button'  ) Yeni Ekle
-                        button.btn.btn-danger.btn-round.mt-4.deleteNode(type='button'  ) Sil
+                    div(style="width: 100%;display: flex;margin-left:30px") 
+                      each d,index in gun
+                        div( style="width: 300px;" gun=index)  
+                          .form-group 
+                            span='-- '+d
+                          div(class="mb-3 bina" style="width: 100%;display:flex;" )
+                            div(style="width: 200px;")
+                              .form-group  
+                                label Bina 
+                                select.select2(name="bina_id"  )
+                                  option(value='' selected='' )= "Seçiniz"
+                            div(style="width: 100px;margin-left:10px")
+                              button.btn.btn-success.mt-4.addNode(type='button'  ) +
+                              button.btn.btn-danger.mt-4.deleteNode(type='button'  ) -
                 .form-footer
                   button.btn.btn-primary(type='submit') Kaydet
                   a(href='/web/table/'+data.table)

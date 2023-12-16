@@ -8,7 +8,7 @@ import path from 'path';
 import Procedures from '@procedures/index';
 const router = Router();
 const { CREATED, OK, NO_CONTENT,FORBIDDEN } = StatusCodes;
-
+const moment = require('moment');
 const viewsDir = path.join(__dirname, 'views');
 import logger from 'jet-logger';
 
@@ -208,6 +208,7 @@ router.use('/invite', async (req: Request, res: Response) => {
 
 router.use('/table/:table',async (req: Request, res: Response) => {
     const { table } = req.params;
+    const initSearch = req.query;
     if(!Procedures.checkTable(table) ) return res.status(NO_CONTENT).end();
     if(!Procedures.checkAuth(table,req.session.auth,"read")) return res.status(FORBIDDEN).end();
     const restTable=Procedures.tables[table];
@@ -219,6 +220,8 @@ router.use('/table/:table',async (req: Request, res: Response) => {
         }
     }
     res.render('dynamic-pages/table',{title:restTable.title,data:{
+        initSearch,
+        srcTxt:Object.keys(initSearch).map(key=> { return { k:key,v:initSearch[key] } }),
         table:table,
         tableHead:restTable.columns,
         hideColumn:restTable.hideColumn,
@@ -279,11 +282,33 @@ router.use('/test', async (req: Request, res: Response) => {
     // //const io: SocketIO.Server = req.app.get('socketio');
     // const msg = JSON.stringify({msg:"refreshTable"})
     // io.emit("update",msg);
-    const io: SocketIO.Server = global.socketio;
-    const data = await db.selectOneQuery({is_emri_id:20},'is_emri_table');
-    const msg = JSON.stringify({msg:"newNotif",data})
-    io.emit("update",msg);
-    res.json({}).end()
+    // const io: SocketIO.Server = global.socketio;
+    // const data = await db.selectOneQuery({is_emri_id:20},'is_emri_table');
+    // const msg = JSON.stringify({msg:"newNotif",data})
+    // io.emit("update",msg);
+    const firmaId=req.session.user.firma_id;
+
+    let index = 0;
+    let temizlik:any=await  db.selectOneQuery({  firma_id:firmaId,temizlik_giden_kullanici_id:req.session.user.kullanici_id},"temizlik_table");
+
+    let temizlikLog:any=await db.queryObject(`SELECT g.* FROM ${global.databaseName}.temizlik_log_table as g 
+    where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.sira desc;`
+    ,{gun:moment().format("DDMMYYYY"),kullanici_id:req.session.user.kullanici_id});
+    
+    if(temizlikLog[0]){
+        index = parseInt(temizlikLog[0].index) + 1;
+    }
+    const dayIndex = moment().day() - 1;
+    const temizlikArr = JSON.parse(temizlik.data);
+    const binaId= temizlikArr[dayIndex][index];
+    let bina=null;
+    if(binaId){
+        bina=await  db.selectOneQuery({  bina_id:binaId},"bina_table");
+
+    }
+
+    res.json(bina).end()
+    //res.json({}).end()
 });
 
 
