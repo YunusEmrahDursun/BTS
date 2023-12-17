@@ -40,7 +40,8 @@ export default {
         "kullanici":Tables.kullanici,
         "yetki":Tables.yetki,
         "bina":Tables.bina,
-        "temizlik":Tables.temizlik
+        "temizlik":Tables.temizlik,
+        "temizlik_log":Tables.temizlik_log,
     },
     getPaths:function(){
         const paths={

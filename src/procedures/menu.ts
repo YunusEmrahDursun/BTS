@@ -10,6 +10,7 @@
                 { table:"iller",auth : ["admin"] },
                 { table:"is_emri" , auth:["sube","admin","onay"] },
                 { table:"temizlik" , auth:["sube","admin","onay"] },
+                { table:"temizlik_log" , auth:["sube","admin","onay"],form:false },
                 { table:"is_emri_durum" , auth:["admin"] },
                 { table:"bina" , auth:["admin","sube","onay"] },
                 { table:"sube" , auth:["admin","sube","onay"] },

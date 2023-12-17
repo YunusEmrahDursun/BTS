@@ -51,7 +51,7 @@ $(function() {
     let rowId=$(e.currentTarget).attr("rowId")
     if(link && link  != "undefined"){
       window.open(link+rowId, '_self');
-    }else{
+    }else if(data.link != false){
       window.open(`/web/form/${table}/${row_Id}`, '_self');
     }
   }

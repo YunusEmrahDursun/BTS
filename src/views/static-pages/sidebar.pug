@@ -31,14 +31,16 @@
                                                     else 
                                                         span=menuChildItem.table 
                                                 ul
-                                                    li
-                                                        a(href='/web/table/'+menuChildItem.table)
-                                                            i(class="icon-list")
-                                                            span="Tablo"
-                                                    li
-                                                        a(href='/web/form/'+menuChildItem.table)
-                                                            i(class="icon-pencil")
-                                                            span="İçerik Ekle"
+                                                    if menuChildItem.table != false
+                                                        li
+                                                            a(href='/web/table/'+menuChildItem.table)
+                                                                i(class="icon-list")
+                                                                span="Tablo"
+                                                    if menuChildItem.form != false
+                                                        li
+                                                            a(href='/web/form/'+menuChildItem.table)
+                                                                i(class="icon-pencil")
+                                                                span="İçerik Ekle"
                                         else 
                                             li
                                                 a(href=menuChildItem.link)

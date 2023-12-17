@@ -174,6 +174,18 @@ router.use("/*", async (req: Request, res: Response,next:NextFunction) => {
     const authToken = req.headers.authorization;
     if(!authToken) return res.status(FORBIDDEN).end();
 
+    const locationStr:any = req.headers.location;
+    try {
+        if(locationStr){
+            const location = JSON.parse(locationStr)
+            if(location.latitude && location.longitude){
+                db.update({kullanici_konum:locationStr},{kullanici_id:req.session.user.kullanici_id},"kullanici_table")
+            }
+        }
+        
+    } catch (error) {
+        
+    }
     var users=(await  db.selectQuery({  kullanici_token:authToken},"kullanici_table"));
     if(users && Array.isArray(users) && users.length>0){
         let user = users[0];
@@ -235,7 +247,7 @@ router.use('/temizlikListesi', async (req: Request, res: Response) => {
     if(temizlikLog[0]){
         sira = parseInt(temizlikLog[0].sira) + 1;
     }
-    const dayIndex = moment().day() - 1;
+    const dayIndex = moment().day() == 0 ? 6 : moment().day() - 1;
     const temizlikArr = JSON.parse(temizlik.data);
     const binaId= temizlikArr[dayIndex][sira];
     let bina:any=null;
@@ -423,7 +435,6 @@ router.use('/taskOlustur/', async (req: Request, res: Response) => {
 
 router.use('/temizlikTamamla/', async (req: Request, res: Response) => {
     const data = req.body;
-    console.log(data)
     var text, status=1;
 
     try {
@@ -431,10 +442,11 @@ router.use('/temizlikTamamla/', async (req: Request, res: Response) => {
             bina_id:data.bina_id,
             gun:data.gun,
             sira:data.index,
-            kullanici_id:req.session.user.kullanici_id
+            kullanici_id:req.session.user.kullanici_id,
+            sube_id:req.session.user.sube_id,
+            firma_id:req.session.user.firma_id
 
         },"temizlik_log_table");
-       
     } catch (error) {
         logger.err(error, true);
         text = "Birşeyler ters gitti!";

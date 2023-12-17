@@ -228,7 +228,8 @@ router.use('/table/:table',async (req: Request, res: Response) => {
         turkce:restTable.turkce,
         static:s,
         props:restTable.props || {} ,
-        idColName:Procedures.getTableIdColumnName(table)
+        idColName:Procedures.getTableIdColumnName(table),
+        link:restTable.link
     }});
 });
 
