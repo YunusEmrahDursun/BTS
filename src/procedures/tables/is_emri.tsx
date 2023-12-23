@@ -13,7 +13,7 @@ export default{
     create:"taskCreated",
     update:"taskUpdated",
     props:{
-        "bina_id":{f:"bina",k:"bina_adi",q:"b",t:"search"},
+        "bina_id":{f:"bina",k:"bina_adi",q:"b",t:"search",extra:"sube_id"},
         "is_emri_olusturma_tarihi":{ t:"date"},
         "ariza_bildiren_telefon":{ t:"phone"},
         "is_emri_kapanis_tarihi":{ t:"date"},

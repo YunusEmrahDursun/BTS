@@ -265,13 +265,14 @@ router.use('/temizlikListesi', async (req: Request, res: Response) => {
 });
 
 router.use('/yonlendirmeTalepleri', async (req: Request, res: Response) => {
-    let talepler:any=await db.queryObject(`SELECT g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
+    let talepler:any=await db.queryObject(`SELECT GROUP_CONCAT(dosya.dosya_adi) as dosyalar,g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
     inner join ${global.databaseName}.is_emri_yonlendirme_table as yonlendirme on yonlendirme.is_emri_id=g.is_emri_id 
     inner join ${global.databaseName}.bina_table as bina on bina.bina_id = g.bina_id
     inner join ${global.databaseName}.is_emri_durum_table as durum on durum.is_emri_durum_id=g.is_emri_durum_id
     inner join ${global.databaseName}.iller_table as il on il.il_id=bina.il_id
     inner join ${global.databaseName}.ilceler_table as ilce on ilce.ilce_id=bina.ilce_id 
-    where  durum.is_emri_durum_key!="success" and g.yonlendirme_talebi='1' and yonlendirme.durum = ''   and yonlendirme.yonlendirilen_kullanici_id=:yonlendirilen_kullanici_id and g.silindi_mi = 0;`
+    left join ${global.databaseName}.firma_dosya_table as dosya on dosya.is_emri_id=g.is_emri_id 
+    where  durum.is_emri_durum_key!="success" and g.yonlendirme_talebi='1' and yonlendirme.durum = '' and yonlendirme.yonlendirilen_kullanici_id=:yonlendirilen_kullanici_id and g.silindi_mi = 0 and dosya.type = 0 GROUP BY g.is_emri_id;`
     ,{yonlendirilen_kullanici_id:req.session.user.kullanici_id});
     res.json(talepler)
 });
@@ -344,13 +345,14 @@ router.use('/yonlendirmeTalepCevap/:id', async (req: Request, res: Response) => 
 });
 
 router.use('/isEmirleri', async (req: Request, res: Response) => {
-    let isEmirleri:any=await db.queryObject(`SELECT teklif.*,g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
+    let isEmirleri:any=await db.queryObject(`SELECT GROUP_CONCAT(dosya.dosya_adi) as dosyalar,teklif.*,g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
     inner join ${global.databaseName}.bina_table as bina on bina.bina_id = g.bina_id
     inner join ${global.databaseName}.is_emri_durum_table as durum on durum.is_emri_durum_id=g.is_emri_durum_id
     left join ${global.databaseName}.iller_table as il on il.il_id=bina.il_id
     left join ${global.databaseName}.ilceler_table as ilce on ilce.ilce_id=bina.ilce_id 
     left join ${global.databaseName}.is_emri_teklif_table as teklif on teklif.is_emri_teklif_id=g.destek_talebi_id 
-    where  durum.is_emri_durum_key="open" and g.is_emri_giden_kullanici_id=:is_emri_giden_kullanici_id and g.silindi_mi = 0;`
+    left join ${global.databaseName}.firma_dosya_table as dosya on dosya.is_emri_id=g.is_emri_id 
+    where  durum.is_emri_durum_key="open" and g.is_emri_giden_kullanici_id=:is_emri_giden_kullanici_id and g.silindi_mi = 0 and dosya.type = 0 GROUP BY g.is_emri_id;`
     ,{is_emri_giden_kullanici_id:req.session.user.kullanici_id});
     res.json(isEmirleri)
 });
@@ -364,8 +366,6 @@ router.use('/tamamlananisEmirleri', async (req: Request, res: Response) => {
     ,{is_emri_giden_kullanici_id:req.session.user.kullanici_id});
     res.json(isEmirleri)
 });
-
-
 
 
 

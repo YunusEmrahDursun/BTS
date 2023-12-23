@@ -23,3 +23,9 @@
     border-color: #E15858;
     color: #E15858
   }
+  #map {
+    height: calc( 100vh - 200px );
+  }
+  .leaflet-control-attribution.leaflet-control{
+    display: none;
+  }

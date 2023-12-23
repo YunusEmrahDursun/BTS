@@ -1,0 +1,20 @@
+extends ../static-pages/layout
+block content
+  div(id="kullanıcılar"  data=data.kullanıcılar)
+  .block-header
+    .row.clearfix
+      .col-md-6.col-sm-12
+        h1=title
+        nav(aria-label='breadcrumb')
+          ol.breadcrumb
+            li.breadcrumb-item
+              |  BTS
+            li.breadcrumb-item.active(aria-current='page')=title
+  .row.clearfix
+    .col-lg-12.col-md-12
+      .card  
+        #map   
+block javascript
+  link(rel='stylesheet' href='https://unpkg.com/leaflet/dist/leaflet.css')  
+  script(src='https://unpkg.com/leaflet/dist/leaflet.js')    
+  script(src='/scripts/pages/map.js')

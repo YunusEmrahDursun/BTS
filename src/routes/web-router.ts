@@ -169,6 +169,16 @@ router.use('/invite', async (req: Request, res: Response) => {
         yetkiler
     }});
 });
+router.use('/map', async (req: Request, res: Response) => {
+    const firmaId=req.session.user.firma_id;
+    const subeId=req.session.user.sube_id;
+    if(!["admin","sube","onay"].includes(req.session.auth)) return res.status(FORBIDDEN).end();
+    if(!firmaId) return res.status(FORBIDDEN).end();
+    var kullanıcılar=(await  db.selectWithColumn(["kullanici_konum","kullanici_isim","kullanici_soyisim"],"kullanici_table",{  firma_id:firmaId,sube_id:subeId  }));
+    res.render('pages/map',{title:"Harita",data: {
+        kullanıcılar
+    }});
+});
 // router.use('/form/firmalar/:id?',async (req: Request, res: Response) => {
 //     const { id } = req.params;
 //     const table="firmalar";
