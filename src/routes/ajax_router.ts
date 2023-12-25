@@ -25,7 +25,11 @@ router.post('/table/:table',async function(req, res, next) {
           return res.status(NO_CONTENT).end();
       }
       const firmaId=req.session.user.firma_id; // hangi firmanın datasını çekeceği için
-      res.send({d:await db.tableProcedure(table,data,firmaId),status:1});
+      let subeId = null;
+      if(req.session.auth != "admin"){
+        subeId=req.session.user.sube_id;
+      }
+      res.send({d:await db.tableProcedure(table,data,firmaId,subeId),status:1});
     } catch (error) {
       logger.err(error, true);
       res.send({
@@ -121,7 +125,6 @@ router.get('/dyndata/:table', async function (req, res, next) {
       const tempConnect=restTable.props[col]?.connectSql;
       where[tempConnect.connect] = (await db.selectOneQuery({[tempConnect.whereColumn]:tempConnect.whereValue},tempConnect.table))[tempConnect.column];
     }
-    console.log(where)
     const result=await db.selectLikeWithColumn(colNames,targetTable+"_table", where ,"AND",connect+" LIMIT 10",[c]);
     if( typeof textName == 'string'){
       res.json( Array.isArray(result) && result.map(x=> ({ "id": x[tableIdName] , "text": x[textName] }) ));

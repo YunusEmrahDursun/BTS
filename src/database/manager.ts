@@ -32,7 +32,7 @@ class Database {
          return temp;
     }
 
-    tableProcedure = async (table,values,firmaId) => {
+    tableProcedure = async (table,values,firmaId,subeId) => {
         const resTable=Procedures.tables[table];
         if(! resTable.sql) throw "Sql not found!"
         let sql=resTable.sql;
@@ -119,7 +119,13 @@ class Database {
         }
         if(! values.current) sql=sql.replace(":current","0")
         
-        sql=sql.replace(":firmaId",firmaId)
+        sql=sql.replace(":firmaId",firmaId);
+        if(subeId){
+            sql=sql.replace(":subeId",subeId);
+        }else{
+            sql=sql.replace("=:subeId","!="+0);
+        }
+
 
         return await this.queryObject(sql,values)
     }
