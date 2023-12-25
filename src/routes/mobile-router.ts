@@ -351,8 +351,8 @@ router.use('/isEmirleri', async (req: Request, res: Response) => {
     left join ${global.databaseName}.iller_table as il on il.il_id=bina.il_id
     left join ${global.databaseName}.ilceler_table as ilce on ilce.ilce_id=bina.ilce_id 
     left join ${global.databaseName}.is_emri_teklif_table as teklif on teklif.is_emri_teklif_id=g.destek_talebi_id 
-    left join ${global.databaseName}.firma_dosya_table as dosya on dosya.is_emri_id=g.is_emri_id 
-    where  durum.is_emri_durum_key="open" and g.is_emri_giden_kullanici_id=:is_emri_giden_kullanici_id and g.silindi_mi = 0 and dosya.type = 0 GROUP BY g.is_emri_id;`
+    left join ${global.databaseName}.firma_dosya_table as dosya on dosya.is_emri_id=g.is_emri_id and dosya.type = 0
+    where  durum.is_emri_durum_key="open" and g.is_emri_giden_kullanici_id=:is_emri_giden_kullanici_id and g.silindi_mi = 0  GROUP BY g.is_emri_id;`
     ,{is_emri_giden_kullanici_id:req.session.user.kullanici_id});
     res.json(isEmirleri)
 });
