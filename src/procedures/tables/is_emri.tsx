@@ -18,7 +18,7 @@ export default{
         "ariza_bildiren_telefon":{ t:"phone"},
         "is_emri_kapanis_tarihi":{ t:"date"},
         "is_emri_aciklama":{ size:12 ,t:"textarea"},
-        "is_emri_giden_kullanici_id":{f:"kullanici",k:["kullanici_isim","kullanici_soyisim"],q:"gk",t:"search",extra:"sube_id"},
+        "is_emri_giden_kullanici_id":{f:"kullanici",k:["kullanici_isim","kullanici_soyisim"],q:"gk",t:"search",extra:"sube_id",connectSql:{table:"yetki_table",column:"yetki_id",whereColumn:"yetki_key",whereValue:"teknik",connect:"yetki_id"}},
         "faaliyet_raporunda_gozuksun":{size:6,t:"checkbox"},
         "is_emri_durum_id":{f:"is_emri_durum",k:"is_emri_durum_adi",q:"d",t:"select", color:"is_emri_durum_key"},
     },

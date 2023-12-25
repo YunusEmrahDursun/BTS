@@ -117,6 +117,11 @@ router.get('/dyndata/:table', async function (req, res, next) {
     if(restTable.props[col]?.extra){
       where[restTable.props[col].extra] = req.session.user[restTable.props[col].extra];
     }
+    if(restTable.props[col]?.connectSql){
+      const tempConnect=restTable.props[col]?.connectSql;
+      where[tempConnect.connect] = (await db.selectOneQuery({[tempConnect.whereColumn]:tempConnect.whereValue},tempConnect.table))[tempConnect.column];
+    }
+    console.log(where)
     const result=await db.selectLikeWithColumn(colNames,targetTable+"_table", where ,"AND",connect+" LIMIT 10",[c]);
     if( typeof textName == 'string'){
       res.json( Array.isArray(result) && result.map(x=> ({ "id": x[tableIdName] , "text": x[textName] }) ));
