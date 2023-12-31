@@ -284,7 +284,10 @@ router.use('/form/:table/:id?',async (req: Request, res: Response) => {
 });
 
 
-router.use('/test', async (req: Request, res: Response) => {
+router.use('/test/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const yonlendirilenKullanici = await db.selectOneQuery({kullanici_id:id},'kullanici_table')
+    global.sendNotification(yonlendirilenKullanici.kullanici_push_token,"Yeni İş Emri","İş Emri Numarası : "+id);
     //res.json(await db.getById(1,"abonelik_table")).end()
     //res.json(req.session).end()
     //console.log(req.session)
@@ -297,29 +300,29 @@ router.use('/test', async (req: Request, res: Response) => {
     // const data = await db.selectOneQuery({is_emri_id:20},'is_emri_table');
     // const msg = JSON.stringify({msg:"newNotif",data})
     // io.emit("update",msg);
-    const firmaId=req.session.user.firma_id;
+    // const firmaId=req.session.user.firma_id;
 
-    let index = 0;
-    let temizlik:any=await  db.selectOneQuery({  firma_id:firmaId,temizlik_giden_kullanici_id:req.session.user.kullanici_id},"temizlik_table");
+    // let index = 0;
+    // let temizlik:any=await  db.selectOneQuery({  firma_id:firmaId,temizlik_giden_kullanici_id:req.session.user.kullanici_id},"temizlik_table");
 
-    let temizlikLog:any=await db.queryObject(`SELECT g.* FROM ${global.databaseName}.temizlik_log_table as g 
-    where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.sira desc;`
-    ,{gun:moment().format("DDMMYYYY"),kullanici_id:req.session.user.kullanici_id});
+    // let temizlikLog:any=await db.queryObject(`SELECT g.* FROM ${global.databaseName}.temizlik_log_table as g 
+    // where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.sira desc;`
+    // ,{gun:moment().format("DDMMYYYY"),kullanici_id:req.session.user.kullanici_id});
     
-    if(temizlikLog[0]){
-        index = parseInt(temizlikLog[0].index) + 1;
-    }
-    const dayIndex = moment().day() - 1;
-    const temizlikArr = JSON.parse(temizlik.data);
-    const binaId= temizlikArr[dayIndex][index];
-    let bina=null;
-    if(binaId){
-        bina=await  db.selectOneQuery({  bina_id:binaId},"bina_table");
+    // if(temizlikLog[0]){
+    //     index = parseInt(temizlikLog[0].index) + 1;
+    // }
+    // const dayIndex = moment().day() - 1;
+    // const temizlikArr = JSON.parse(temizlik.data);
+    // const binaId= temizlikArr[dayIndex][index];
+    // let bina=null;
+    // if(binaId){
+    //     bina=await  db.selectOneQuery({  bina_id:binaId},"bina_table");
 
-    }
+    // }
 
-    res.json(bina).end()
-    //res.json({}).end()
+    // res.json(bina).end()
+    res.json({}).end()
 });
 
 

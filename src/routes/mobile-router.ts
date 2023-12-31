@@ -233,33 +233,105 @@ router.use('/subeBinalari', async (req: Request, res: Response) => {
     res.json(binalar)
 });
 
+router.use('/temizlikGiris/', async (req: Request, res: Response) => {
+    const data = req.body;
+    var text, status=1;
+    const temizlikDurumu = await db.selectOneQuery({temizlik_log_durum_key:'giris'},'temizlik_log_durum_table');
 
+    try {
+
+        await db.insert({
+            bina_id:data.bina_id,
+            gun:data.gun,
+            sira:data.sira,
+            kullanici_id:req.session.user.kullanici_id,
+            sube_id:req.session.user.sube_id,
+            firma_id:req.session.user.firma_id,
+            temizlik_log_durum_id:temizlikDurumu.temizlik_log_durum_id
+        },"temizlik_log_table");
+
+    } catch (error) {
+        logger.err(error, true);
+        text = "Birşeyler ters gitti!";
+        status = 0;
+    }
+    
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
+});
+router.use('/temizlikTamamla/', async (req: Request, res: Response) => {
+    const data = req.body;
+    var text, status=1;
+    const temizlikDurumu = await db.selectOneQuery({temizlik_log_durum_key:'cikis'},'temizlik_log_durum_table');
+    try {
+        const insertId=(await db.insert({
+            bina_id:data.bina_id,
+            gun:data.gun,
+            sira:data.sira,
+            kullanici_id:req.session.user.kullanici_id,
+            sube_id:req.session.user.sube_id,
+            firma_id:req.session.user.firma_id,
+            temizlik_log_durum_id:temizlikDurumu.temizlik_log_durum_id
+        },"temizlik_log_table")).insertId;
+        if(data && data.files){
+            for (let index = 0; index < data.files.length; index++) {
+                const item = data.files[index];
+                await db.insert({firma_id:req.session.user.firma_id,dosya_adi:item,temizlik_log_id:insertId,type:1},"firma_dosya_table")
+            }
+            
+        }
+    } catch (error) {
+        logger.err(error, true);
+        text = "Birşeyler ters gitti!";
+        status = 0;
+    }
+    
+    return res.status(OK).send({
+        message: text,
+        status: status,
+    });
+});
 
 router.use('/temizlikListesi', async (req: Request, res: Response) => {
     const firmaId=req.session.user.firma_id;
     let sira = 0;
+    let durum = 'giris';
     let temizlik:any=await  db.selectOneQuery({  firma_id:firmaId,temizlik_giden_kullanici_id:req.session.user.kullanici_id},"temizlik_table");
 
-    let temizlikLog:any=await db.queryObject(`SELECT g.* FROM ${global.databaseName}.temizlik_log_table as g 
-    where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.sira desc;`
+    let temizlikLog:any=await db.queryObject(`SELECT g.*,durum.temizlik_log_durum_key FROM ${global.databaseName}.temizlik_log_table as g 
+    inner join ${global.databaseName}.temizlik_log_durum_table as durum on durum.temizlik_log_durum_id=g.temizlik_log_durum_id
+    where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.sira,g.guncellenme_zamani desc;`
     ,{gun:moment().format("DDMMYYYY"),kullanici_id:req.session.user.kullanici_id});
-    
     if(temizlikLog[0]){
-        sira = parseInt(temizlikLog[0].sira) + 1;
-    }
-    const dayIndex = moment().day() == 0 ? 6 : moment().day() - 1;
-    const temizlikArr = JSON.parse(temizlik.data);
-    const binaId= temizlikArr[dayIndex][sira];
-    let bina:any=null;
-    if(binaId){
-        bina=await  db.selectOneQuery({  bina_id:binaId},"bina_table");
-        if(bina){
-            bina.qr=md5(bina.bina_id+"-bts")
-            bina.sira=sira;
-            bina.dayIndex=dayIndex;
-            bina.gun=moment().format("DDMMYYYY");
+        if(temizlikLog[0].temizlik_log_durum_key == "giris"){
+            sira = parseInt(temizlikLog[0].sira);
+            durum="cikis"
+        }else if(temizlikLog[0].temizlik_log_durum_key == "cikis"){
+            sira = parseInt(temizlikLog[0].sira) + 1;
+            durum="giris"
         }
     }
+
+    const dayIndex = moment().day() == 0 ? 6 : moment().day() - 1;
+   
+    let bina:any=null;
+    if(temizlik){
+        const temizlikArr = JSON.parse(temizlik.data);
+        const binaId= temizlikArr[dayIndex][sira];
+        if(binaId){
+            bina=await  db.selectOneQuery({  bina_id:binaId},"bina_table");
+            if(bina){
+                bina.qr=md5(bina.bina_id+"-bts")
+                bina.sira=sira;
+                bina.dayIndex=dayIndex;
+                bina.gun=moment().format("DDMMYYYY");
+                bina.durum = durum;
+            }
+        }
+    }
+    
 
     res.json(bina)
 });
@@ -276,8 +348,6 @@ router.use('/yonlendirmeTalepleri', async (req: Request, res: Response) => {
     ,{yonlendirilen_kullanici_id:req.session.user.kullanici_id});
     res.json(talepler)
 });
-
-
 router.post('/isEmiriYonlendir/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const data = req.body;
@@ -343,7 +413,6 @@ router.use('/yonlendirmeTalepCevap/:id', async (req: Request, res: Response) => 
         status: status,
     });
 });
-
 router.use('/isEmirleri', async (req: Request, res: Response) => {
     let isEmirleri:any=await db.queryObject(`SELECT GROUP_CONCAT(dosya.dosya_adi) as dosyalar,teklif.*,g.*,bina.*,il.*,ilce.*,durum.* FROM ${global.databaseName}.is_emri_table as g 
     inner join ${global.databaseName}.bina_table as bina on bina.bina_id = g.bina_id
@@ -366,9 +435,6 @@ router.use('/tamamlananisEmirleri', async (req: Request, res: Response) => {
     ,{is_emri_giden_kullanici_id:req.session.user.kullanici_id});
     res.json(isEmirleri)
 });
-
-
-
 router.post('/servisIstegiTalebi/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const data = req.body;
@@ -433,31 +499,6 @@ router.use('/taskOlustur/', async (req: Request, res: Response) => {
     });
 });
 
-router.use('/temizlikTamamla/', async (req: Request, res: Response) => {
-    const data = req.body;
-    var text, status=1;
-
-    try {
-        await db.insert({
-            bina_id:data.bina_id,
-            gun:data.gun,
-            sira:data.index,
-            kullanici_id:req.session.user.kullanici_id,
-            sube_id:req.session.user.sube_id,
-            firma_id:req.session.user.firma_id
-
-        },"temizlik_log_table");
-    } catch (error) {
-        logger.err(error, true);
-        text = "Birşeyler ters gitti!";
-        status = 0;
-    }
-    
-    return res.status(OK).send({
-        message: text,
-        status: status,
-    });
-});
 router.use('/binaOlustur/', async (req: Request, res: Response) => {
     const data = req.body;
 

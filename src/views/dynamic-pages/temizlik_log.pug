@@ -1,0 +1,50 @@
+extends ../static-pages/layout
+block content
+  div(id="id"  data=targetData[data.idColName])
+  div(id="table"  data=data.table)
+  div(id="firma"  data=session.firma_id)
+  .block-header
+    .row.clearfix
+      .col-md-6.col-sm-12
+        h1=title
+        nav(aria-label='breadcrumb')
+          ol.breadcrumb
+            li.breadcrumb-item
+              |  BTS
+            li.breadcrumb-item.active(aria-current='page')=title
+  .row.clearfix
+    .col-lg-12.col-md-12
+      .card  
+        ul.nav.nav-tabs2.space-between
+          li.nav-item
+            a.nav-link.show( href='#')="Kayıt Ekle"
+          li.nav-item.float-right(style="display: flex;")
+            a.nav-link.active( href='/web/table/'+data.table)=title +" Tablosu"
+        .tab-content    
+          .tab-content
+            form.form-auth-small.m-t-20#form(novalidate data-parsley-validate )
+              .body
+                include ./components/inputGen
+                if data.extraData && data.extraData.files && data.extraData.files.length != 0  
+                  .col-md-12.p-0.mt-3
+                    .form-group
+                      span -- Yüklü Dosyalar 
+                    .card.mb-2
+                      .body
+                        div(class="col-md-12" style="display: flex;")
+                          each s,index in data.extraData.files
+                            div( style= "display: flex;flex-direction: column;align-content: center;width: 150px;align-items: center;")
+                              img(src="/firmaImages/"+s.firma_id+"/"+s.dosya_adi style="width: 100px;height: 100px;")
+                              span="Dosya "+(index+1) 
+                              a(href="/firmaImages/"+s.firma_id+"/"+s.dosya_adi target="_blank")="  Görüntüle " 
+              .form-footer
+                button.btn.btn-primary(type='submit') Kaydet
+                a(href='/web/table/'+data.table)
+                  button.btn.btn-secondary(type='button' ) Vazgeç
+                if targetData && targetData[data.idColName] && targetData[data.idColName] != ""   
+                  .float-right    
+                    button.btn.btn-danger#deleteForm(type='button' ) Sil
+
+block javascript 
+  script(src='/scripts/pages/is_emri.js')
+  script(src='https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.15/dist/browser-image-compression.js')

@@ -2,7 +2,7 @@
     justify-content: space-between;
 }
 
-.badge-success {
+.badge-success, .badge-giris {
     background: transparent;
     border-color: #5CB65F;
     color: #5CB65F;
@@ -18,7 +18,7 @@
     color: #FFA117
   }
   
-  .badge-open {
+  .badge-open, .badge-cikis {
     background: transparent;
     border-color: #E15858;
     color: #E15858
