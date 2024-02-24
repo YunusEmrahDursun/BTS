@@ -29,6 +29,18 @@ function refresh(c,_this){
   Dynajax(`table/${data.table}`,'x',table,null,false,postData);
   window.scroll(0,findPos(document.querySelector(".table")));
 }
+function rowData(e){
+  let table = $("#table").attr("data");
+  let link=$(e.currentTarget).attr("link")
+  let row_Id=$(e.currentTarget).attr("row-id")
+  let rowId=$(e.currentTarget).attr("rowId")
+  if(link && link  != "undefined"){
+    window.open(link+rowId, '_self');
+  }else if(data.link != false){
+    window.open(`/web/form/${table}/${row_Id}`, '_self');
+  }
+}
+
 function table(result){
   try{
     $(".table>tbody").html("");
@@ -216,17 +228,6 @@ $('#search-box>input').keyup(function(e){
         refresh(1,this)
     }
 });
-function rowData(e){
-  let table = $("#table").attr("data");
-  let link=$(e.currentTarget).attr("link")
-  let row_Id=$(e.currentTarget).attr("row-id")
-  let rowId=$(e.currentTarget).attr("rowId")
-  if(link && link  != "undefined"){
-    window.open(link+rowId, '_self');
-  }else if(data.link != false){
-    window.open(`/web/form/${table}/${row_Id}`, '_self');
-  }
-}
 
 
 function skip(id){
