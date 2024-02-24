@@ -2,11 +2,14 @@ export default{
     icon:"fa fa-building-o",
     title:"Bina",
     check_firma_id:true,
+    check_sube_id:true,
     columns:[ "bina_id","bina_adi", "sube_id","il_id","ilce_id","adres","yonetici_ad_soyad","yonetici_tel"],
     turkce:["#","Ad","Şube","İl","İlçe","Adres","Yetkili Ad Soyad", "Yetkili Tel"],
     defaultSize:4,
     hideColumn:["yonetici_ad_soyad","yonetici_tel","adres","qr_code"],
     required:["sube_id"],
+    beforeCreate: "beforeBinaCreatedUpdated",
+    beforeUpdate: "beforeBinaCreatedUpdated",
     props:{
         "bina_adi":{size:12},
         "adres":{t:"textarea",size:12},
@@ -19,6 +22,6 @@ export default{
     left join ${global.databaseName}.iller_table as i on g.il_id=i.il_id
     left join ${global.databaseName}.ilceler_table as c on g.ilce_id=c.ilce_id
     left join ${global.databaseName}.sube_table as s on g.sube_id=s.sube_id 
-    where g.silindi_mi=0 and g.firma_id=:firmaId :srcTxt`,
+    where g.silindi_mi=0 and g.firma_id=:firmaId and g.sube_id=:sube_id :srcTxt`,
     custom:"bina"
 }

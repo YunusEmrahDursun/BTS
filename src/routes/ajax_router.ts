@@ -106,6 +106,10 @@ router.get('/dyndata/:table', async function (req, res, next) {
         const firmaId= req.session.user.firma_id;
         where["firma_id"] = firmaId;
       }
+      if( Procedures.tables[restTable.props[col].f].check_sube_id ){
+        const sube_id= req.session.user.sube_id;
+        where["sube_id"] = sube_id;
+      }
     } catch (error) {
       logger.err(error, true);
       res.status(NO_CONTENT).end();

@@ -50,7 +50,7 @@ async function taskUpdated(req, data) {
 }
 async function beforeTaskCreated(req, data) {
     try {
-        
+        if(data.is_emri_giden_kullanici_id == "") delete data.is_emri_giden_kullanici_id;
         const durum = await db.selectOneQuery({is_emri_durum_key:'open'},'is_emri_durum_table')
         
         return {...data,is_emri_durum_id:durum.is_emri_durum_id};
@@ -61,7 +61,8 @@ async function beforeTaskCreated(req, data) {
 }
 async function beforeTaskUpdate(req, data) {
     try {
-        
+
+        if(data.is_emri_giden_kullanici_id == "") delete data.is_emri_giden_kullanici_id;
         const transferDurumu = await db.selectOneQuery({is_emri_durum_key:'success'},'is_emri_durum_table');
         if(transferDurumu.is_emri_durum_id == data.is_emri_durum_id){
             return {...data,kapatan_kullanici_id:req.session.user.kullanici_id,is_emri_kapanis_tarihi:currentTimestamp()};
@@ -90,9 +91,20 @@ async function temizlikDataAddTaskStatus(req, data) {
         logger.err(error);
     }
 }
+async function beforeBinaCreatedUpdated(req, data) {
+    try {
+        
+        if(data.il_id == "") delete data.il_id;
+        if(data.ilce_id == "") delete data.ilce_id;
+        return data;
+    } catch (error) {
+        logger.err(error);
+    }
+}
 export default {
     taskCreated,
     taskUpdated,
     beforeTaskCreated,
     beforeTaskUpdate,
+    beforeBinaCreatedUpdated
 }

@@ -302,7 +302,7 @@ router.use('/temizlikListesi', async (req: Request, res: Response) => {
 
     let temizlikLog:any=await db.queryObject(`SELECT g.*,durum.temizlik_log_durum_key FROM ${global.databaseName}.temizlik_log_table as g 
     inner join ${global.databaseName}.temizlik_log_durum_table as durum on durum.temizlik_log_durum_id=g.temizlik_log_durum_id
-    where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.sira,g.guncellenme_zamani desc;`
+    where g.gun=:gun and g.silindi_mi = 0 and g.kullanici_id = :kullanici_id ORDER BY g.guncellenme_zamani desc;` //g.sira,
     ,{gun:moment().format("DDMMYYYY"),kullanici_id:req.session.user.kullanici_id});
     if(temizlikLog[0]){
         if(temizlikLog[0].temizlik_log_durum_key == "giris"){
